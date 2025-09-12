@@ -34,8 +34,11 @@ class User(Base):
     visible_gpus: Mapped[str] = mapped_column(String, default="", nullable=False)
     priority: Mapped[int] = mapped_column(Integer, default=100, nullable=False)
 
+    # 注意：前向引用用字符串，避免静态类型检查报错
     tasks: Mapped[list[Task]] = relationship(
-        "Task", back_populates="user", cascade="all, delete-orphan"
+        "Task",
+        back_populates="user",
+        cascade="all, delete-orphan",
     )
 
     def set_password(self, raw: str) -> None:
@@ -59,20 +62,20 @@ class Task(Base):
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True, index=True)
     user_id: Mapped[int] = mapped_column(
-        Integer, ForeignKey("users.id"), nullable=False, index=True
+        Integer,
+        ForeignKey("users.id"),
+        nullable=False,
+        index=True,
     )
     user: Mapped[User] = relationship("User", back_populates="tasks")
 
     name: Mapped[str] = mapped_column(String(128), nullable=False)
     command: Mapped[str] = mapped_column(String(512), nullable=False)
-    requested_gpus: Mapped[str] = mapped_column(
-        String(64),
-        nullable=False,
-    )  # e.g. "0,1" or "AUTO:2"
-    gpu_memory_limit: Mapped[int | None] = mapped_column(Integer, nullable=True)  # in MB
+    requested_gpus: Mapped[str] = mapped_column(String(64), nullable=False)  # "0,1" 或 "AUTO:2"
+    gpu_memory_limit: Mapped[int | None] = mapped_column(Integer, nullable=True)  # MB
     priority: Mapped[int] = mapped_column(Integer, default=100, nullable=False)
 
-    working_dir: Mapped[str] = mapped_column(String(128), nullable=False)
+    working_dir: Mapped[str] = mapped_column(String(256), nullable=False)
 
     status: Mapped[TaskStatus] = mapped_column(
         SAEnum(TaskStatus),
@@ -80,13 +83,14 @@ class Task(Base):
         nullable=False,
     )
 
+    # 使用时区感知时间（UTC），并设置 timezone=True
     created_at: Mapped[dt.datetime] = mapped_column(
-        DateTime,
-        default=dt.UTC,
+        DateTime(timezone=True),
+        default=lambda: dt.datetime.now(dt.UTC),
         nullable=False,
     )
-    started_at: Mapped[dt.datetime | None] = mapped_column(DateTime, nullable=True)
-    finished_at: Mapped[dt.datetime | None] = mapped_column(DateTime, nullable=True)
+    started_at: Mapped[dt.datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
+    finished_at: Mapped[dt.datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
 
     stdout_log: Mapped[str | None] = mapped_column(Text, nullable=True)
     stderr_log: Mapped[str | None] = mapped_column(Text, nullable=True)

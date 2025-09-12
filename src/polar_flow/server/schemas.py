@@ -31,6 +31,7 @@ class TaskCreate(BaseModel):
     name: str = Field(..., min_length=1, max_length=128)
     command: str = Field(..., min_length=1)
     requested_gpus: str = Field(..., min_length=1)
+    working_dir: str = Field(..., min_length=1, max_length=256)
     gpu_memory_limit: int | None = Field(default=None, ge=0)
     priority: int | None = Field(default=None, ge=0)
 
@@ -39,9 +40,7 @@ class TaskCreate(BaseModel):
     @field_validator("priority", mode="after")
     @classmethod
     def default_priority_if_missing(cls, v: int | None) -> int:
-        if v is None:
-            return 100
-        return v
+        return 100 if v is None else v
 
 
 class TaskRead(BaseModel):
@@ -50,6 +49,7 @@ class TaskRead(BaseModel):
     name: str
     command: str
     requested_gpus: str
+    working_dir: str
     gpu_memory_limit: int | None
     priority: int
     status: TaskStatus
