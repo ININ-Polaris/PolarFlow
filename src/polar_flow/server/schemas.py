@@ -1,8 +1,9 @@
+# server/schemas.py
 from __future__ import annotations
 
 from typing import TYPE_CHECKING
 
-from pydantic import BaseModel, ConfigDict, Field, field_validator
+from pydantic import BaseModel, ConfigDict, Field
 
 from polar_flow.server.models import Role, TaskStatus  # noqa: TC001
 
@@ -53,5 +54,7 @@ class TaskRead(BaseModel):
     finished_at: dt.datetime | None
     stdout_log: str | None
     stderr_log: str | None
+    stdout_path: str | None
+    stderr_path: str | None
 
     model_config = ConfigDict(from_attributes=True)

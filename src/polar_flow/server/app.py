@@ -22,7 +22,6 @@ def create_app(config_path: str) -> Flask:
 
     # 1) 加载配置
     cfg = Config.load(Path(config_path) if config_path else Path("config.toml"))
-    print(cfg)
     app.config["SECRET_KEY"] = cfg.server.secret_key
 
     # 2) 初始化数据库（Engine / Session 工厂）
@@ -43,7 +42,13 @@ def create_app(config_path: str) -> Flask:
     login_manager.init_app(app)
 
     # 4) 注册蓝图
+    from polar_flow.server.routes import (  # noqa: PLC0415
+        api_bp,
+        set_session_factory as routes_set_session_factory,
+    )
+    routes_set_session_factory(session_local)
     app.register_blueprint(auth_bp)
+    app.register_blueprint(api_bp)
 
     # 5) 演示路由：健康检查
     @app.get("/healthz")

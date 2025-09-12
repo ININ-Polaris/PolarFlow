@@ -19,7 +19,7 @@ class ServerConfig(BaseModel):
     database_url: str = Field(...)
     redis_url: str = Field(...)
     scheduler_poll_interval: int = Field(
-        ..., gt=0, description="轮询间隔（秒），必须大于 0"
+        ..., gt=0, description="轮询间隔（秒），必须大于 0",
     )
 
     @field_validator("scheduler_poll_interval", mode="after")
@@ -34,7 +34,7 @@ class DefaultsConfig(BaseModel):
     user_priority: int = Field(
         default=100,
         ge=0,
-        description="默认普通用户提交任务可用的最大优先级（>= 0）",
+        description="默认普通用户提交任务可用的最大优先级(>= 0)",
     )
 
     @field_validator("user_priority", mode="after")
@@ -74,7 +74,7 @@ class Config(BaseModel):
             database_url = f"sqlite:///{(basedir / 'app.db').as_posix()}"
 
         redis_url = server_data.get("redis_url") or os.environ.get(
-            "REDIS_URL", "redis://localhost:6379/0"
+            "REDIS_URL", "redis://localhost:6379/0",
         )
 
         # 统一解析 scheduler_poll_interval
@@ -85,14 +85,7 @@ class Config(BaseModel):
             spi = int(spi_raw) if spi_raw is not None else 5
         except ValueError:
             logger.warning(
-                f"scheduler_poll_interval 无法解析为整数: {spi_raw}, 使用默认 5"
-            )
-            spi = 5
-        try:
-            spi = int(spi_raw) if spi_raw is not None else 5
-        except ValueError:
-            logger.warning(
-                f"scheduler_poll_interval 无法解析为整数: {spi_raw}, 使用默认 5"
+                f"scheduler_poll_interval 无法解析为整数: {spi_raw}, 使用默认 5",
             )
             spi = 5
 

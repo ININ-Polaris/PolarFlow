@@ -1,3 +1,4 @@
+# server/models.py
 from __future__ import annotations
 
 import datetime as dt
@@ -98,3 +99,7 @@ class Task(Base):
 
     stdout_log: Mapped[str | None] = mapped_column(Text, nullable=True)
     stderr_log: Mapped[str | None] = mapped_column(Text, nullable=True)
+
+    pid: Mapped[int | None] = mapped_column(Integer, nullable=True)
+    stdout_path: Mapped[str | None] = mapped_column(String(512), nullable=True)
+    stderr_path: Mapped[str | None] = mapped_column(String(512), nullable=True)
