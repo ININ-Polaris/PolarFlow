@@ -1,13 +1,13 @@
 from __future__ import annotations
 
 from functools import wraps
-from typing import TYPE_CHECKING, ParamSpec
+from typing import TYPE_CHECKING
 
 from flask import Blueprint, Response, jsonify, request
 from flask_login import LoginManager, current_user, login_required, login_user, logout_user
 
-from .models import Role, User
-from .schemas import UserRead
+from polar_flow.server.models import Role, User
+from polar_flow.server.schemas import UserRead
 
 if TYPE_CHECKING:
     from collections.abc import Callable
@@ -15,11 +15,15 @@ if TYPE_CHECKING:
     from flask.typing import ResponseReturnValue
     from sqlalchemy.orm import Session, sessionmaker
 
-P = ParamSpec("P")
-
 # ---- Flask-Login 基础对象 ----
 auth_bp = Blueprint("auth", __name__)
 login_manager = LoginManager()
+
+
+@login_manager.unauthorized_handler
+def _unauthorized():  # noqa: ANN202
+    return jsonify({"error": "login required"}), 401
+
 
 # ---- 会话工厂注入 ----
 _session_factory: sessionmaker[Session] | None = None
@@ -55,12 +59,14 @@ def login() -> tuple[Response, int]:
 
     user = get_user_by_username(username)
     if user is None or not user.check_password(password):
-        # 也可使用 check_password_hash(user.password_hash, password)
         return jsonify({"error": "invalid credentials"}), 401
 
     login_user(user)
+
+    print(user.visible_gpus)
+
     return jsonify(
-        {"message": "logged in", "user": UserRead.model_validate(user).model_dump()}
+        {"message": "logged in", "user": UserRead.model_validate(user).model_dump()},
     ), 200
 
 
@@ -91,10 +97,12 @@ def admin_required[**P](func: Callable[P, ResponseReturnValue]) -> Callable[P, R
 
 @login_manager.user_loader
 def load_user(user_id: str) -> User | None:
-    """Flask-Login 要求用 user_id 恢复用户会话。"""
+    try:
+        uid = int(user_id)
+    except (TypeError, ValueError):
+        return None
     session = _get_session()
     try:
-        # 使用 get(primary_key) 按 ID 加载
-        return session.get(User, int(user_id))
+        return session.get(User, uid)
     finally:
         session.close()

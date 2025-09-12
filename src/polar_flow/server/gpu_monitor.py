@@ -35,6 +35,7 @@ def get_all_gpu_info() -> list[GPUInfo]:
         nvmlInit()
     except NVMLError:
         logger.exception("初始化 GPU 失败")
+        return []
 
     gpu_count = nvmlDeviceGetCount()
     infos: list[GPUInfo] = []

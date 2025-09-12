@@ -15,6 +15,12 @@ license = { text = "MIT" }
 # 运行依赖 `uv add`
 dependencies = [
     "colorama>=0.4.6",
+    "flask-login>=0.6.3",
+    "flask-sqlalchemy>=3.1.1",
+    "nvidia-ml-py>=13.580.82",
+    "pydantic>=2.11.7",
+    "toml>=0.10.2",
+    "types-toml>=0.10.8.20240310",
 ]
 
 # 分组依赖 `pip install .[dev]`
@@ -30,7 +36,7 @@ dev = [
 ]
 
 [project.scripts]
-cli = "learn_torch.cli:main"
+server = "polar_flow.server.app:main"
 demo = "learn_torch.cli:demo"
 
 # ---- hatchling 构建细节 ----
@@ -53,6 +59,7 @@ dev-dependencies = [
   "xdoctest>=1.2.0",
   "pytest-cov>=6.2.1",
   "pytest-asyncio>=1.1.0",
+  "pydantic>=2.11.7",
 ]
 
 [tool.pytest.ini_options]
@@ -63,7 +70,7 @@ addopts = """
 --strict-markers
 --strict-config
 --maxfail=1
---cov=cliniq_nexus_core --cov-report=term-missing
+--cov=polar_flow --cov-report=term-missing
 --doctest-modules
 --xdoctest --xdoctest-style=google
 """
@@ -177,7 +184,7 @@ mypy-init-return = true
 max-args = 7
 
 [tool.ruff.lint.per-file-ignores]
-"tests/**/*.py" = ["S101", "PLR2004", "ANN"]
+"tests/**/*.py" = ["S101", "PLR2004", "ANN", "ARG001", "PLC0415"]
 "src/**/__init__.py" = ["F401"]
 "scripts/*.py" = ["T201", "T20"]
 

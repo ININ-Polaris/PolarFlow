@@ -3,7 +3,9 @@ from __future__ import annotations
 import datetime as dt
 from enum import Enum
 
-from sqlalchemy import DateTime, Enum as SAEnum, ForeignKey, Integer, String, Text
+from flask_login import UserMixin
+from sqlalchemy import JSON, DateTime, Enum as SAEnum, ForeignKey, Integer, String, Text
+from sqlalchemy.ext.mutable import MutableList
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column, relationship
 
 
@@ -24,14 +26,18 @@ class TaskStatus(Enum):
     CANCELLED = "CANCELLED"
 
 
-class User(Base):
+class User(Base, UserMixin):
     __tablename__ = "users"
 
     id: Mapped[int] = mapped_column(primary_key=True)
     username: Mapped[str] = mapped_column(String(64), unique=True, nullable=False)
     password_hash: Mapped[str] = mapped_column(String(128), nullable=False)
     role: Mapped[Role] = mapped_column(SAEnum(Role), default=Role.USER, nullable=False)
-    visible_gpus: Mapped[str] = mapped_column(String, default="", nullable=False)
+    visible_gpus: Mapped[list[int]] = mapped_column(
+        MutableList.as_mutable(JSON),
+        default=list,  # 注意：用可调用对象，避免共享同一个列表
+        nullable=False,
+    )
     priority: Mapped[int] = mapped_column(Integer, default=100, nullable=False)
 
     # 注意：前向引用用字符串，避免静态类型检查报错
@@ -52,9 +58,7 @@ class User(Base):
         return check_password_hash(self.password_hash, raw)
 
     def get_visible_gpus_list(self) -> list[int]:
-        if self.visible_gpus == "":
-            return []
-        return [int(x) for x in self.visible_gpus.split(",")]
+        return self.visible_gpus
 
 
 class Task(Base):

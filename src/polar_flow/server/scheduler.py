@@ -8,10 +8,11 @@ import time
 from collections.abc import Callable
 from typing import TYPE_CHECKING
 
-from sqlalchemy.orm import Session
+from sqlalchemy import select
+from sqlalchemy.orm import Session, joinedload
 
-from .gpu_monitor import get_all_gpu_info
-from .models import Role, Task, TaskStatus
+from polar_flow.server.gpu_monitor import get_all_gpu_info
+from polar_flow.server.models import Role, Task, TaskStatus
 
 if TYPE_CHECKING:
     from sqlalchemy.orm import sessionmaker
@@ -20,14 +21,21 @@ SessionFactory = Callable[[], Session]
 
 
 def resources_available(requested: list[int], gpu_memory_limit: int | None) -> bool:
+    """
+    检查给定 GPU 是否有足够的可用显存。
+    NVML 返回的是字节，这里将 gpu_memory_limit(单位 MB) 转换为字节后比较。
+    """
     infos = get_all_gpu_info()
-    free_map: dict[int, int] = {g["id"]: g["memory_free"] for g in infos}
+    free_map: dict[int, int] = {g["id"]: g["memory_free"] for g in infos}  # bytes
+
     for gid in requested:
-        free = free_map.get(gid)
-        if free is None:
+        free_bytes = free_map.get(gid)
+        if free_bytes is None:
             return False
-        if gpu_memory_limit is not None and free < gpu_memory_limit:
-            return False
+        if gpu_memory_limit is not None:
+            required_bytes = gpu_memory_limit * 1024 * 1024  # MB -> bytes
+            if free_bytes < required_bytes:
+                return False
     return True
 
 
@@ -35,11 +43,13 @@ def _select_gpus(task: Task) -> list[int]:
     if task.requested_gpus.startswith("AUTO:"):
         num = int(task.requested_gpus.split(":", 1)[1])
         infos = get_all_gpu_info()
-        candidates = [
-            g
-            for g in infos
-            if (task.gpu_memory_limit is None or g["memory_free"] >= task.gpu_memory_limit)
-        ]
+
+        # 注意：NVML 是字节，这里做单位换算
+        limit_bytes = None
+        if task.gpu_memory_limit is not None:
+            limit_bytes = task.gpu_memory_limit * 1024 * 1024
+
+        candidates = [g for g in infos if (limit_bytes is None or g["memory_free"] >= limit_bytes)]
         if len(candidates) < num:
             return []
         selected = [
@@ -50,56 +60,58 @@ def _select_gpus(task: Task) -> list[int]:
     return selected
 
 
-def allocate_and_run_task(task: Task, session_local: sessionmaker[Session]) -> bool:
-    """
-    尝试为 task 分配 GPU 并启动。如果成功返回 True，否则 False。
-    """
+def allocate_and_run_task(task: Task, session_local: SessionFactory) -> bool:
     session: Session = session_local()
     try:
-        selected = _select_gpus(task)
+        # 在当前 session 中把 task 捞出来（顺便把 user 一并 eager load，避免再次懒加载）
+        task_db = session.execute(
+            select(Task).options(joinedload(Task.user)).where(Task.id == task.id)
+        ).scalar_one_or_none()
+        if task_db is None:
+            return False
+
+        selected = _select_gpus(task_db)
         if not selected:
             return False
 
         # 用户 GPU 权限检查（非管理员走白名单）
-        user = task.user
+        user = task_db.user
         if user.role != Role.ADMIN:
             visible = set(user.get_visible_gpus_list())
             if not all(gid in visible for gid in selected):
                 return False
 
-        if not resources_available(selected, task.gpu_memory_limit):
+        if not resources_available(selected, task_db.gpu_memory_limit):
             return False
 
         # 状态更新为 RUNNING
-        task.status = TaskStatus.RUNNING
-        task.started_at = dt.datetime.now(dt.UTC)
-        session.add(task)
+        task_db.status = TaskStatus.RUNNING
+        task_db.started_at = dt.datetime.now(dt.UTC)
         session.commit()
 
         env = os.environ.copy()
-        env["CUDA_VISIBLE_DEVICES"] = ",".join(
-            str(x) for x in selected
-        )  # 官方推荐变量名，控制可见与重编号
-        # 参考 NVIDIA 文档：CUDA_VISIBLE_DEVICES 会决定可见设备及其重编号顺序
-        # https://docs.nvidia.com/deploy/topics/topic_5_2_1.html
+        env["CUDA_VISIBLE_DEVICES"] = ",".join(str(x) for x in selected)
 
         proc = subprocess.Popen(
-            task.command,
+            task_db.command,
             shell=True,
             stdout=subprocess.PIPE,
             stderr=subprocess.PIPE,
-            cwd=task.working_dir or os.getcwd(),
+            cwd=task_db.working_dir or os.getcwd(),
             env=env,
             text=True,
         )
         out, err = proc.communicate()
 
-        task.finished_at = dt.datetime.now(dt.UTC)
-        task.stdout_log = out
-        task.stderr_log = err
-        task.status = TaskStatus.SUCCESS if proc.returncode == 0 else TaskStatus.FAILED
-        session.add(task)
+        task_db.finished_at = dt.datetime.now(dt.UTC)
+        task_db.stdout_log = out
+        task_db.stderr_log = err
+        task_db.status = TaskStatus.SUCCESS if proc.returncode == 0 else TaskStatus.FAILED
         session.commit()
+    except Exception:
+        session.rollback()
+        raise
+    else:
         return True
     finally:
         session.close()

@@ -1,16 +1,19 @@
 # app.py
 from __future__ import annotations
 
+import importlib
 from pathlib import Path
 
 from flask import Flask, Response, jsonify
 from sqlalchemy import create_engine
 from sqlalchemy.orm import Session, sessionmaker
 
-from .auth import auth_bp, login_manager, set_session_factory
-from .config import Config
-from .models import Base
-from .schemas import UserRead
+importlib.import_module("polar_flow.server.models")
+
+from polar_flow.server.auth import auth_bp, login_manager, set_session_factory  # noqa: E402
+from polar_flow.server.config import Config  # noqa: E402
+from polar_flow.server.models import Base  # noqa: E402
+from polar_flow.server.schemas import UserRead  # noqa: E402
 
 
 # -------- App Factory --------
@@ -19,6 +22,7 @@ def create_app(config_path: str) -> Flask:
 
     # 1) 加载配置
     cfg = Config.load(Path(config_path) if config_path else Path("config.toml"))
+    print(cfg)
     app.config["SECRET_KEY"] = cfg.server.secret_key
 
     # 2) 初始化数据库（Engine / Session 工厂）

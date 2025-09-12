@@ -4,10 +4,10 @@ from typing import TYPE_CHECKING
 
 from pydantic import BaseModel, ConfigDict, Field, field_validator
 
+from polar_flow.server.models import Role, TaskStatus  # noqa: TC001
+
 if TYPE_CHECKING:
     import datetime as dt
-
-    from server.models import Role, TaskStatus
 
 
 class UserCreate(BaseModel):
@@ -24,7 +24,7 @@ class UserRead(BaseModel):
     visible_gpus: list[int] = Field(default_factory=list)
     priority: int
 
-    model_config = ConfigDict(from_attributes=True)
+    model_config = ConfigDict(from_attributes=True, use_enum_values=True)
 
 
 class TaskCreate(BaseModel):
@@ -33,14 +33,9 @@ class TaskCreate(BaseModel):
     requested_gpus: str = Field(..., min_length=1)
     working_dir: str = Field(..., min_length=1, max_length=256)
     gpu_memory_limit: int | None = Field(default=None, ge=0)
-    priority: int | None = Field(default=None, ge=0)
+    priority: int = Field(default=100, ge=0)
 
     model_config = ConfigDict(extra="forbid")
-
-    @field_validator("priority", mode="after")
-    @classmethod
-    def default_priority_if_missing(cls, v: int | None) -> int:
-        return 100 if v is None else v
 
 
 class TaskRead(BaseModel):

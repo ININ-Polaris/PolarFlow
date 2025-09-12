@@ -18,12 +18,13 @@ class ServerConfig(BaseModel):
     secret_key: str = Field(...)
     database_url: str = Field(...)
     redis_url: str = Field(...)
-    scheduler_poll_interval: int = Field(..., gt=0, description="轮询间隔（秒），必须大于 0")
+    scheduler_poll_interval: int = Field(
+        ..., gt=0, description="轮询间隔（秒），必须大于 0"
+    )
 
     @field_validator("scheduler_poll_interval", mode="after")
     @classmethod
     def check_positive_interval(cls, v: int) -> int:
-        # 与 gt=0 一致：严格大于 0
         if v <= 0:
             raise ValueError("scheduler_poll_interval 必须大于 0")
         return v
@@ -49,7 +50,7 @@ class Config(BaseModel):
     defaults: DefaultsConfig
 
     @classmethod
-    def load(cls, config_path: Path) -> "Config":
+    def load(cls, config_path: Path) -> Config:
         data = {}
         if config_path.exists():
             try:
@@ -77,13 +78,22 @@ class Config(BaseModel):
         )
 
         # 统一解析 scheduler_poll_interval
-        spi_raw = server_data.get("scheduler_poll_interval") or os.environ.get(
-            "SCHEDULER_POLL_INTERVAL"
-        )
+        spi_raw = server_data.get("scheduler_poll_interval")
+        if spi_raw is None:
+            spi_raw = os.environ.get("SCHEDULER_POLL_INTERVAL")
         try:
             spi = int(spi_raw) if spi_raw is not None else 5
         except ValueError:
-            logger.warning(f"scheduler_poll_interval 无法解析为整数: {spi_raw}, 使用默认 5")
+            logger.warning(
+                f"scheduler_poll_interval 无法解析为整数: {spi_raw}, 使用默认 5"
+            )
+            spi = 5
+        try:
+            spi = int(spi_raw) if spi_raw is not None else 5
+        except ValueError:
+            logger.warning(
+                f"scheduler_poll_interval 无法解析为整数: {spi_raw}, 使用默认 5"
+            )
             spi = 5
 
         # 统一解析 user_priority
