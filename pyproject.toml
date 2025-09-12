@@ -1,0 +1,189 @@
+# pyproject.toml
+[build-system]
+requires = ["hatchling", "hatch-vcs"]
+build-backend = "hatchling.build"
+
+[project]
+name = "PolarFlow"
+dynamic = ["version"]
+description = "BIT ININ 课题组自用服务器 GPU 资源调度及管理工具"
+readme = "README.md"
+requires-python = ">=3.12, <3.13"
+authors = [{ name = "CharlesHsu", email = "charles040318@gmail.com" }]
+license = { text = "MIT" }
+
+# 运行依赖 `uv add`
+dependencies = [
+    "colorama>=0.4.6",
+]
+
+# 分组依赖 `pip install .[dev]`
+[project.optional-dependencies]
+dev = [
+  "pytest>=8",
+  "ruff>=0.5",
+  "mypy>=1.10",
+  "pytest-xdist>=3.8.0",
+  "xdoctest>=1.2.0",
+  "pytest-cov>=6.2.1",
+  "pytest-asyncio>=1.1.0",
+]
+
+[project.scripts]
+cli = "learn_torch.cli:main"
+demo = "learn_torch.cli:demo"
+
+# ---- hatchling 构建细节 ----
+[tool.hatch.build.targets.wheel]
+packages = ["src/polar_flow"]
+
+[tool.hatch.build.targets.sdist]
+exclude = ["tests/*", ".github/*"]
+
+[tool.hatch.version]
+source = "vcs"
+
+# ---- uv 设置 ----
+[tool.uv]
+dev-dependencies = [
+  "pytest>=8",
+  "ruff>=0.5",
+  "mypy>=1.10",
+  "pytest-xdist>=3.8.0",
+  "xdoctest>=1.2.0",
+  "pytest-cov>=6.2.1",
+  "pytest-asyncio>=1.1.0",
+]
+
+[tool.pytest.ini_options]
+minversion = "8.0"
+
+addopts = """
+-ra
+--strict-markers
+--strict-config
+--maxfail=1
+--cov=cliniq_nexus_core --cov-report=term-missing
+--doctest-modules
+--xdoctest --xdoctest-style=google
+"""
+testpaths = ["tests"]
+pythonpath = ["src"]
+# 慢测试标记为 integration，默认可以选择跳过
+markers = [
+  "unit: 快速单元测试",
+  "integration: 较慢/复杂依赖测试"
+]
+# doctest 容错：省略号匹配/空白规整
+doctest_optionflags = "ELLIPSIS NORMALIZE_WHITESPACE"
+filterwarnings = [
+  "error::DeprecationWarning",
+]
+# 日志支持
+log_cli = true
+log_cli_level = "INFO"
+# Async 支持
+asyncio_mode = "auto"
+
+# ---- mypy 配置 ----
+[tool.mypy]
+python_version = "3.12"
+warn_unused_configs = true
+warn_return_any = true
+warn_unused_ignores = true
+disallow_any_generics = true
+disallow_untyped_defs = true
+ignore_missing_imports = true
+show_error_codes = true
+pretty = true
+plugins = ["pydantic.mypy"]
+
+# ---- ruff 配置 ----
+[tool.ruff]
+target-version = "py312"
+line-length = 100
+indent-width = 4
+
+exclude = [
+    ".git",
+    ".venv",
+    "venv",
+    "build",
+    "dist",
+    "logs",
+    "data",
+    "docs",
+    "uv.lock",
+]
+
+[tool.ruff.lint]
+select = [
+    "E",   # pycodestyle (errors)
+    "F",   # pyflakes
+    "W",   # pycodestyle (warnings)
+    "I",   # isort
+    "UP",  # pyupgrade
+    "ANN", # flake8-annotations
+    "ARG", # flake8-unused-arguments
+    "B",   # flake8-bugbear
+    "BLE", # flake8-blind-except
+    "C4",  # flake8-comprehensions
+    "COM", # flake8-commas
+    "DTZ", # flake8-datetimez
+    "G",   # flake8-logging-format
+    "ISC", # flake8-implicit-str-concat
+    "N",   # pep8-naming
+    "PGH", # pygrep-hooks
+    "PIE", # flake8-pie
+    "PL",  # pylint (subset)
+    "PT",  # flake8-pytest-style
+    "Q",   # flake8-quotes
+    "RET", # flake8-return
+    "RUF", # ruff extensions
+    "SIM", # flake8-simplify
+    "TCH", # flake8-type-checking
+    "TID", # flake8-tidy-imports
+    "TRY", # tryceratops
+]
+
+ignore = [
+    "E501",
+    "PLR2004",
+    "PLR0911",
+    "PLR0912",
+    "PLR0915",
+    "RUF001",
+    "RUF002",
+    "RUF003",
+    "ANN401",
+    "TRY003",
+    "G004",
+]
+
+[tool.ruff.lint.isort]
+combine-as-imports = true
+force-single-line = false
+known-first-party = ["cliniq_nexus_medical"]
+
+[tool.ruff.lint.mccabe]
+max-complexity = 10
+
+[tool.ruff.lint.flake8-annotations]
+allow-star-arg-any = true
+suppress-dummy-args = true
+mypy-init-return = true
+
+[tool.ruff.lint.pylint]
+max-args = 7
+
+[tool.ruff.lint.per-file-ignores]
+"tests/**/*.py" = ["S101", "PLR2004", "ANN"]
+"src/**/__init__.py" = ["F401"]
+"scripts/*.py" = ["T201", "T20"]
+
+[tool.ruff.format]
+quote-style = "double"
+indent-style = "space"
+line-ending = "lf"
+skip-magic-trailing-comma = false
+docstring-code-format = true
