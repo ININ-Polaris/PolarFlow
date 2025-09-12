@@ -47,7 +47,7 @@ def fmt_status(s: str) -> Text:
     return badge(label, style)
 
 
-def safe_get(d: dict, *keys, default: Any = "") -> Any:
+def safe_get(d: dict, *keys: Any, default: Any = "") -> Any:
     for k in keys:
         d = d.get(k, {})
     return d or default
@@ -100,7 +100,8 @@ class Client:
     # ---- Auth ----
     def login(self, username: str, password: str) -> dict:
         r = self.session.post(
-            f"{self.base_url}/auth/login", json={"username": username, "password": password}
+            f"{self.base_url}/auth/login",
+            json={"username": username, "password": password},
         )
         try:
             r.raise_for_status()
@@ -110,11 +111,12 @@ class Client:
             except Exception:  # noqa: BLE001
                 err = r.text
             msg = f"{colorama.Fore.BLUE}[登录失败]: {colorama.Fore.RED}{err} ({e}){colorama.Style.RESET_ALL}"
+            raise SystemExit(msg) from requests.HTTPError
         # 成功：保存 cookies 并返回体
         self._save_cookies()
         try:
             return r.json()
-        except Exception:
+        except Exception:  # noqa: BLE001
             return {"message": "login ok"}
 
     def logout(self) -> dict:
@@ -129,7 +131,7 @@ class Client:
         r.raise_for_status()
         return r.json()
 
-    def list_tasks(self, status: Optional[str] = None) -> list[dict]:
+    def list_tasks(self, status: str | None = None) -> list[dict]:
         params = {"status": status} if status else None
         r = self.session.get(f"{self.base_url}/api/tasks", params=params)
         r.raise_for_status()
@@ -152,11 +154,11 @@ class Client:
         except requests.HTTPError as e:
             try:
                 err = r.json().get("error")
-            except Exception:
+            except Exception:  # noqa: BLE001
                 err = r.text
             raise SystemExit(
-                f"{colorama.Fore.BLUE}[查询失败]: {colorama.Fore.RED}{err} ({e}){colorama.Style.RESET_ALL}"
-            )
+                f"{colorama.Fore.BLUE}[查询失败]: {colorama.Fore.RED}{err} ({e}){colorama.Style.RESET_ALL}",
+            ) from requests.HTTPError
         return r.json()
 
 
@@ -167,7 +169,7 @@ def login(
     password: str = typer.Option(..., "--password", "-p", prompt=True, hide_input=True),
     base_url: str = typer.Option(DEFAULT_BASE_URL, "--base-url"),
     json_out: bool = typer.Option(False, "--json", help="Output raw JSON"),
-):
+) -> None:
     """登录并保存会话 Cookie。"""
     c = Client(base_url)
     with console.status("[bold]Logging in..."):
@@ -186,7 +188,7 @@ def login(
 def logout(
     base_url: str = typer.Option(DEFAULT_BASE_URL, "--base-url"),
     json_out: bool = typer.Option(False, "--json", help="Output raw JSON"),
-):
+) -> None:
     """注销当前会话。"""
     c = Client(base_url)
     with console.status("[bold]Logging out..."):
@@ -194,7 +196,7 @@ def logout(
             res = c.logout()
         except requests.HTTPError as e:
             console.print(pretty_panel("Logout Failed", content=Text(str(e), style="red")))
-            raise typer.Exit(1)
+            raise typer.Exit(1) from requests.HTTPError
 
     if json_out:
         console.print(RICH_JSON.from_data(res))
@@ -207,7 +209,7 @@ def logout(
 def gpus_cmd(
     base_url: str = typer.Option(DEFAULT_BASE_URL, "--base-url"),
     json_out: bool = typer.Option(False, "--json", help="Output raw JSON"),
-):
+) -> None:
     """查看 GPU 状态。"""
     c = Client(base_url)
     with console.status("[bold]Fetching GPU status..."):
@@ -241,10 +243,7 @@ def gpus_cmd(
             for _, key in candidate_fields:
                 cur: Any = g
                 for part in key.split("."):
-                    if isinstance(cur, dict):
-                        cur = cur.get(part, "")
-                    else:
-                        cur = ""
+                    cur = cur.get(part, "") if isinstance(cur, dict) else ""
                 if key.lower().endswith("status"):
                     row.append(fmt_status(str(cur)))
                 else:
@@ -259,14 +258,24 @@ def gpus_cmd(
 
 @app.command("submit")
 def submit_cmd(
-    config: Path = typer.Option(
-        ..., "--config", "-c", exists=True, readable=True, help="TOML 任务配置文件"
-    ),
+    config: Path | None = None,
     base_url: str = typer.Option(DEFAULT_BASE_URL, "--base-url"),
     json_out: bool = typer.Option(False, "--json", help="Output raw JSON"),
-):
+) -> None:
     """从 TOML 提交任务。"""
-    data = toml.load(config)
+    if config is None:
+        data = toml.load(
+            typer.Option(
+                ...,
+                "--config",
+                "-c",
+                exists=True,
+                readable=True,
+                help="TOML 任务配置文件",
+            ),
+        )
+    else:
+        data = toml.load(config)
     t = data.get("task", {})
     payload = {
         "name": t.get("name"),
@@ -294,12 +303,14 @@ def submit_cmd(
 
 @app.command("ls")
 def list_cmd(
-    status: Optional[str] = typer.Option(
-        None, "--status", help="过滤任务状态 (PENDING/RUNNING/SUCCESS/FAILED/CANCELLED)"
+    status: str | None = typer.Option(
+        None,
+        "--status",
+        help="过滤任务状态 (PENDING/RUNNING/SUCCESS/FAILED/CANCELLED)",
     ),
     base_url: str = typer.Option(DEFAULT_BASE_URL, "--base-url"),
     json_out: bool = typer.Option(False, "--json", help="Output raw JSON"),
-):
+) -> None:
     """列出我的任务。"""
     c = Client(base_url)
     with console.status("[bold]Loading tasks..."):
@@ -340,7 +351,7 @@ def logs_cmd(
     task_id: int = typer.Argument(...),
     base_url: str = typer.Option(DEFAULT_BASE_URL, "--base-url"),
     json_out: bool = typer.Option(False, "--json", help="Output raw JSON"),
-):
+) -> None:
     """查看任务日志（stdout/stderr）。"""
     c = Client(base_url)
     with console.status("[bold]Fetching logs..."):
@@ -349,8 +360,8 @@ def logs_cmd(
     if json_out:
         console.print(
             RICH_JSON.from_data(
-                {"stdout": t.get("stdout_log") or "", "stderr": t.get("stderr_log") or ""}
-            )
+                {"stdout": t.get("stdout_log") or "", "stderr": t.get("stderr_log") or ""},
+            ),
         )
         return
 
@@ -369,7 +380,7 @@ def cancel_cmd(
     task_id: int = typer.Argument(...),
     base_url: str = typer.Option(DEFAULT_BASE_URL, "--base-url"),
     json_out: bool = typer.Option(False, "--json", help="Output raw JSON"),
-):
+) -> None:
     """取消指定任务。"""
     c = Client(base_url)
     with console.status("[bold]Cancelling task..."):
