@@ -1,0 +1,15 @@
+[task]
+name = "torch-gpu-test-docker"
+command = "python -c \"import torch;print('CUDA:',torch.cuda.is_available()); x=torch.randn(1024,1024,device='cuda'); print('done',x.sum().item())\""
+requested_gpus = "AUTO:1"
+working_dir = "./tmp"
+priority = 100
+
+# 关键：指定镜像（需包含 PyTorch + CUDA/cuDNN）
+docker_image = "pytorch/pytorch:2.4.0-cuda12.1-cudnn9-runtime"
+
+# 可选：额外 docker args（示例：共享 IPC、挂载只读 cache）
+docker_args = ["--ipc=host"]
+
+# 可选：任务级环境变量（将传入容器）
+env = { "HF_HOME" = "$HOME/.cache/huggingface" }
