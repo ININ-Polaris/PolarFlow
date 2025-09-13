@@ -312,7 +312,7 @@ def patch_user(user_id: int) -> tuple[Response, int]:
         # 允许修改：role, priority, visible_gpus, password
         if "role" in data:
             try:
-                u.role = Role(data["role"])  # type: ignore[assignment]
+                u.role = Role(data["role"])
             except Exception:  # noqa: BLE001
                 return jsonify({"error": "role must be 'user'|'admin'"}), 400
         if "priority" in data:
