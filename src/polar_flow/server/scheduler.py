@@ -16,7 +16,11 @@ from sqlalchemy.orm import Session, joinedload
 
 from polar_flow.server.gpu_monitor import get_all_gpu_info
 from polar_flow.server.models import Role, Task, TaskStatus
-from polar_flow.server.utils_logging import save_task_logs
+from polar_flow.server.utils_logging import (
+    format_argv,
+    redact_env,
+    save_task_logs,
+)
 
 if TYPE_CHECKING:
     from sqlalchemy.orm import sessionmaker
@@ -27,11 +31,12 @@ SessionFactory = Callable[[], Session]
 ALLOCATED: set[int] = set()
 ALLOC_LOCK = threading.Lock()
 
+
 logger = logging.getLogger(__name__)
 
 
 @contextmanager
-def reserve_gpus(gids: list[int]):  # noqa: ANN201
+def reserve_gpus(gids: list[int]):
     with ALLOC_LOCK:
         if any(g in ALLOCATED for g in gids):
             yield False
@@ -185,6 +190,28 @@ def _spawn_and_track(task_db: Task, selected: list[int], session_local: SessionF
     """在后台线程内等待进程结束并写回结果。"""
     # 使用新会话组，便于取消时整组终止；env 统一由构建函数产出
     argv, env = build_command_and_env_for_task(task_db, selected)
+
+    mode = "docker" if task_db.docker_image else "host"
+    img = task_db.docker_image or ""
+    cwd = task_db.working_dir or os.getcwd()
+
+    pass_env_keys = set((task_db.env or {}).keys()) | {
+        "CUDA_VISIBLE_DEVICES",
+        "NVIDIA_VISIBLE_DEVICES",
+        "CUDA_DEVICE_ORDER",
+        "POLAR_ALLOCATED_GPU_IDS",
+        "HOME",
+    }
+    logger.info(
+        "exec(prepare): user=%s mode=%s docker_image=%s gpus=%s cwd=%s argv=%s env_excerpt=%s",
+        getattr(getattr(task_db, "user", None), "username", None),
+        mode,
+        img,
+        selected,
+        cwd,
+        format_argv(argv),
+        redact_env(env, pass_env_keys),
+    )
     proc = subprocess.Popen(
         argv,
         stdout=subprocess.PIPE,
@@ -236,7 +263,9 @@ def _spawn_and_track(task_db: Task, selected: list[int], session_local: SessionF
 
 
 def allocate_and_run_task(
-    task: Task, session_local: SessionFactory, async_run: bool = False
+    task: Task,
+    session_local: SessionFactory,
+    async_run: bool = False,
 ) -> bool:
     session: Session = session_local()
     try:
@@ -305,6 +334,26 @@ def allocate_and_run_task(
             else:
                 # —— 同步分支（保持向后兼容，供单测/调用方期待立即得到 SUCCESS/FAILED）——
                 argv, env = build_command_and_env_for_task(task_db, selected)
+                mode = "docker" if task_db.docker_image else "host"
+                img = task_db.docker_image or ""
+                cwd = task_db.working_dir or os.getcwd()
+                pass_env_keys = set((task_db.env or {}).keys()) | {
+                    "CUDA_VISIBLE_DEVICES",
+                    "NVIDIA_VISIBLE_DEVICES",
+                    "CUDA_DEVICE_ORDER",
+                    "POLAR_ALLOCATED_GPU_IDS",
+                    "HOME",
+                }
+                logger.info(
+                    "exec(prepare): user=%s mode=%s docker_image=%s gpus=%s cwd=%s argv=%s env_excerpt=%s",
+                    getattr(getattr(task_db, "user", None), "username", None),
+                    mode,
+                    img,
+                    selected,
+                    cwd,
+                    format_argv(argv),
+                    redact_env(env, pass_env_keys),
+                )
                 proc = subprocess.Popen(
                     argv,
                     stdout=subprocess.PIPE,
