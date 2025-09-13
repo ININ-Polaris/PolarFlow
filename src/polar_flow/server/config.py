@@ -11,6 +11,7 @@ from pydantic import BaseModel, Field, ValidationError, field_validator
 if TYPE_CHECKING:
     from pathlib import Path
 
+logging.basicConfig(level=logging.DEBUG)
 logger = logging.getLogger(__name__)
 
 
@@ -19,7 +20,9 @@ class ServerConfig(BaseModel):
     database_url: str = Field(...)
     redis_url: str = Field(...)
     scheduler_poll_interval: int = Field(
-        ..., gt=0, description="轮询间隔（秒），必须大于 0",
+        ...,
+        gt=0,
+        description="轮询间隔（秒），必须大于 0",
     )
 
     @field_validator("scheduler_poll_interval", mode="after")
@@ -74,7 +77,8 @@ class Config(BaseModel):
             database_url = f"sqlite:///{(basedir / 'app.db').as_posix()}"
 
         redis_url = server_data.get("redis_url") or os.environ.get(
-            "REDIS_URL", "redis://localhost:6379/0",
+            "REDIS_URL",
+            "redis://localhost:6379/0",
         )
 
         # 统一解析 scheduler_poll_interval
