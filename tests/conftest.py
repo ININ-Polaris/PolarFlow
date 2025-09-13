@@ -1,5 +1,5 @@
-from collections.abc import Generator
 import tempfile
+from collections.abc import Generator
 from pathlib import Path
 
 import pytest

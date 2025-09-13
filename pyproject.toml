@@ -41,7 +41,9 @@ dev = [
 
 [project.scripts]
 server = "polar_flow.server.app:main"
+worker = "polar_flow.server.worker:main"
 polar-flow = "polar_flow.cli.entry:main"
+admin = "polar_flow.cli.create_admin:main"
 
 # ---- hatchling 构建细节 ----
 [tool.hatch.build.targets.wheel]
@@ -108,6 +110,7 @@ ignore_missing_imports = true
 show_error_codes = true
 pretty = true
 plugins = ["pydantic.mypy"]
+exclude = "tests/"
 
 # ---- ruff 配置 ----
 [tool.ruff]

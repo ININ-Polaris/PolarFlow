@@ -4,7 +4,7 @@ import contextlib
 import json
 import os
 from pathlib import Path
-from typing import TYPE_CHECKING, Any, Optional
+from typing import TYPE_CHECKING, Any
 
 import colorama
 import requests
@@ -17,6 +17,7 @@ from rich.panel import Panel
 from rich.syntax import Syntax
 from rich.table import Table
 from rich.text import Text
+from rich.traceback import Traceback
 
 if TYPE_CHECKING:
     from collections.abc import Iterable
@@ -36,6 +37,24 @@ STATUS_STYLES = {
     "FAILED": ("FAILED", "bold red"),
     "CANCELLED": ("CANCELLED", "bold magenta"),
 }
+
+
+def _print_http_error(action: str, e: requests.HTTPError, *, debug: bool) -> None:
+    """统一友好错误输出；--debug 时打印调用栈"""
+    resp = getattr(e, "response", None)
+    detail = None
+    if resp is not None:
+        with contextlib.suppress(Exception):
+            j = resp.json()
+            detail = j.get("error") or j.get("message")
+        if not detail:
+            # 回退到纯文本
+            with contextlib.suppress(Exception):
+                detail = resp.text.strip()
+    msg = detail or str(e)
+    console.print(pretty_panel(f"{action} Failed", content=Text(msg, style="red")))
+    if debug:
+        console.print(Traceback.show())
 
 
 def badge(text: str, style: str) -> Text:
@@ -67,7 +86,7 @@ def to_table_from_dicts(rows: Iterable[dict], columns: list[tuple[str, str]]) ->
             if key.lower().endswith("status"):
                 vs.append(fmt_status(str(cur)))
             else:
-                vs.append(str(cur))
+                vs.append(Text(str(cur)))
         table.add_row(*vs)
     return table
 
@@ -103,16 +122,7 @@ class Client:
             f"{self.base_url}/auth/login",
             json={"username": username, "password": password},
         )
-        try:
-            r.raise_for_status()
-        except requests.HTTPError as e:
-            try:
-                err = r.json().get("error")
-            except Exception:  # noqa: BLE001
-                err = r.text
-            msg = f"{colorama.Fore.BLUE}[登录失败]: {colorama.Fore.RED}{err} ({e}){colorama.Style.RESET_ALL}"
-            raise SystemExit(msg) from requests.HTTPError
-        # 成功：保存 cookies 并返回体
+        r.raise_for_status()
         self._save_cookies()
         try:
             return r.json()
@@ -122,7 +132,13 @@ class Client:
     def logout(self) -> dict:
         r = self.session.post(f"{self.base_url}/auth/logout")
         r.raise_for_status()
-        self._save_cookies()
+        # 清空内存中的 cookies
+        self.session.cookies.clear()
+        try:
+            if COOKIE_FILE.exists():
+                COOKIE_FILE.unlink()
+        except Exception:
+            pass
         return r.json()
 
     # ---- Tasks ----
@@ -149,16 +165,25 @@ class Client:
 
     def list_gpus(self) -> list[dict]:
         r = self.session.get(f"{self.base_url}/api/gpus")
-        try:
-            r.raise_for_status()
-        except requests.HTTPError as e:
-            try:
-                err = r.json().get("error")
-            except Exception:  # noqa: BLE001
-                err = r.text
-            raise SystemExit(
-                f"{colorama.Fore.BLUE}[查询失败]: {colorama.Fore.RED}{err} ({e}){colorama.Style.RESET_ALL}",
-            ) from requests.HTTPError
+        r.raise_for_status()
+        return r.json()
+
+    def create_user(self, username: str, password: str) -> dict:
+        r = self.session.post(
+            f"{self.base_url}/api/admin/users",
+            json={"username": username, "password": password},
+        )
+        r.raise_for_status()
+        return r.json()
+
+    def list_users(self) -> list[dict]:
+        r = self.session.get(f"{self.base_url}/api/admin/users")
+        r.raise_for_status()
+        return r.json()
+
+    def patch_user(self, user_id: int, payload: dict) -> dict:
+        r = self.session.patch(f"{self.base_url}/api/admin/users/{user_id}", json=payload)
+        r.raise_for_status()
         return r.json()
 
 
@@ -169,11 +194,16 @@ def login(
     password: str = typer.Option(..., "--password", "-p", prompt=True, hide_input=True),
     base_url: str = typer.Option(DEFAULT_BASE_URL, "--base-url"),
     json_out: bool = typer.Option(False, "--json", help="Output raw JSON"),
+    debug: bool = typer.Option(False, "--debug", help="Show Python traceback on error"),
 ) -> None:
     """登录并保存会话 Cookie。"""
     c = Client(base_url)
     with console.status("[bold]Logging in..."):
-        res = c.login(username, password)
+        try:
+            res = c.login(username, password)
+        except requests.HTTPError as e:
+            _print_http_error("Login", e, debug=debug)
+            raise typer.Exit(1)
 
     if json_out:
         console.print(RICH_JSON.from_data(res))
@@ -188,6 +218,7 @@ def login(
 def logout(
     base_url: str = typer.Option(DEFAULT_BASE_URL, "--base-url"),
     json_out: bool = typer.Option(False, "--json", help="Output raw JSON"),
+    debug: bool = typer.Option(False, "--debug", help="Show Python traceback on error"),
 ) -> None:
     """注销当前会话。"""
     c = Client(base_url)
@@ -195,8 +226,8 @@ def logout(
         try:
             res = c.logout()
         except requests.HTTPError as e:
-            console.print(pretty_panel("Logout Failed", content=Text(str(e), style="red")))
-            raise typer.Exit(1) from requests.HTTPError
+            _print_http_error("Logout", e, debug=debug)
+            raise typer.Exit(1)
 
     if json_out:
         console.print(RICH_JSON.from_data(res))
@@ -209,11 +240,16 @@ def logout(
 def gpus_cmd(
     base_url: str = typer.Option(DEFAULT_BASE_URL, "--base-url"),
     json_out: bool = typer.Option(False, "--json", help="Output raw JSON"),
+    debug: bool = typer.Option(False, "--debug", help="Show Python traceback on error"),
 ) -> None:
     """查看 GPU 状态。"""
     c = Client(base_url)
     with console.status("[bold]Fetching GPU status..."):
-        infos = c.list_gpus()
+        try:
+            infos = c.list_gpus()
+        except requests.HTTPError as e:
+            _print_http_error("Fetch GPU Status", e, debug=debug)
+            raise typer.Exit(1)
 
     if json_out:
         console.print(RICH_JSON.from_data(infos))
@@ -261,6 +297,7 @@ def submit_cmd(
     config: Path | None = None,
     base_url: str = typer.Option(DEFAULT_BASE_URL, "--base-url"),
     json_out: bool = typer.Option(False, "--json", help="Output raw JSON"),
+    debug: bool = typer.Option(False, "--debug", help="Show Python traceback on error"),
 ) -> None:
     """从 TOML 提交任务。"""
     if config is None:
@@ -287,7 +324,11 @@ def submit_cmd(
     }
     c = Client(base_url)
     with console.status("[bold]Submitting task..."):
-        res = c.create_task(payload)
+        try:
+            res = c.create_task(payload)
+        except requests.HTTPError as e:
+            _print_http_error("Submit Task", e, debug=debug)
+            raise typer.Exit(1)
 
     if json_out:
         console.print(RICH_JSON.from_data(res))
@@ -310,11 +351,16 @@ def list_cmd(
     ),
     base_url: str = typer.Option(DEFAULT_BASE_URL, "--base-url"),
     json_out: bool = typer.Option(False, "--json", help="Output raw JSON"),
+    debug: bool = typer.Option(False, "--debug", help="Show Python traceback on error"),
 ) -> None:
     """列出我的任务。"""
     c = Client(base_url)
     with console.status("[bold]Loading tasks..."):
-        items = c.list_tasks(status=status)
+        try:
+            items = c.list_tasks(status=status)
+        except requests.HTTPError as e:
+            _print_http_error("List Tasks", e, debug=debug)
+            raise typer.Exit(1)
 
     if json_out:
         console.print(RICH_JSON.from_data(items))
@@ -351,11 +397,16 @@ def logs_cmd(
     task_id: int = typer.Argument(...),
     base_url: str = typer.Option(DEFAULT_BASE_URL, "--base-url"),
     json_out: bool = typer.Option(False, "--json", help="Output raw JSON"),
+    debug: bool = typer.Option(False, "--debug", help="Show Python traceback on error"),
 ) -> None:
     """查看任务日志（stdout/stderr）。"""
     c = Client(base_url)
     with console.status("[bold]Fetching logs..."):
-        t = c.get_task(task_id)
+        try:
+            t = c.get_task(task_id)
+        except requests.HTTPError as e:
+            _print_http_error("Fetch Logs", e, debug=debug)
+            raise typer.Exit(1)
 
     if json_out:
         console.print(
@@ -380,11 +431,16 @@ def cancel_cmd(
     task_id: int = typer.Argument(...),
     base_url: str = typer.Option(DEFAULT_BASE_URL, "--base-url"),
     json_out: bool = typer.Option(False, "--json", help="Output raw JSON"),
+    debug: bool = typer.Option(False, "--debug", help="Show Python traceback on error"),
 ) -> None:
     """取消指定任务。"""
     c = Client(base_url)
     with console.status("[bold]Cancelling task..."):
-        res = c.cancel_task(task_id)
+        try:
+            res = c.cancel_task(task_id)
+        except requests.HTTPError as e:
+            _print_http_error("Cancel Task", e, debug=debug)
+            raise typer.Exit(1)
 
     if json_out:
         console.print(RICH_JSON.from_data(res))
@@ -393,6 +449,79 @@ def cancel_cmd(
     msg = res.get("message", "ok")
     style = "green" if "ok" in msg.lower() or "success" in msg.lower() else "yellow"
     console.print(pretty_panel("Cancel Task", content=Text(msg, style=style)))
+
+
+@app.command("users")
+def users_cmd(
+    base_url: str = typer.Option(DEFAULT_BASE_URL, "--base-url"),
+    debug: bool = typer.Option(False, "--debug", help="Show Python traceback on error"),
+) -> None:
+    """列出所有用户（仅管理员）。"""
+    c = Client(base_url)
+    try:
+        items = c.list_users()
+    except requests.HTTPError as e:
+        _print_http_error("List Users", e, debug=False)  # 或接入 debug 参数
+        raise typer.Exit(1)
+    for u in items:
+        typer.echo(
+            f"#{u['id']} {u['username']} role={u['role']} prio={u['priority']} visible={u['visible_gpus']}"
+        )
+
+
+@app.command("add-user")
+def add_user_cmd(
+    username: str = typer.Option(..., "--username", "-u"),
+    password: str = typer.Option(..., "--password", "-p", prompt=True, hide_input=True),
+    base_url: str = typer.Option(DEFAULT_BASE_URL, "--base-url"),
+    debug: bool = typer.Option(False, "--debug", help="Show Python traceback on error"),
+) -> None:
+    """新建用户（仅管理员）。"""
+    c = Client(base_url)
+    # 客户端侧的小校验：避免 400（密码最少 6 位）
+    if len(password) < 6:
+        console.print(
+            pretty_panel(
+                "Create User Failed",
+                content=Text("Password must be at least 6 characters.", style="red"),
+            )
+        )
+        raise typer.Exit(2)
+    try:
+        u = c.create_user(username, password)
+    except requests.HTTPError as e:
+        _print_http_error("Create User", e, debug=debug)
+        raise typer.Exit(1)
+    typer.echo(f"User created: {u['username']} (id={u['id']})")
+
+
+@app.command("patch-user")
+def patch_user_cmd(
+    user_id: int = typer.Argument(..., help="用户ID"),
+    role: str = typer.Option(None, "--role", help="user|admin"),
+    priority: int = typer.Option(None, "--priority"),
+    visible_gpus: str = typer.Option(None, "--visible-gpus", help="逗号分隔的 GPU 列表"),
+    password: str = typer.Option(None, "--password"),
+    base_url: str = typer.Option(DEFAULT_BASE_URL, "--base-url"),
+    debug: bool = typer.Option(False, "--debug", help="Show Python traceback on error"),
+) -> None:
+    """修改用户属性（仅管理员）。"""
+    payload = {}
+    if role:
+        payload["role"] = role
+    if priority is not None:
+        payload["priority"] = priority
+    if visible_gpus is not None:
+        payload["visible_gpus"] = [int(x) for x in visible_gpus.split(",") if x.strip()]
+    if password:
+        payload["password"] = password
+    c = Client(base_url)
+    try:
+        u = c.patch_user(user_id, payload)
+    except requests.HTTPError as e:
+        _print_http_error("Patch User", e, debug=debug)
+        raise typer.Exit(1)
+    typer.echo(f"User updated: {u['username']} (id={u['id']}) -> {u}")
 
 
 def main() -> None:
