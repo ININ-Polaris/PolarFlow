@@ -1,0 +1,6 @@
+[task]
+name = "hello"
+command = "python -c \"print('hello from task')\""
+requested_gpus = "CPU"
+working_dir = "."
+priority = 100
