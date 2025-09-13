@@ -186,6 +186,11 @@ class Client:
         r.raise_for_status()
         return r.json()
 
+    def whoami(self) -> dict:
+        r = self.session.get(f"{self.base_url}/me")
+        r.raise_for_status()
+        return r.json()
+
 
 # ---------------- CLI commands ----------------
 @app.command()
@@ -193,16 +198,16 @@ def login(
     username: str = typer.Option(..., "--username", "-u"),
     password: str = typer.Option(..., "--password", "-p", prompt=True, hide_input=True),
     base_url: str = typer.Option(DEFAULT_BASE_URL, "--base-url"),
-    json_out: bool = typer.Option(False, "--json", help="Output raw JSON"),
-    debug: bool = typer.Option(False, "--debug", help="Show Python traceback on error"),
+    json_out: bool = typer.Option(False, "--json", help="输出原始 JSON 数据"),
+    debug: bool = typer.Option(False, "--debug", help="Debug 模式，打印调用栈"),
 ) -> None:
     """登录并保存会话 Cookie。"""
     c = Client(base_url)
-    with console.status("[bold]Logging in..."):
+    with console.status("[bold]登录中..."):
         try:
             res = c.login(username, password)
         except requests.HTTPError as e:
-            _print_http_error("Login", e, debug=debug)
+            _print_http_error("登录", e, debug=debug)
             raise typer.Exit(1)
 
     if json_out:
@@ -210,45 +215,50 @@ def login(
         return
 
     user = safe_get(res, "user", "username", default=username)
-    console.print(pretty_panel("Login Success", content=Text(f"Logged in as [bold cyan]{user}[/]")))
-    console.print(f"[dim]Cookie saved to {COOKIE_FILE}[/]")
+    console.print(
+        pretty_panel(
+            "登陆成功",
+            content=Text("登录为 ") + Text(user, style="bold cyan"),
+        ),
+    )
+    console.print(Text.from_markup(f"[dim]Cookie 保存到 {COOKIE_FILE}[/]"))
 
 
 @app.command()
 def logout(
     base_url: str = typer.Option(DEFAULT_BASE_URL, "--base-url"),
-    json_out: bool = typer.Option(False, "--json", help="Output raw JSON"),
-    debug: bool = typer.Option(False, "--debug", help="Show Python traceback on error"),
+    json_out: bool = typer.Option(False, "--json", help="输出原始 JSON 数据"),
+    debug: bool = typer.Option(False, "--debug", help="Debug 模式，打印调用栈"),
 ) -> None:
     """注销当前会话。"""
     c = Client(base_url)
-    with console.status("[bold]Logging out..."):
+    with console.status("[bold]登出中..."):
         try:
             res = c.logout()
         except requests.HTTPError as e:
-            _print_http_error("Logout", e, debug=debug)
+            _print_http_error("登出", e, debug=debug)
             raise typer.Exit(1)
 
     if json_out:
         console.print(RICH_JSON.from_data(res))
     else:
-        msg = res.get("message", "logged out")
-        console.print(pretty_panel("Logout", content=Text(msg, style="green")))
+        msg = res.get("message", "登出")
+        console.print(pretty_panel("登出", content=Text(msg, style="green")))
 
 
 @app.command("gpus")
 def gpus_cmd(
     base_url: str = typer.Option(DEFAULT_BASE_URL, "--base-url"),
-    json_out: bool = typer.Option(False, "--json", help="Output raw JSON"),
-    debug: bool = typer.Option(False, "--debug", help="Show Python traceback on error"),
+    json_out: bool = typer.Option(False, "--json", help="输出原始 JSON 数据"),
+    debug: bool = typer.Option(False, "--debug", help="Debug 模式，打印调用栈"),
 ) -> None:
     """查看 GPU 状态。"""
     c = Client(base_url)
-    with console.status("[bold]Fetching GPU status..."):
+    with console.status("[bold]获取 GPU 状态中..."):
         try:
             infos = c.list_gpus()
         except requests.HTTPError as e:
-            _print_http_error("Fetch GPU Status", e, debug=debug)
+            _print_http_error("获取 GPU 状态", e, debug=debug)
             raise typer.Exit(1)
 
     if json_out:
@@ -283,9 +293,9 @@ def gpus_cmd(
                 if key.lower().endswith("status"):
                     row.append(fmt_status(str(cur)))
                 else:
-                    row.append(str(cur))
+                    row.append(Text(str(cur)))
             table.add_row(*row)
-        console.print(pretty_panel("GPU Status", content=table))
+        console.print(pretty_panel("GPU 状态", content=table))
     else:
         # 回退：每块 GPU 显示 JSON
         for i, g in enumerate(infos, 1):
@@ -296,8 +306,8 @@ def gpus_cmd(
 def submit_cmd(
     config: Path | None = None,
     base_url: str = typer.Option(DEFAULT_BASE_URL, "--base-url"),
-    json_out: bool = typer.Option(False, "--json", help="Output raw JSON"),
-    debug: bool = typer.Option(False, "--debug", help="Show Python traceback on error"),
+    json_out: bool = typer.Option(False, "--json", help="输出原始 JSON 数据"),
+    debug: bool = typer.Option(False, "--debug", help="Debug 模式，打印调用栈"),
 ) -> None:
     """从 TOML 提交任务。"""
     if config is None:
@@ -323,11 +333,11 @@ def submit_cmd(
         "priority": t.get("priority", 100),
     }
     c = Client(base_url)
-    with console.status("[bold]Submitting task..."):
+    with console.status("[bold]提交任务中..."):
         try:
             res = c.create_task(payload)
         except requests.HTTPError as e:
-            _print_http_error("Submit Task", e, debug=debug)
+            _print_http_error("提交任务", e, debug=debug)
             raise typer.Exit(1)
 
     if json_out:
@@ -339,7 +349,7 @@ def submit_cmd(
     info.add_row("Name", str(res.get("name", "")))
     info.add_row("Status", fmt_status(str(res.get("status", ""))))
     info.add_row("Priority", str(res.get("priority", "")))
-    console.print(pretty_panel("Task Submitted", content=info))
+    console.print(pretty_panel("任务提交成功", content=info))
 
 
 @app.command("ls")
@@ -350,8 +360,8 @@ def list_cmd(
         help="过滤任务状态 (PENDING/RUNNING/SUCCESS/FAILED/CANCELLED)",
     ),
     base_url: str = typer.Option(DEFAULT_BASE_URL, "--base-url"),
-    json_out: bool = typer.Option(False, "--json", help="Output raw JSON"),
-    debug: bool = typer.Option(False, "--debug", help="Show Python traceback on error"),
+    json_out: bool = typer.Option(False, "--json", help="输出原始 JSON 数据"),
+    debug: bool = typer.Option(False, "--debug", help="Debug 模式，打印调用栈"),
 ) -> None:
     """列出我的任务。"""
     c = Client(base_url)
@@ -359,7 +369,7 @@ def list_cmd(
         try:
             items = c.list_tasks(status=status)
         except requests.HTTPError as e:
-            _print_http_error("List Tasks", e, debug=debug)
+            _print_http_error("列出任务", e, debug=debug)
             raise typer.Exit(1)
 
     if json_out:
@@ -367,7 +377,7 @@ def list_cmd(
         return
 
     if not items:
-        console.print(pretty_panel("Tasks", content=Text("No tasks found.", style="yellow")))
+        console.print(pretty_panel("任务", content=Text("没有任务.", style="yellow")))
         return
 
     cols = [
@@ -388,24 +398,24 @@ def list_cmd(
             str(it.get("priority", "")),
             str(it.get("created_at", "")),
         )
-    subtitle = f"Filter: {status}" if status else None
-    console.print(pretty_panel("My Tasks", subtitle=subtitle, content=table))
+    subtitle = f"筛选: {status}" if status else None
+    console.print(pretty_panel("我的任务", subtitle=subtitle, content=table))
 
 
 @app.command("logs")
 def logs_cmd(
     task_id: int = typer.Argument(...),
     base_url: str = typer.Option(DEFAULT_BASE_URL, "--base-url"),
-    json_out: bool = typer.Option(False, "--json", help="Output raw JSON"),
-    debug: bool = typer.Option(False, "--debug", help="Show Python traceback on error"),
+    json_out: bool = typer.Option(False, "--json", help="输出原始 JSON 数据"),
+    debug: bool = typer.Option(False, "--debug", help="Debug 模式，打印调用栈"),
 ) -> None:
     """查看任务日志（stdout/stderr）。"""
     c = Client(base_url)
-    with console.status("[bold]Fetching logs..."):
+    with console.status("[bold]获取日志中..."):
         try:
             t = c.get_task(task_id)
         except requests.HTTPError as e:
-            _print_http_error("Fetch Logs", e, debug=debug)
+            _print_http_error("获取日志", e, debug=debug)
             raise typer.Exit(1)
 
     if json_out:
@@ -430,16 +440,16 @@ def logs_cmd(
 def cancel_cmd(
     task_id: int = typer.Argument(...),
     base_url: str = typer.Option(DEFAULT_BASE_URL, "--base-url"),
-    json_out: bool = typer.Option(False, "--json", help="Output raw JSON"),
-    debug: bool = typer.Option(False, "--debug", help="Show Python traceback on error"),
+    json_out: bool = typer.Option(False, "--json", help="输出原始 JSON 数据"),
+    debug: bool = typer.Option(False, "--debug", help="Debug 模式，打印调用栈"),
 ) -> None:
     """取消指定任务。"""
     c = Client(base_url)
-    with console.status("[bold]Cancelling task..."):
+    with console.status("[bold]取消任务中..."):
         try:
             res = c.cancel_task(task_id)
         except requests.HTTPError as e:
-            _print_http_error("Cancel Task", e, debug=debug)
+            _print_http_error("取消任务", e, debug=debug)
             raise typer.Exit(1)
 
     if json_out:
@@ -448,20 +458,20 @@ def cancel_cmd(
 
     msg = res.get("message", "ok")
     style = "green" if "ok" in msg.lower() or "success" in msg.lower() else "yellow"
-    console.print(pretty_panel("Cancel Task", content=Text(msg, style=style)))
+    console.print(pretty_panel("取消任务", content=Text(msg, style=style)))
 
 
 @app.command("users")
 def users_cmd(
     base_url: str = typer.Option(DEFAULT_BASE_URL, "--base-url"),
-    debug: bool = typer.Option(False, "--debug", help="Show Python traceback on error"),
+    debug: bool = typer.Option(False, "--debug", help="Debug 模式，打印调用栈"),
 ) -> None:
     """列出所有用户（仅管理员）。"""
     c = Client(base_url)
     try:
         items = c.list_users()
     except requests.HTTPError as e:
-        _print_http_error("List Users", e, debug=False)  # 或接入 debug 参数
+        _print_http_error("列出所有用户", e, debug=debug)
         raise typer.Exit(1)
     for u in items:
         typer.echo(
@@ -474,7 +484,7 @@ def add_user_cmd(
     username: str = typer.Option(..., "--username", "-u"),
     password: str = typer.Option(..., "--password", "-p", prompt=True, hide_input=True),
     base_url: str = typer.Option(DEFAULT_BASE_URL, "--base-url"),
-    debug: bool = typer.Option(False, "--debug", help="Show Python traceback on error"),
+    debug: bool = typer.Option(False, "--debug", help="Debug 模式，打印调用栈"),
 ) -> None:
     """新建用户（仅管理员）。"""
     c = Client(base_url)
@@ -482,8 +492,8 @@ def add_user_cmd(
     if len(password) < 6:
         console.print(
             pretty_panel(
-                "Create User Failed",
-                content=Text("Password must be at least 6 characters.", style="red"),
+                "创建用户失败",
+                content=Text("密码长度应大于 6 位.", style="red"),
             )
         )
         raise typer.Exit(2)
@@ -492,7 +502,7 @@ def add_user_cmd(
     except requests.HTTPError as e:
         _print_http_error("Create User", e, debug=debug)
         raise typer.Exit(1)
-    typer.echo(f"User created: {u['username']} (id={u['id']})")
+    typer.echo(f"创建用户: {u['username']} (id={u['id']})")
 
 
 @app.command("patch-user")
@@ -503,7 +513,7 @@ def patch_user_cmd(
     visible_gpus: str = typer.Option(None, "--visible-gpus", help="逗号分隔的 GPU 列表"),
     password: str = typer.Option(None, "--password"),
     base_url: str = typer.Option(DEFAULT_BASE_URL, "--base-url"),
-    debug: bool = typer.Option(False, "--debug", help="Show Python traceback on error"),
+    debug: bool = typer.Option(False, "--debug", help="Debug 模式，打印调用栈"),
 ) -> None:
     """修改用户属性（仅管理员）。"""
     payload = {}
@@ -519,9 +529,29 @@ def patch_user_cmd(
     try:
         u = c.patch_user(user_id, payload)
     except requests.HTTPError as e:
-        _print_http_error("Patch User", e, debug=debug)
+        _print_http_error("修改用户属性", e, debug=debug)
         raise typer.Exit(1)
     typer.echo(f"User updated: {u['username']} (id={u['id']}) -> {u}")
+
+
+@app.command("whoami")
+def whoami_cmd(
+    base_url: str = typer.Option(DEFAULT_BASE_URL, "--base-url"),
+    debug: bool = typer.Option(False, "--debug", help="Debug 模式，打印调用栈"),
+    json_out: bool = typer.Option(False, "--json", help="输出原始 JSON 数据"),
+) -> None:
+    """显示当前登录用户（需要登录）。"""
+    c = Client(base_url)
+    try:
+        res = c.whoami()
+    except requests.HTTPError as e:
+        _print_http_error("我是谁？", e, debug=debug)
+        raise typer.Exit(1)
+    if json_out:
+        console.print(RICH_JSON.from_data(res))
+        return
+    user = res.get("username") or res.get("id")
+    console.print(pretty_panel("我是谁？", content=Text(str(user), style="cyan")))
 
 
 def main() -> None:
