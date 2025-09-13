@@ -3,6 +3,7 @@ from __future__ import annotations
 
 import datetime as dt
 from enum import Enum
+from typing import Any
 
 from flask_login import UserMixin
 from sqlalchemy import JSON, DateTime, Enum as SAEnum, ForeignKey, Integer, String, Text
@@ -103,3 +104,7 @@ class Task(Base):
     pid: Mapped[int | None] = mapped_column(Integer, nullable=True)
     stdout_path: Mapped[str | None] = mapped_column(String(512), nullable=True)
     stderr_path: Mapped[str | None] = mapped_column(String(512), nullable=True)
+
+    docker_image: Mapped[str | None] = mapped_column(String(256), nullable=True)
+    docker_args: Mapped[list[str] | None] = mapped_column(JSON, nullable=True)
+    env: Mapped[dict[str, Any] | None] = mapped_column(JSON, nullable=True)

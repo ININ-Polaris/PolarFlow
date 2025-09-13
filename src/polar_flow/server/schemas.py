@@ -33,6 +33,10 @@ class TaskCreate(BaseModel):
     gpu_memory_limit: int | None = Field(default=None, ge=0)
     priority: int = Field(default=100, ge=0)
 
+    docker_image: str | None = Field(default=None, max_length=256)
+    docker_args: list[str] | None = Field(default=None, max_items=16)  # 例如 ["--ipc=host"]
+    env: dict[str, str] | None = Field(default=None)  # 任务级环境变量
+
     model_config = ConfigDict(extra="forbid")
 
 
@@ -53,5 +57,9 @@ class TaskRead(BaseModel):
     stderr_log: str | None
     stdout_path: str | None
     stderr_path: str | None
+
+    docker_image: str | None
+    docker_args: list[str] | None
+    env: dict[str, str] | None
 
     model_config = ConfigDict(from_attributes=True)

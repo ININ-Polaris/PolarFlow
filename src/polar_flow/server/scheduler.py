@@ -79,6 +79,75 @@ def resources_available(requested: list[int], gpu_memory_limit: int | None) -> b
     return True
 
 
+def build_command_and_env_for_task(task_db: Task, selected: list[int]) -> tuple[list[str], dict]:
+    """
+    返回 (argv, env)：
+      - Host: ["bash","-lc", <script>]
+      - Docker: ["docker","run",...]
+    """
+    # 1) 合成 env
+    env = os.environ.copy()
+    # 叠加任务环境变量（支持 $HOME 展开）
+    if task_db.env:
+        for k, v in task_db.env.items():
+            env[k] = os.path.expandvars(v)
+
+    # GPU/CPU-only 环境变量（容器内外都可用）
+    if selected:
+        env["CUDA_DEVICE_ORDER"] = "PCI_BUS_ID"
+        env["CUDA_VISIBLE_DEVICES"] = ",".join(str(x) for x in selected)
+        env["POLAR_ALLOCATED_GPU_IDS"] = env["CUDA_VISIBLE_DEVICES"]
+        env["NVIDIA_VISIBLE_DEVICES"] = env["CUDA_VISIBLE_DEVICES"]
+    else:
+        env.pop("CUDA_VISIBLE_DEVICES", None)
+        env.pop("NVIDIA_VISIBLE_DEVICES", None)
+        env.pop("CUDA_DEVICE_ORDER", None)
+        env["POLAR_ALLOCATED_GPU_IDS"] = ""
+
+    # 2) 拼脚本（允许后续扩展 prelude，这里保持最简：直接 command）
+    script = task_db.command
+
+    # 3) Host 模式
+    if not task_db.docker_image:
+        return (["bash", "-lc", script], env)
+
+    # 4) Docker 模式
+    workdir = task_db.working_dir or os.getcwd()
+    img = task_db.docker_image
+    args = list(task_db.docker_args or [])
+
+    cmd = ["docker", "run", "--rm"]
+    # GPU
+    if selected:
+        # 需要 nvidia-container-runtime 支持
+        cmd += ["--gpus", f"device={','.join(map(str, selected))}"]
+    else:
+        # CPU-only：不传 --gpus
+        pass
+
+    # 挂载工作目录并设定工作目录
+    cmd += ["-v", f"{workdir}:/work", "-w", "/work"]
+
+    # 透传部分 env（只传任务 env + GPU 相关 + 常见 HOME）
+    pass_env_keys = set((task_db.env or {}).keys()) | {
+        "CUDA_VISIBLE_DEVICES",
+        "NVIDIA_VISIBLE_DEVICES",
+        "CUDA_DEVICE_ORDER",
+        "POLAR_ALLOCATED_GPU_IDS",
+        "HOME",
+    }
+    for k in sorted(pass_env_keys):
+        if k in env:
+            cmd += ["-e", f"{k}={env[k]}"]
+
+    # 额外 docker args
+    cmd += args
+
+    # 镜像 + 入口
+    cmd += [img, "bash", "-lc", script]
+    return (cmd, env)
+
+
 def _select_gpus(task: Task) -> list[int]:
     kind = task.requested_gpus.strip().upper()
     if kind in ("CPU", "NONE"):
@@ -114,20 +183,13 @@ def _select_gpus(task: Task) -> list[int]:
 
 def _spawn_and_track(task_db: Task, selected: list[int], session_local: SessionFactory) -> None:
     """在后台线程内等待进程结束并写回结果。"""
-    env = os.environ.copy()
-    # CUDA 设备与额外可观测变量（见修复 #4）
-    env["CUDA_DEVICE_ORDER"] = "PCI_BUS_ID"
-    env["CUDA_VISIBLE_DEVICES"] = ",".join(str(x) for x in selected)
-    env["POLAR_ALLOCATED_GPU_IDS"] = ",".join(str(x) for x in selected)
-    env["NVIDIA_VISIBLE_DEVICES"] = env["CUDA_VISIBLE_DEVICES"]
-
-    # 使用新会话组，便于取消时整组终止
+    # 使用新会话组，便于取消时整组终止；env 统一由构建函数产出
+    argv, env = build_command_and_env_for_task(task_db, selected)
     proc = subprocess.Popen(
-        task_db.command,
-        shell=True,
+        argv,
         stdout=subprocess.PIPE,
         stderr=subprocess.PIPE,
-        cwd=task_db.working_dir or os.getcwd(),
+        cwd=task_db.working_dir or os.getcwd(),  # 对 docker 来说不影响；对 host 有效
         env=env,
         text=True,
         start_new_session=True,
@@ -141,11 +203,12 @@ def _spawn_and_track(task_db: Task, selected: list[int], session_local: SessionF
             t.pid = proc.pid
             session.commit()
             logger.info(
-                "task[%s] started pid=%s selected_gpus=%s cwd=%s",
+                "task[%s] started pid=%s selected_gpus=%s cwd=%s docker=%s",
                 t.id,
                 proc.pid,
                 selected,
                 task_db.working_dir,
+                task_db.docker_image,
             )
     finally:
         session.close()
@@ -241,22 +304,9 @@ def allocate_and_run_task(
                 )
             else:
                 # —— 同步分支（保持向后兼容，供单测/调用方期待立即得到 SUCCESS/FAILED）——
-                env = os.environ.copy()
-                if selected:
-                    env["CUDA_VISIBLE_DEVICES"] = ",".join(str(x) for x in selected)
-                    env["CUDA_DEVICE_ORDER"] = "PCI_BUS_ID"
-                    env["POLAR_ALLOCATED_GPU_IDS"] = env["CUDA_VISIBLE_DEVICES"]
-                    env["NVIDIA_VISIBLE_DEVICES"] = env["CUDA_VISIBLE_DEVICES"]
-                else:
-                    # CPU-only：显式清空，避免误用宿主/容器的可见设备
-                    env.pop("CUDA_VISIBLE_DEVICES", None)
-                    env.pop("NVIDIA_VISIBLE_DEVICES", None)
-                    env.pop("CUDA_DEVICE_ORDER", None)
-                    env["POLAR_ALLOCATED_GPU_IDS"] = ""
-
+                argv, env = build_command_and_env_for_task(task_db, selected)
                 proc = subprocess.Popen(
-                    task_db.command,
-                    shell=True,
+                    argv,
                     stdout=subprocess.PIPE,
                     stderr=subprocess.PIPE,
                     cwd=task_db.working_dir or os.getcwd(),
@@ -298,14 +348,18 @@ def allocate_and_run_task(
                     session.commit()
                     logger.info(
                         "task[%s] finished (sync) rc=%s status=%s",
-                        +task_row.id,
+                        task_row.id,
                         proc.returncode,
                         task_row.status,
                     )
             return True
-    except Exception:
+    except Exception as e:
         session.rollback()
-        logger.exception("allocate: exception task_id=%s err=%s", getattr(task, "id", None), exc)
+        logger.exception(
+            "allocate: exception task_id=%s err=%s",
+            getattr(task, "id", None),
+            repr(e),
+        )
         raise
     else:
         return True

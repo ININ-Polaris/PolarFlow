@@ -12,6 +12,7 @@ from pynvml import (
     nvmlDeviceGetMemoryInfo,
     nvmlDeviceGetUtilizationRates,
     nvmlInit,
+    nvmlShutdown,
 )
 
 logger = logging.getLogger(__name__)
@@ -36,22 +37,31 @@ def get_all_gpu_info() -> list[GPUInfo]:
         logger.exception("初始化 GPU 失败")
         return []
 
-    gpu_count = nvmlDeviceGetCount()
-    infos: list[GPUInfo] = []
-    for i in range(gpu_count):
-        handle = nvmlDeviceGetHandleByIndex(i)
-        mem = nvmlDeviceGetMemoryInfo(handle)
-        util = nvmlDeviceGetUtilizationRates(handle)
-        info = GPUInfo(
-            id=i,
-            memory_total=int(mem.total),
-            memory_free=int(mem.free),
-            memory_used=int(mem.used),
-            util_gpu=int(util.gpu),
-            util_mem=int(util.memory),
-        )
-        infos.append(info)
-    return infos
+    try:
+        gpu_count = nvmlDeviceGetCount()
+        infos: list[GPUInfo] = []
+        for i in range(gpu_count):
+            try:
+                handle = nvmlDeviceGetHandleByIndex(i)
+                mem = nvmlDeviceGetMemoryInfo(handle)
+                util = nvmlDeviceGetUtilizationRates(handle)
+                info = GPUInfo(
+                    id=i,
+                    memory_total=int(mem.total),
+                    memory_free=int(mem.free),
+                    memory_used=int(mem.used),
+                    util_gpu=int(util.gpu),
+                    util_mem=int(util.memory),
+                )
+                infos.append(info)
+            except NVMLError:
+                logger.exception("读取 GPU[%s] 信息失败，已跳过", i)
+        return infos
+    finally:
+        try:
+            nvmlShutdown()
+        except NVMLError:
+            logger.debug("nvmlShutdown 失败，忽略", exc_info=True)
 
 
 def monitor_loop(poll_interval: float = 5.0) -> None:

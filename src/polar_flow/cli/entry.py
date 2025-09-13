@@ -352,6 +352,9 @@ def submit_cmd(
         "working_dir": t.get("working_dir", str(Path.cwd())),
         "gpu_memory_limit": t.get("gpu_memory_limit"),
         "priority": t.get("priority", 100),
+        "docker_image": t.get("docker_image"),
+        "docker_args": t.get("docker_args"),
+        "env": t.get("env"),
     }
     c = Client(base_url)
     with console.status("[bold]提交任务中..."):
