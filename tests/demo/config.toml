@@ -1,0 +1,8 @@
+[server]
+secret_key = "my-super-secret-key"
+database_url = "sqlite:///./data/app.db"
+scheduler_poll_interval = 10
+redis_url = "redis://localhost:6379/0" # 暂时没用
+
+[defaults]
+user_priority = 100
