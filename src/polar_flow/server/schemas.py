@@ -1,14 +1,11 @@
 # server/schemas.py
 from __future__ import annotations
 
-from typing import TYPE_CHECKING
+import datetime as dt  # noqa: TC003
 
 from pydantic import BaseModel, ConfigDict, Field
 
 from polar_flow.server.models import Role, TaskStatus  # noqa: TC001
-
-if TYPE_CHECKING:
-    import datetime as dt
 
 
 class UserCreate(BaseModel):
