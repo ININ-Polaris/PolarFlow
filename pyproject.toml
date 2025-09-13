@@ -66,6 +66,7 @@ dev-dependencies = [
   "pytest-cov>=6.2.1",
   "pytest-asyncio>=1.1.0",
   "pydantic>=2.11.7",
+  "twine>=6.2.0",
 ]
 
 [tool.pytest.ini_options]

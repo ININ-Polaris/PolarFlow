@@ -2,8 +2,12 @@
 from __future__ import annotations
 
 import os
-from pathlib import Path
 import shlex
+from pathlib import Path
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from polar_flow.server.models import Task
 
 MAX_KEEP = 16 * 1024  # 16KB 片段
 
@@ -39,7 +43,7 @@ def _snippet(s: str, keep: int = MAX_KEEP) -> str:
     return head + "\n...[TRUNCATED]...\n" + tail
 
 
-def save_task_logs(task, stdout: str, stderr: str) -> tuple[str, str, str, str]:
+def save_task_logs(task: Task, stdout: str, stderr: str) -> tuple[str, str, str, str]:
     wdir = Path(task.working_dir or os.getcwd())
     logdir = wdir / ".polar_logs"
     logdir.mkdir(parents=True, exist_ok=True)
@@ -59,8 +63,7 @@ def format_argv(argv: list[str]) -> str:
     """把 argv 美观地拼为一行 shell 命令（仅用于日志）。"""
     try:
         return shlex.join(argv)
-    except Exception:
-        # 兼容极端情况
+    except Exception:  # noqa: BLE001
         return " ".join(repr(x) for x in argv)
 
 

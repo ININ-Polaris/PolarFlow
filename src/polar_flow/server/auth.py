@@ -22,7 +22,7 @@ login_manager = LoginManager()
 
 
 @login_manager.unauthorized_handler
-def _unauthorized():  # noqa: ANN202
+def _unauthorized() -> tuple[Response, int]:
     return jsonify({"error": "login required"}), 401
 
 

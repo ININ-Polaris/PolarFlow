@@ -12,3 +12,5 @@ data/
 tmp.py
 
 .polar_logs
+
+dist/

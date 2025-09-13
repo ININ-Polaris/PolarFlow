@@ -3,7 +3,6 @@ from __future__ import annotations
 import contextlib
 import json
 import os
-import sys
 from pathlib import Path
 from typing import TYPE_CHECKING, Any
 
@@ -53,10 +52,10 @@ def _print_http_error(action: str, e: requests.HTTPError, *, debug: bool) -> Non
                 detail = resp.text.strip()
     # 裁剪特别长的 HTML/文本，避免把整页 HTML 打到终端
     raw_msg = detail or str(e)
-    MAX_LEN = 2000
+    max_len = 2000
     msg = (
         raw_msg
-        if len(raw_msg) <= MAX_LEN
+        if len(raw_msg) <= max_len
         else (raw_msg[:1000] + "\n\n\n...[TRUNCATED]...\n\n\n" + raw_msg[-800:])
     )
     console.print(pretty_panel(f"{action}", content=Text(msg, style="red")))
@@ -75,13 +74,13 @@ def fmt_status(s: str) -> Text:
     return badge(label, style)
 
 
-def safe_get(d: dict, *keys: Any, default: Any = "") -> Any:
+def safe_get(d: dict[str, Any], *keys: str, default: Any = "") -> Any:
     for k in keys:
         d = d.get(k, {})
     return d or default
 
 
-def to_table_from_dicts(rows: Iterable[dict], columns: list[tuple[str, str]]) -> Table:
+def to_table_from_dicts(rows: Iterable[dict[str, Any]], columns: list[tuple[str, str]]) -> Table:
     """columns: list of (header, key) where key supports dotted path like 'gpu.name'."""
     table = Table(box=box.SIMPLE_HEAVY, show_lines=False, header_style="bold")
     for header, _ in columns:
@@ -126,7 +125,7 @@ class Client:
         COOKIE_FILE.write_text(json.dumps(requests.utils.dict_from_cookiejar(self.session.cookies)))
 
     # ---- Auth ----
-    def login(self, username: str, password: str) -> dict:
+    def login(self, username: str, password: str) -> dict[str, Any]:
         r = self.session.post(
             f"{self.base_url}/auth/login",
             json={"username": username, "password": password},
@@ -134,11 +133,13 @@ class Client:
         r.raise_for_status()
         self._save_cookies()
         try:
-            return r.json()
+            res: dict[str, Any] = r.json()
         except Exception:  # noqa: BLE001
             return {"message": "login ok"}
+        else:
+            return res
 
-    def logout(self) -> dict:
+    def logout(self) -> dict[str, Any]:
         r = self.session.post(f"{self.base_url}/auth/logout")
         r.raise_for_status()
         # 清空内存中的 cookies
@@ -146,69 +147,81 @@ class Client:
         try:
             if COOKIE_FILE.exists():
                 COOKIE_FILE.unlink()
-        except Exception:
+        except Exception:  # noqa: BLE001 TODO
             pass
-        return r.json()
+        res: dict[str, Any] = r.json()
+        return res
 
     # ---- Tasks ----
-    def create_task(self, payload: dict) -> dict:
+    def create_task(self, payload: dict[str, str]) -> dict[str, Any]:
         r = self.session.post(f"{self.base_url}/api/tasks", json=payload)
         r.raise_for_status()
-        return r.json()
+        res: dict[str, Any] = r.json()
+        return res
 
-    def check_task(self, payload: dict) -> dict:
+    def check_task(self, payload: dict[str, str]) -> dict[str, Any]:
         r = self.session.post(f"{self.base_url}/api/tasks_check", json=payload)
         r.raise_for_status()
-        return r.json()
+        res: dict[str, Any] = r.json()
+        return res
 
-    def list_tasks(self, status: str | None = None) -> list[dict]:
+    def list_tasks(self, status: str | None = None) -> list[dict[str, Any]]:
         params = {"status": status} if status else None
         r = self.session.get(f"{self.base_url}/api/tasks", params=params)
         r.raise_for_status()
-        return r.json()
+        res: list[dict[str, Any]] = r.json()
+        return res
 
-    def get_task(self, task_id: int) -> dict:
+    def get_task(self, task_id: int) -> dict[str, Any]:
         r = self.session.get(f"{self.base_url}/api/tasks/{task_id}")
         r.raise_for_status()
-        return r.json()
+        res: dict[str, Any] = r.json()
+        return res
 
-    def cancel_task(self, task_id: int) -> dict:
+    def cancel_task(self, task_id: int) -> dict[str, Any]:
         r = self.session.post(f"{self.base_url}/api/tasks/{task_id}/cancel")
         r.raise_for_status()
-        return r.json()
+        res: dict[str, Any] = r.json()
+        return res
 
-    def list_gpus(self) -> list[dict]:
+    def list_gpus(self) -> list[dict[str, Any]]:
         r = self.session.get(f"{self.base_url}/api/gpus")
         r.raise_for_status()
-        return r.json()
+        res: list[dict[str, Any]] = r.json()
+        return res
 
-    def create_user(self, username: str, password: str) -> dict:
+    def create_user(self, username: str, password: str) -> dict[str, Any]:
         r = self.session.post(
             f"{self.base_url}/api/admin/users",
             json={"username": username, "password": password},
         )
         r.raise_for_status()
-        return r.json()
+        res: dict[str, Any] = r.json()
+        return res
 
-    def list_users(self) -> list[dict]:
+    def list_users(self) -> list[dict[str, Any]]:
         r = self.session.get(f"{self.base_url}/api/admin/users")
         r.raise_for_status()
-        return r.json()
+        res: list[dict[str, Any]] = r.json()
+        return res
 
-    def patch_user(self, user_id: int, payload: dict) -> dict:
+    def patch_user(self, user_id: int, payload: dict[str, str]) -> dict[str, Any]:
         r = self.session.patch(f"{self.base_url}/api/admin/users/{user_id}", json=payload)
         r.raise_for_status()
-        return r.json()
+        res: dict[str, Any] = r.json()
+        return res
 
-    def whoami(self) -> dict:
+    def whoami(self) -> dict[str, Any]:
         r = self.session.get(f"{self.base_url}/me")
         r.raise_for_status()
-        return r.json()
+        res: dict[str, Any] = r.json()
+        return res
 
-    def get_user(self, user_id: int) -> dict:
+    def get_user(self, user_id: int) -> dict[str, Any]:
         r = self.session.get(f"{self.base_url}/api/admin/users/{user_id}")
         r.raise_for_status()
-        return r.json()
+        res: dict[str, Any] = r.json()
+        return res
 
 
 # ---------------- CLI commands ----------------
@@ -234,7 +247,7 @@ def login(
             res = c.login(username, password)
         except requests.HTTPError as e:
             _print_http_error("登录失败", e, debug=debug)
-            raise typer.Exit(1)
+            raise typer.Exit(1) from requests.HTTPError
 
     if json_out:
         console.print(RICH_JSON.from_data(res))
@@ -263,7 +276,7 @@ def logout(
             res = c.logout()
         except requests.HTTPError as e:
             _print_http_error("登出失败", e, debug=debug)
-            raise typer.Exit(1)
+            raise typer.Exit(1) from requests.HTTPError
 
     if json_out:
         console.print(RICH_JSON.from_data(res))
@@ -285,7 +298,7 @@ def gpus_cmd(
             infos = c.list_gpus()
         except requests.HTTPError as e:
             _print_http_error("获取 GPU 状态失败", e, debug=debug)
-            raise typer.Exit(1)
+            raise typer.Exit(1) from requests.HTTPError
 
     if json_out:
         console.print(RICH_JSON.from_data(infos))
@@ -367,7 +380,7 @@ def submit_cmd(
             res = c.create_task(payload)
         except requests.HTTPError as e:
             _print_http_error("提交任务失败", e, debug=debug)
-            raise typer.Exit(1)
+            raise typer.Exit(1) from requests.HTTPError
 
     if json_out:
         console.print(RICH_JSON.from_data(res))
@@ -420,7 +433,7 @@ def check_cmd(
             res = c.check_task(payload)
         except requests.HTTPError as e:
             _print_http_error("检查任务失败", e, debug=debug)
-            raise typer.Exit(1)
+            raise typer.Exit(1) from requests.HTTPError
 
     if json_out:
         console.print(RICH_JSON.from_data(res))
@@ -450,7 +463,7 @@ def list_cmd(
             items = c.list_tasks(status=status)
         except requests.HTTPError as e:
             _print_http_error("列出任务失败", e, debug=debug)
-            raise typer.Exit(1)
+            raise typer.Exit(1) from requests.HTTPError
 
     if json_out:
         console.print(RICH_JSON.from_data(items))
@@ -496,7 +509,7 @@ def logs_cmd(
             t = c.get_task(task_id)
         except requests.HTTPError as e:
             _print_http_error("获取日志失败", e, debug=debug)
-            raise typer.Exit(1)
+            raise typer.Exit(1) from requests.HTTPError
 
     if json_out:
         console.print(
@@ -530,7 +543,7 @@ def cancel_cmd(
             res = c.cancel_task(task_id)
         except requests.HTTPError as e:
             _print_http_error("取消任务失败", e, debug=debug)
-            raise typer.Exit(1)
+            raise typer.Exit(1) from requests.HTTPError
 
     if json_out:
         console.print(RICH_JSON.from_data(res))
@@ -552,10 +565,10 @@ def users_cmd(
         items = c.list_users()
     except requests.HTTPError as e:
         _print_http_error("列出所有用户失败", e, debug=debug)
-        raise typer.Exit(1)
+        raise typer.Exit(1) from requests.HTTPError
     for u in items:
         typer.echo(
-            f"#{u['id']} {u['username']} role={u['role']} prio={u['priority']} visible={u['visible_gpus']}"
+            f"#{u['id']} {u['username']} role={u['role']} prio={u['priority']} visible={u['visible_gpus']}",
         )
 
 
@@ -581,7 +594,7 @@ def add_user_cmd(
         u = c.create_user(username, password)
     except requests.HTTPError as e:
         _print_http_error("创建用户失败", e, debug=debug)
-        raise typer.Exit(1)
+        raise typer.Exit(1) from requests.HTTPError
     typer.echo(f"创建用户: {u['username']} (id={u['id']})")
 
 
@@ -600,9 +613,9 @@ def patch_user_cmd(
     if role:
         payload["role"] = role
     if priority is not None:
-        payload["priority"] = priority
+        payload["priority"] = str(priority)
     if visible_gpus is not None:
-        payload["visible_gpus"] = [int(x) for x in visible_gpus.split(",") if x.strip()]
+        payload["visible_gpus"] = str([int(x) for x in visible_gpus.split(",") if x.strip()])
     if password:
         payload["password"] = password
     c = Client(base_url)
@@ -610,7 +623,7 @@ def patch_user_cmd(
         u = c.patch_user(user_id, payload)
     except requests.HTTPError as e:
         _print_http_error("修改用户属性失败", e, debug=debug)
-        raise typer.Exit(1)
+        raise typer.Exit(1) from requests.HTTPError
     typer.echo(f"User updated: {u['username']} (id={u['id']}) -> {u}")
 
 
@@ -626,7 +639,7 @@ def whoami_cmd(
         me = c.whoami()
     except requests.HTTPError as e:
         _print_http_error("WhoAmI", e, debug=debug)
-        raise typer.Exit(1)
+        raise typer.Exit(1) from requests.HTTPError
 
     if json_out:
         console.print(RICH_JSON.from_data(me))

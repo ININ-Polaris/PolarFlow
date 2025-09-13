@@ -34,7 +34,11 @@ class TaskCreate(BaseModel):
     priority: int = Field(default=100, ge=0)
 
     docker_image: str | None = Field(default=None, max_length=256)
-    docker_args: list[str] | None = Field(default=None, max_items=16)  # 例如 ["--ipc=host"]
+    docker_args: list[str] | None = Field(
+        default=None,
+        max_length=16,
+        description="例如 ['--ipc=host']",
+    )
     env: dict[str, str] | None = Field(default=None)  # 任务级环境变量
 
     model_config = ConfigDict(extra="forbid")
