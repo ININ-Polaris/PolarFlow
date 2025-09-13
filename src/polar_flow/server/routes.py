@@ -57,7 +57,10 @@ def create_task() -> tuple[Response, int]:
         return jsonify({"error": f"invalid payload: {e}"}), 400
 
     # 基础校验
-    if payload.requested_gpus.startswith("AUTO:"):
+    kind = payload.requested_gpus.strip().upper()
+    if kind in ("CPU", "NONE"):
+        pass
+    elif payload.requested_gpus.startswith("AUTO:"):
         try:
             n = int(payload.requested_gpus.split(":", 1)[1])
         except Exception:  # noqa: BLE001
@@ -94,7 +97,7 @@ def create_task() -> tuple[Response, int]:
         sess.add(task)
         sess.commit()
         sess.refresh(task)
-        return jsonify(TaskRead.model_validate(task).model_dump()), 201
+        return jsonify(TaskRead.model_validate(task).model_dump(mode="json")), 201
     finally:
         sess.close()
 
@@ -121,7 +124,7 @@ def list_tasks() -> tuple[Response, int] | Response:
                 return jsonify({"error": "status 无效"}), 400
         q = q.order_by(Task.created_at.desc())
         items = q.all()
-        return jsonify([TaskRead.model_validate(t).model_dump() for t in items])
+        return jsonify([TaskRead.model_validate(t).model_dump(mode="json") for t in items])
     finally:
         sess.close()
 
@@ -136,7 +139,7 @@ def get_task(task_id: int) -> tuple[Response, int]:
             return jsonify({"error": "not found"}), 404
         if current_user.role != Role.ADMIN and t.user_id != current_user.id:
             return jsonify({"error": "forbidden"}), 403
-        return jsonify(TaskRead.model_validate(t).model_dump()), 200
+        return jsonify(TaskRead.model_validate(t).model_dump(mode="json")), 200
     finally:
         sess.close()
 
@@ -182,7 +185,7 @@ def cancel_task(task_id: int) -> tuple[Response, int]:
         t.status = TaskStatus.CANCELLED
         t.finished_at = dt.datetime.now(dt.UTC)
         sess.commit()
-        return jsonify({"message": "cancelled"}), 200
+        return jsonify({"message": "cancelled ok"}), 200
     finally:
         sess.close()
 
@@ -211,7 +214,20 @@ def create_user() -> tuple[Response, int]:
         sess.add(u)
         sess.commit()
         sess.refresh(u)
-        return jsonify(UserRead.model_validate(u).model_dump()), 201
+        return jsonify(UserRead.model_validate(u).model_dump(mode="json")), 201
+    finally:
+        sess.close()
+
+
+@api_bp.get("/admin/users/<int:user_id>")
+@admin_required
+def get_user_admin(user_id: int) -> tuple[Response, int]:
+    sess = _get_session()
+    try:
+        u = sess.get(User, user_id)
+        if not u:
+            return jsonify({"error": "not found"}), 404
+        return jsonify(UserRead.model_validate(u).model_dump(mode="json")), 200
     finally:
         sess.close()
 
@@ -247,7 +263,7 @@ def patch_user(user_id: int) -> tuple[Response, int]:
         if "password" in data:
             u.set_password(str(data["password"]))
         sess.commit()
-        return jsonify(UserRead.model_validate(u).model_dump()), 200
+        return jsonify(UserRead.model_validate(u).model_dump(mode="json")), 200
     finally:
         sess.close()
 
@@ -258,6 +274,6 @@ def list_users() -> Response:
     sess = _get_session()
     try:
         items = sess.query(User).order_by(User.id.asc()).all()
-        return jsonify([UserRead.model_validate(u).model_dump() for u in items])
+        return jsonify([UserRead.model_validate(u).model_dump(mode="json") for u in items])
     finally:
         sess.close()

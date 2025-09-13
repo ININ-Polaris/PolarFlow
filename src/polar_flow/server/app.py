@@ -61,7 +61,7 @@ def create_app(config_path: str) -> Flask:
     @app.get("/me")
     @login_required
     def me() -> Response:
-        return jsonify(UserRead.model_validate(current_user).model_dump())
+        return jsonify(UserRead.model_validate(current_user).model_dump(mode="json"))
 
     return app
 
