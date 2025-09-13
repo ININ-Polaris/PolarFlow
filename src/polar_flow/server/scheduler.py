@@ -7,7 +7,7 @@ import os
 import subprocess
 import threading
 import time
-from collections.abc import Callable
+from collections.abc import Callable, Generator
 from contextlib import contextmanager
 from typing import TYPE_CHECKING
 
@@ -36,7 +36,7 @@ logger = logging.getLogger(__name__)
 
 
 @contextmanager
-def reserve_gpus(gids: list[int]):
+def reserve_gpus(gids: list[int]) -> Generator[bool]:
     with ALLOC_LOCK:
         if any(g in ALLOCATED for g in gids):
             yield False
@@ -84,35 +84,41 @@ def resources_available(requested: list[int], gpu_memory_limit: int | None) -> b
     return True
 
 
-def build_command_and_env_for_task(task_db: Task, selected: list[int]) -> tuple[list[str], dict]:
+def build_command_and_env_for_task(
+    task_db: Task,
+    selected: list[int],
+) -> tuple[list[str], dict[str, str]]:
     """
     返回 (argv, env)：
-      - Host: ["bash","-lc", <script>]
+      - Host:   ["bash","-lc", <script>]
       - Docker: ["docker","run",...]
     """
-    # 1) 合成 env
+    # 1) 合成 host 侧 env
     env = os.environ.copy()
     # 叠加任务环境变量（支持 $HOME 展开）
     if task_db.env:
         for k, v in task_db.env.items():
             env[k] = os.path.expandvars(v)
 
-    # GPU/CPU-only 环境变量（容器内外都可用）
+    # GPU/CPU-only 环境变量（Host 侧）
     if selected:
+        # Host 进程里，如需本地执行，按主机索引过滤
         env["CUDA_DEVICE_ORDER"] = "PCI_BUS_ID"
         env["CUDA_VISIBLE_DEVICES"] = ",".join(str(x) for x in selected)
         env["POLAR_ALLOCATED_GPU_IDS"] = env["CUDA_VISIBLE_DEVICES"]
-        env["NVIDIA_VISIBLE_DEVICES"] = env["CUDA_VISIBLE_DEVICES"]
+        # 不再在 Host 侧主动设置 NVIDIA_VISIBLE_DEVICES，避免与 nvidia runtime 冲突
+        env.pop("NVIDIA_VISIBLE_DEVICES", None)
     else:
+        # CPU-only：清理 GPU 相关变量
         env.pop("CUDA_VISIBLE_DEVICES", None)
         env.pop("NVIDIA_VISIBLE_DEVICES", None)
         env.pop("CUDA_DEVICE_ORDER", None)
         env["POLAR_ALLOCATED_GPU_IDS"] = ""
 
-    # 2) 拼脚本（允许后续扩展 prelude，这里保持最简：直接 command）
+    # 2) 拼脚本
     script = task_db.command
 
-    # 3) Host 模式
+    # 3) Host 模式（不走 Docker）
     if not task_db.docker_image:
         return (["bash", "-lc", script], env)
 
@@ -122,34 +128,58 @@ def build_command_and_env_for_task(task_db: Task, selected: list[int]) -> tuple[
     args = list(task_db.docker_args or [])
 
     cmd = ["docker", "run", "--rm"]
-    # GPU
-    if selected:
-        # 需要 nvidia-container-runtime 支持
-        cmd += ["--gpus", f"device={','.join(map(str, selected))}"]
-    else:
-        # CPU-only：不传 --gpus
-        pass
 
-    # 挂载工作目录并设定工作目录
+    # 4.1 GPU：只用 --gpus 选择主机 GPU（让 nvidia-container-runtime 处理映射与注入）
+    if selected:
+        # 这里传入主机索引；容器内会被重编号为 0..N-1
+        device_arg = "device=" + ",".join(map(str, selected))
+        cmd += ["--gpus", device_arg]
+    # else: CPU-only 不传 --gpus
+
+    # 4.2 工作目录
     cmd += ["-v", f"{workdir}:/work", "-w", "/work"]
 
-    # 透传部分 env（只传任务 env + GPU 相关 + 常见 HOME）
-    pass_env_keys = set((task_db.env or {}).keys()) | {
-        "CUDA_VISIBLE_DEVICES",
-        "NVIDIA_VISIBLE_DEVICES",
-        "CUDA_DEVICE_ORDER",
-        "POLAR_ALLOCATED_GPU_IDS",
-        "HOME",
-    }
-    for k in sorted(pass_env_keys):
-        if k in env:
-            cmd += ["-e", f"{k}={env[k]}"]
+    # 4.3 透传到容器的 env（与 host 侧区分开来，避免把主机索引带进容器）
+    container_env = {}
 
-    # 额外 docker args
+    # 任务自定义 env（优先）
+    if task_db.env:
+        for k, v in task_db.env.items():
+            container_env[k] = os.path.expandvars(v)
+
+    # 常用变量
+    if "HOME" in env:
+        container_env["HOME"] = env["HOME"]
+
+    # 始终透传排序策略
+    container_env["CUDA_DEVICE_ORDER"] = "PCI_BUS_ID"
+
+    # 仅作为记录/诊断：保留主机侧分配信息
+    container_env["POLAR_ALLOCATED_GPU_IDS"] = ",".join(map(str, selected)) if selected else ""
+
+    # 关键点：如果容器里需要 CUDA_VISIBLE_DEVICES，按容器重编号设置为 0..N-1
+    # 这既满足部分框架对该变量的依赖，又不会与 --gpus 的实际映射冲突。
+    if selected:
+        remapped = ",".join(str(i) for i in range(len(selected)))  # e.g. "0" or "0,1"
+        container_env["CUDA_VISIBLE_DEVICES"] = remapped
+    else:
+        # CPU-only：不设置该变量
+        pass
+
+    # 不要覆盖 NVIDIA_VISIBLE_DEVICES；由 runtime 注入
+    # Docker 内部会重映射序号
+
+    # 4.4 将 container_env 写入 docker -e
+    for k in sorted(container_env.keys()):
+        cmd += ["-e", f"{k}={container_env[k]}"]
+
+    # 4.5 追加额外 docker args（如 --ipc=host 等）
     cmd += args
 
-    # 镜像 + 入口
+    # 4.6 镜像 + 入口
     cmd += [img, "bash", "-lc", script]
+
+    # 返回 docker 命令（容器内 env 的注入在 cmd 中），以及 host 侧 env（供调用方需要时使用）
     return (cmd, env)
 
 
@@ -222,7 +252,7 @@ def _spawn_and_track(task_db: Task, selected: list[int], session_local: SessionF
         start_new_session=True,
     )
 
-    # 把 pid 写回数据库，便于 cancel 杀进程（见修复 #2）
+    # 把 pid 写回数据库，便于 cancel 杀进程
     session: Session = session_local()
     try:
         t = session.get(Task, task_db.id)
@@ -242,7 +272,7 @@ def _spawn_and_track(task_db: Task, selected: list[int], session_local: SessionF
 
     out, err = proc.communicate()
 
-    # 结果回写：日志落盘 + DB 仅保存摘要（见修复 #12）
+    # 结果回写：日志落盘 + DB 仅保存摘要
     session = session_local()
     try:
         t = session.get(Task, task_db.id)
@@ -280,7 +310,9 @@ def allocate_and_run_task(
         cpu_only = task_db.requested_gpus.strip().upper() in ("CPU", "NONE")
         if not selected and not cpu_only:
             logger.debug(
-                "allocate: selection failed task_id=%s req=%s", task_db.id, task_db.requested_gpus
+                "allocate: selection failed task_id=%s req=%s",
+                task_db.id,
+                task_db.requested_gpus,
             )
             return False
 
@@ -300,7 +332,7 @@ def allocate_and_run_task(
         if not resources_available(selected, task_db.gpu_memory_limit):
             return False
 
-        # 进程内资源占位，且做原子状态 CAS（见修复 #10）
+        # 进程内资源占位，且做原子状态 CAS
         with reserve_gpus(selected) as ok:
             if not ok:
                 logger.debug("allocate: reserve_gpus busy selected=%s", selected)
@@ -326,10 +358,14 @@ def allocate_and_run_task(
             if async_run:
                 # 后台线程处理执行与回写
                 threading.Thread(
-                    target=_spawn_and_track, args=(task_db, selected, session_local), daemon=True
+                    target=_spawn_and_track,
+                    args=(task_db, selected, session_local),
+                    daemon=True,
                 ).start()
                 logger.debug(
-                    "allocate: spawned async runner task_id=%s selected=%s", task_db.id, selected
+                    "allocate: spawned async runner task_id=%s selected=%s",
+                    task_db.id,
+                    selected,
                 )
             else:
                 # —— 同步分支（保持向后兼容，供单测/调用方期待立即得到 SUCCESS/FAILED）——
@@ -382,10 +418,11 @@ def allocate_and_run_task(
                 task_row = session.get(Task, task_db.id)
                 if task_row:
                     task_row.finished_at = dt.datetime.now(dt.UTC)
-                    from .utils_logging import save_task_logs
 
                     stdout_path, stderr_path, out_snip, err_snip = save_task_logs(
-                        task_row, out, err
+                        task_row,
+                        out,
+                        err,
                     )
                     task_row.stdout_path = stdout_path
                     task_row.stderr_path = stderr_path
@@ -402,18 +439,48 @@ def allocate_and_run_task(
                         task_row.status,
                     )
             return True
-    except Exception as e:
+    except Exception:
         session.rollback()
         logger.exception(
-            "allocate: exception task_id=%s err=%s",
+            "allocate: exception task_id=%s",
             getattr(task, "id", None),
-            repr(e),
         )
         raise
     else:
         return True
     finally:
         session.close()
+
+
+def preview_task_command_and_env(task_db: Task) -> tuple[str, dict[str, str]]:
+    """
+    干跑预览：不执行任务，只返回日志中会打印的两项：
+      - format_argv(argv)
+      - redact_env(env, pass_env_keys)
+
+    返回:
+        (argv_formatted, env_excerpt)
+    """
+    # 计算将要使用的 GPU（保持与实际路径一致，但不做权限/资源占用）
+    selected = _select_gpus(task_db)
+
+    # 构建命令与环境（与真实执行一致）
+    argv, env = build_command_and_env_for_task(task_db, selected)
+
+    # 与日志相同的 env 过滤键集合
+    pass_env_keys = set((task_db.env or {}).keys()) | {
+        "CUDA_VISIBLE_DEVICES",
+        "NVIDIA_VISIBLE_DEVICES",
+        "CUDA_DEVICE_ORDER",
+        "POLAR_ALLOCATED_GPU_IDS",
+        "HOME",
+    }
+
+    # 返回日志里两项
+    return (
+        format_argv(argv),
+        redact_env(env, pass_env_keys),
+    )
 
 
 def scheduler_loop(poll_interval: float, session_local: sessionmaker[Session]) -> None:

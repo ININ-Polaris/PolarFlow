@@ -6,10 +6,12 @@ import os
 import signal
 import time
 from pathlib import Path
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, cast
 
 from flask import Blueprint, Response, jsonify, request
 from flask_login import current_user, login_required
+
+from polar_flow.server.scheduler import preview_task_command_and_env
 
 from .auth import admin_required
 from .models import Role, Task, TaskStatus, User
@@ -107,6 +109,65 @@ def create_task() -> tuple[Response, int]:
         return jsonify(TaskRead.model_validate(task).model_dump(mode="json")), 201
     finally:
         sess.close()
+
+
+@api_bp.post("/tasks_check")
+@login_required
+def check_task() -> tuple[Response, int]:
+    data = request.json or {}
+    try:
+        payload = TaskCreate.model_validate(data)
+    except Exception as e:  # noqa: BLE001
+        return jsonify({"error": f"invalid payload: {e}"}), 400
+
+    # 基础校验
+    kind = payload.requested_gpus.strip().upper()
+    if kind in ("CPU", "NONE"):
+        pass
+    elif payload.requested_gpus.startswith("AUTO:"):
+        try:
+            n = int(payload.requested_gpus.split(":", 1)[1])
+        except Exception:  # noqa: BLE001
+            return jsonify({"error": "requested_gpus AUTO:<n> 格式错误"}), 400
+        if n <= 0:
+            return jsonify({"error": "AUTO 台数必须 > 0"}), 400
+    else:
+        try:
+            gids = [int(x) for x in payload.requested_gpus.split(",") if x.strip()]
+        except Exception:  # noqa: BLE001
+            return jsonify({"error": "requested_gpus 需为 '0,1' 或 'AUTO:n'"}), 400
+        if current_user.role != Role.ADMIN:
+            visible = set(current_user.get_visible_gpus_list() or [])
+            if not all(g in visible for g in gids):
+                return jsonify({"error": "所选 GPU 超出可见范围"}), 403
+
+    # 非管理员不可越权设定优先级
+    priority = payload.priority
+    if current_user.role != Role.ADMIN and priority > current_user.priority:
+        priority = current_user.priority
+
+    # working_dir 必须存在
+    if not Path(payload.working_dir).exists():
+        return jsonify({"error": f"working_dir 不存在: {payload.working_dir}"}), 400
+
+    task = Task(
+        user_id=current_user.id,
+        name=payload.name,
+        command=payload.command,
+        requested_gpus=payload.requested_gpus,
+        gpu_memory_limit=payload.gpu_memory_limit,
+        priority=priority,
+        working_dir=str(Path(payload.working_dir).resolve()),
+        status=TaskStatus.PENDING,
+        docker_image=payload.docker_image,
+        docker_args=payload.docker_args or None,
+        env=payload.env or None,
+    )
+    task.user = cast("User", current_user._get_current_object())
+
+    argv_fmt, _ = preview_task_command_and_env(task)
+
+    return jsonify({"cmd": argv_fmt}), 200
 
 
 @api_bp.get("/tasks")

@@ -156,6 +156,11 @@ class Client:
         r.raise_for_status()
         return r.json()
 
+    def check_task(self, payload: dict) -> dict:
+        r = self.session.post(f"{self.base_url}/api/tasks_check", json=payload)
+        r.raise_for_status()
+        return r.json()
+
     def list_tasks(self, status: str | None = None) -> list[dict]:
         params = {"status": status} if status else None
         r = self.session.get(f"{self.base_url}/api/tasks", params=params)
@@ -374,6 +379,56 @@ def submit_cmd(
     info.add_row("Status", fmt_status(str(res.get("status", ""))))
     info.add_row("Priority", str(res.get("priority", "")))
     console.print(pretty_panel("任务提交成功", content=info))
+
+
+@app.command("check")
+def check_cmd(
+    config: str | None = typer.Option(None, "--config", "-c"),
+    base_url: str = typer.Option(DEFAULT_BASE_URL, "--base-url", "-b"),
+    json_out: bool = typer.Option(False, "--json", "-j", help="输出原始 JSON 数据"),
+    debug: bool = typer.Option(False, "--debug", "-d", help="Debug 模式，打印调用栈"),
+) -> None:
+    """从 TOML 检查任务是否可行。"""
+    if config is None:
+        data = toml.load(
+            typer.Option(
+                ...,
+                "--config",
+                "-c",
+                exists=True,
+                readable=True,
+                help="TOML 任务配置文件",
+            ),
+        )
+    else:
+        data = toml.load(Path(config))
+    t = data.get("task", {})
+    payload = {
+        "name": t.get("name"),
+        "command": t.get("command"),
+        "requested_gpus": t.get("requested_gpus", "AUTO:1"),
+        "working_dir": t.get("working_dir", str(Path.cwd())),
+        "gpu_memory_limit": t.get("gpu_memory_limit"),
+        "priority": t.get("priority", 100),
+        "docker_image": t.get("docker_image"),
+        "docker_args": t.get("docker_args"),
+        "env": t.get("env"),
+    }
+    c = Client(base_url)
+    with console.status("[bold]检查任务中..."):
+        try:
+            res = c.check_task(payload)
+        except requests.HTTPError as e:
+            _print_http_error("检查任务失败", e, debug=debug)
+            raise typer.Exit(1)
+
+    if json_out:
+        console.print(RICH_JSON.from_data(res))
+        return
+
+    info = Table(box=box.SIMPLE, show_header=False)
+    info.add_row("cmd", str(res.get("cmd", "")))
+    console.print(pretty_panel("检查提交成功", content=info))
 
 
 @app.command("ls")
