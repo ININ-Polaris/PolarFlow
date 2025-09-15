@@ -5,7 +5,7 @@ import pytest
 
 from polar_flow.server.auth import _get_session
 from polar_flow.server.models import Task, TaskStatus
-from polar_flow.server.scheduler import allocate_and_run_task, resources_available
+from polar_flow.worker.scheduler import allocate_and_run_task, resources_available
 
 
 def _fake_gpu_info(num=2, free_bytes=(4 * 1024 * 1024 * 1024, 2 * 1024 * 1024 * 1024)):
@@ -26,7 +26,7 @@ def _fake_gpu_info(num=2, free_bytes=(4 * 1024 * 1024 * 1024, 2 * 1024 * 1024 * 
 
 @pytest.fixture
 def mempatch(monkeypatch):
-    import polar_flow.server.scheduler as sched
+    import polar_flow.worker.scheduler as sched
 
     monkeypatch.setattr(sched, "get_all_gpu_info", lambda: _fake_gpu_info())
     return monkeypatch

@@ -66,6 +66,7 @@ ignore_missing_imports = true
 show_error_codes = true
 pretty = true
 plugins = ["pydantic.mypy"]
+exclude = "tests/"
 
 # ---- ruff 配置 ----
 [tool.ruff]
@@ -155,3 +156,35 @@ indent-style = "space"
 line-ending = "lf"
 skip-magic-trailing-comma = false
 docstring-code-format = true
+
+# ---- pytest 配置 ----
+
+[tool.pytest.ini_options]
+minversion = "8.0"
+
+addopts = """
+-ra
+--strict-markers
+--strict-config
+--maxfail=1
+--cov=polar_flow --cov-report=term-missing
+--doctest-modules
+--xdoctest --xdoctest-style=google
+"""
+testpaths = ["tests"]
+pythonpath = ["src"]
+# 慢测试标记为 integration，默认可以选择跳过
+markers = [
+  "unit: 快速单元测试",
+  "integration: 较慢/复杂依赖测试"
+]
+# doctest 容错：省略号匹配/空白规整
+doctest_optionflags = "ELLIPSIS NORMALIZE_WHITESPACE"
+filterwarnings = [
+  "error::DeprecationWarning",
+]
+# 日志支持
+log_cli = true
+log_cli_level = "INFO"
+# Async 支持
+asyncio_mode = "auto"

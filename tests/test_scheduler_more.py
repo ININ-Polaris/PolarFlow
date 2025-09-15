@@ -1,8 +1,8 @@
 import sys
 
-from polar_flow.server import scheduler as sched
 from polar_flow.server.auth import _get_session
 from polar_flow.server.models import Task, TaskStatus
+from polar_flow.worker import scheduler as sched
 
 
 def _fake_infos(frees):
@@ -42,7 +42,7 @@ def test_select_gpus_auto_insufficient(monkeypatch, db_session, normal_user, tmp
     db_session.add(t)
     db_session.commit()
     # 直接测内部函数：
-    from polar_flow.server.scheduler import _select_gpus
+    from polar_flow.worker.scheduler import _select_gpus
 
     assert _select_gpus(t) == []
 

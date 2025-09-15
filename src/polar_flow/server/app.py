@@ -69,4 +69,4 @@ def create_app(config_path: str) -> Flask:
 def main() -> None:
     app = create_app("data/config.toml")
     # 生产环境请使用 WSGI/ASGI 服务器；这里用于本地开发
-    app.run(host="0.0.0.0", port=5000, debug=True)
+    app.run(host="0.0.0.0", port=5000, debug=False)

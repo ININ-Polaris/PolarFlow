@@ -1,7 +1,7 @@
 from pathlib import Path
 
-from pydantic import ValidationError
 import pytest
+from pydantic import ValidationError
 
 from polar_flow.server.config import Config
 

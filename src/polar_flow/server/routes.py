@@ -10,8 +10,9 @@ from typing import TYPE_CHECKING, cast
 
 from flask import Blueprint, Response, jsonify, request
 from flask_login import current_user, login_required
+from pydantic import ValidationError
 
-from polar_flow.server.scheduler import preview_task_command_and_env
+from polar_flow.worker.scheduler import preview_task_command_and_env
 
 from .auth import admin_required
 from .models import Role, Task, TaskStatus, User
@@ -42,7 +43,8 @@ api_bp = Blueprint("api", __name__, url_prefix="/api")
 @api_bp.get("/gpus")
 @login_required
 def list_gpus() -> Response:
-    from .gpu_monitor import get_all_gpu_info  # 延迟导入避免 NVML 成本  # noqa: PLC0415
+    # 延迟导入避免 NVML 成本
+    from .gpu_monitor import get_all_gpu_info  # noqa: PLC0415
 
     infos = get_all_gpu_info()
     return jsonify(infos)
@@ -55,7 +57,7 @@ def create_task() -> tuple[Response, int]:
     data = request.json or {}
     try:
         payload = TaskCreate.model_validate(data)
-    except Exception as e:  # noqa: BLE001
+    except ValidationError as e:
         return jsonify({"error": f"invalid payload: {e}"}), 400
 
     # 基础校验

@@ -42,7 +42,6 @@ class User(Base, UserMixin):
     )
     priority: Mapped[int] = mapped_column(Integer, default=100, nullable=False)
 
-    # 注意：前向引用用字符串，避免静态类型检查报错
     tasks: Mapped[list[Task]] = relationship(
         "Task",
         back_populates="user",
