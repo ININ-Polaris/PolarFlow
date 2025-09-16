@@ -1,0 +1,19 @@
+[package]
+name = "pam-jwt-issuer"
+version = "0.1.0"
+edition = "2024"
+authors = ["CharlesHsu<charles040318@gmail.com>"]
+
+[dependencies]
+axum = { version = "0.7", features = ["macros", "json"] }
+tokio = { version = "1", features = ["rt-multi-thread", "macros"] }
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+jsonwebtoken = "9"
+pam = "0.7"
+users = "0.11"
+dotenvy = "0.15"
+thiserror = "1"
+time = "0.3"
+tracing = "0.1"
+tracing-subscriber = { version = "0.3", features = ["env-filter", "fmt"] }
