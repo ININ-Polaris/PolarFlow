@@ -6,7 +6,7 @@ use axum::{
     routing::{get, post},
 };
 use dotenvy::dotenv;
-use jsonwebtoken::{Algorithm, EncodingKey, Header, encode};
+use jsonwebtoken::{Algorithm, EncodingKey, Header, encode, decode_header};
 use pam::Authenticator;
 use rsa::{
     Oaep, RsaPrivateKey,
@@ -240,7 +240,17 @@ async fn issue_token(
         iat: now.unix_timestamp(),
         exp: exp.unix_timestamp(),
     };
-    let header = Header::new(Algorithm::HS256);
+    let mut header = Header::new(Algorithm::HS256);
+
+    header.typ = Some("JWT".to_string());
+
+    let token =
+        encode(&header, &claims, &state.jwt_key).map_err(|_| ApiError::Internal("jwt encode"))?;
+
+    // 立刻解析头部核对
+    let h = decode_header(&token).map_err(|_| ApiError::Internal("decode header"))?;
+    assert_eq!(h.alg, Algorithm::HS256);
+    
     let token =
         encode(&header, &claims, &state.jwt_key).map_err(|_| ApiError::Internal("jwt encode"))?;
 
