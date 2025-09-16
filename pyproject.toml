@@ -17,6 +17,7 @@ dependencies = [
     "colorama>=0.4.6",
     "flask-login>=0.6.3",
     "flask-sqlalchemy>=3.1.1",
+    "httpx>=0.28.1",
     "nvidia-ml-py>=13.580.82",
     "pamela>=1.2.0",
     "pydantic>=2.11.7",
@@ -42,7 +43,7 @@ dev = [
 [project.scripts]
 server = "polar_flow.server.app:main"
 worker = "polar_flow.server.worker:main"
-polar-flow = "polar_flow.cli.entry:main"
+polar-flow = "polar_flow.cli.entry:entry"
 admin = "polar_flow.cli.create_admin:main"
 
 # ---- hatchling 构建细节 ----

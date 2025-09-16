@@ -1,0 +1,68 @@
+from __future__ import annotations
+
+import json
+from typing import TYPE_CHECKING, Any
+
+import httpx
+import typer
+
+from polar_flow.cli.printers import print_error
+
+if TYPE_CHECKING:
+    from .config import AppConfig
+
+DEFAULT_TIMEOUT = 10.0
+
+
+class SlurmClient:
+    def __init__(self, cfg: AppConfig, token: str, debug: bool = False):
+        self.base_url = f"http://{cfg.slurm_server.host}:{cfg.slurm_server.port}/slurm/v0.0.43"
+        self._token = token
+        self._client = httpx.Client(timeout=DEFAULT_TIMEOUT)
+        self._debug = debug
+
+    def _headers(self) -> dict[str, str]:
+        headers = {"Accept": "application/json"}
+        if self._token:
+            headers["X-SLURM-USER-TOKEN"] = self._token
+        return headers
+
+    def _error_handler(self, r: httpx.Response) -> None:
+        try:
+            code = r.status_code
+            r.raise_for_status()
+        except httpx.HTTPStatusError as e:
+            if code == 401:
+                print_error("未登录，请重新登录或检查网络连接", "UNAUTHORIZED")
+            elif code == 511:
+                print_error(
+                    "授权过期或认证失败，请重新登录或检查网络连接",
+                    "Network Authentication Required",
+                )
+
+            if self._debug:
+                raise
+            print_error("请联系管理员，或使用 --debug", "未知错误")
+            raise typer.Exit(1) from None
+
+    def get(self, path: str, params: dict[str, Any] | None = None) -> Any:
+        url = f"{self.base_url}{path}"
+        r = self._client.get(url, headers=self._headers(), params=params)
+        self._error_handler(r)
+        return r.json()
+
+    def delete(self, path: str, params: dict[str, Any] | None = None) -> Any:
+        url = f"{self.base_url}{path}"
+        r = self._client.delete(url, headers=self._headers(), params=params)
+        self._error_handler(r)
+        return r.json()
+
+    def post_json(self, path: str, body: dict[str, Any]) -> Any:
+        url = f"{self.base_url}{path}"
+        r = self._client.post(
+            url,
+            headers=self._headers() | {"Content-Type": "application/json"},
+            json=body,
+        )
+        self._error_handler(r)
+        return r.json()
