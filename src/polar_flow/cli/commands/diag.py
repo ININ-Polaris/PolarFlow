@@ -1,4 +1,4 @@
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Any
 
 import typer
 from rich import print
@@ -19,6 +19,9 @@ def ping(ctx: typer.Context) -> None:
     debug: bool = ctx.obj["debug"]
     c = SlurmClient(cfg, token, debug=debug)
     data = c.get("/ping/")
+    # cluster = data["meta"][]
+    payload: dict[str, Any] = {}
+    # payload["结果"] = data.
     print_kv("PING", data, cfg.logging.dict_style)
 
 

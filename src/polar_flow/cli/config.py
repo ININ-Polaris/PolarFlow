@@ -38,7 +38,6 @@ def load_config(path: Path) -> AppConfig:
 
     with open(p, "rb") as f:
         data = tomllib.load(f)
-    print(data)
     return AppConfig(**data)
 
 
