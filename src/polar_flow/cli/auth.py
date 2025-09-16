@@ -14,7 +14,7 @@ from polar_flow.cli.printers import print_debug, print_kv
 
 from .config import AppConfig, save_token
 
-app = typer.Typer(help="Authorization")
+app = typer.Typer(help="账户与权限")
 
 
 def _fetch_server_pubkey(client: httpx.Client, base_url: str) -> bytes:
