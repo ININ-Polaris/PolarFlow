@@ -21,16 +21,17 @@ use time::{Duration, OffsetDateTime};
 use tracing::{error, info};
 use tracing_subscriber::EnvFilter;
 
-// 新：base64 新版 Engine
+// base64 新 API
 use base64::{Engine as _, engine::general_purpose::STANDARD as B64};
 
-/// 应用全局状态，集中管理配置与密钥
+/// 应用全局状态：JWT 用 HS256，对称密钥；RSA 仅用于传输层解密与导出公钥
 #[derive(Clone)]
 struct AppState {
-    // JWT RS256 签名私钥
+    // HS256 对称签名密钥
     jwt_key: Arc<EncodingKey>,
-    // 传输层解密私钥（与上面可同一把）
+    // RSA 私钥（仅用于 OAEP 解密 & 导出公钥）
     rsa_private: Arc<RsaPrivateKey>,
+
     jwt_exp_minutes: i64,
     pam_service: String,
     // 抗重放窗口（秒）
@@ -108,19 +109,34 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     // 读取 .env
     dotenv().ok();
 
-    // 日志
+    // 初始化日志：RUST_LOG=info ./pam-jwt-issuer
     tracing_subscriber::fmt()
         .with_env_filter(EnvFilter::from_default_env())
         .init();
 
-    // 读取 RSA 私钥（同一把用于 RS256 签名 + OAEP 解密）
-    let key_path = env::var("RSA_PRIVATE_KEY_PATH").unwrap_or_else(|_| "rsa_private.pem".into());
-    let pem = fs::read_to_string(&key_path).map_err(|e| {
-        error!("failed to read RSA key {}: {}", key_path, e);
+    // 读取 HS256 密钥文件路径
+    let key_path = env::var("JWT_KEY_PATH").unwrap_or_else(|_| "jwt_hs256.key".to_string());
+    let secret_bytes = fs::read(&key_path).map_err(|e| {
+        error!("failed to read key file {}: {}", key_path, e);
         e
     })?;
 
-    // 解析 RSA 私钥（优先 PKCS#8，失败回退 PKCS#1）
+    if secret_bytes.len() < 32 {
+        error!("JWT secret seems too short; please use at least 32 random bytes for HS256");
+    }
+
+    // 构造 JWT HS256 EncodingKey
+    let jwt_key = EncodingKey::from_secret(&secret_bytes);
+
+    // 读取 RSA 私钥（仅用于 OAEP 解密与导出公钥；与 JWT 密钥完全分离）
+    let rsa_key_path =
+        env::var("RSA_PRIVATE_KEY_PATH").unwrap_or_else(|_| "rsa_private.pem".into());
+    let pem = fs::read_to_string(&rsa_key_path).map_err(|e| {
+        error!("failed to read RSA key {}: {}", rsa_key_path, e);
+        e
+    })?;
+
+    // 解析 RSA 私钥：优先 PKCS#8，失败回退 PKCS#1
     let rsa_private = RsaPrivateKey::from_pkcs8_pem(&pem)
         .or_else(|_| RsaPrivateKey::from_pkcs1_pem(&pem))
         .map_err(|e| {
@@ -128,13 +144,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
             e
         })?;
 
-    // JWT 的 RS256 签名 key
-    let jwt_key = EncodingKey::from_rsa_pem(pem.as_bytes()).map_err(|e| {
-        error!("failed to build RS256 EncodingKey: {}", e);
-        e
-    })?;
-
-    // 构造应用状态
+    // 应用状态
     let state = AppState {
         jwt_key: Arc::new(jwt_key),
         rsa_private: Arc::new(rsa_private),
@@ -166,7 +176,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     Ok(())
 }
 
-/// 返回 RSA 公钥（PEM），给客户端做加密/验签
+/// 返回 RSA 公钥（PEM），用于客户端进行加密
 async fn get_pubkey(State(state): State<AppState>) -> Result<impl IntoResponse, ApiError> {
     let pub_pem = state
         .rsa_private
@@ -183,12 +193,12 @@ async fn get_pubkey(State(state): State<AppState>) -> Result<impl IntoResponse, 
     ))
 }
 
-/// 解密密文 -> PAM 认证 -> RS256 签 JWT
+/// 解密密文 -> PAM 认证 -> HS256 签 JWT
 async fn issue_token(
     State(state): State<AppState>,
     Json(req): Json<EncryptedTokenRequest>,
 ) -> Result<impl IntoResponse, ApiError> {
-    // 1) Base64 解码密文（新版 Engine API）
+    // 1) Base64 解码密文
     let ciphertext = B64
         .decode(&req.ciphertext_b64)
         .map_err(|_| ApiError::BadRequest("invalid base64"))?;
@@ -223,14 +233,14 @@ async fn issue_token(
         .set_credentials(username, &payload.password);
     auth.authenticate().map_err(|_| ApiError::AuthFailed)?;
 
-    // 6) RS256 颁发 JWT
+    // 6) HS256 颁发 JWT
     let exp = now + Duration::minutes(state.jwt_exp_minutes);
     let claims = Claims {
         sun: username.to_string(),
         iat: now.unix_timestamp(),
         exp: exp.unix_timestamp(),
     };
-    let header = Header::new(Algorithm::RS256);
+    let header = Header::new(Algorithm::HS256);
     let token =
         encode(&header, &claims, &state.jwt_key).map_err(|_| ApiError::Internal("jwt encode"))?;
 
