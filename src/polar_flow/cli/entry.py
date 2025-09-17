@@ -9,7 +9,7 @@ from .commands import acct, diag, jobs, nodes, partitions, reservation
 DEBUG = False
 
 app = typer.Typer(
-    add_completion=False,
+    add_completion=True,
     help="BIT ININ 自用 SLURM 包装",
 )
 

@@ -44,7 +44,12 @@ def login(
     ctx: typer.Context,
     username: str | None = typer.Option(..., "--username", "-u", prompt=True, help="用户名"),
     password: str | None = typer.Option(
-        ..., "--password", "-p", prompt=True, help="密码", hide_input=True,
+        ...,
+        "--password",
+        "-p",
+        prompt=True,
+        help="密码",
+        hide_input=True,
     ),
 ) -> None:
     """登录并获取身份认证"""
