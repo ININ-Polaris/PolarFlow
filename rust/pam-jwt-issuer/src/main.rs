@@ -6,7 +6,7 @@ use axum::{
     routing::{get, post},
 };
 use dotenvy::dotenv;
-use jsonwebtoken::{Algorithm, EncodingKey, Header, encode, decode_header};
+use jsonwebtoken::{Algorithm, EncodingKey, Header, decode_header, encode};
 use pam::Authenticator;
 use rsa::{
     Oaep, RsaPrivateKey,
@@ -15,14 +15,19 @@ use rsa::{
 };
 use serde::{Deserialize, Serialize};
 use sha2::Sha256;
-use std::{env, fs, net::SocketAddr, sync::Arc};
+use std::{env, fs, io::Write, net::SocketAddr, process::Command, sync::Arc};
 use thiserror::Error;
+use time::macros::format_description;
 use time::{Duration, OffsetDateTime};
 use tracing::{error, info};
 use tracing_subscriber::EnvFilter;
 
 // base64 新 API
 use base64::{Engine as _, engine::general_purpose::STANDARD as B64};
+
+// 颁发 SSH 证书所需
+use rand::{RngCore, rngs::OsRng};
+use tempfile::NamedTempFile;
 
 /// 应用全局状态：JWT 用 HS256，对称密钥；RSA 仅用于传输层解密与导出公钥
 #[derive(Clone)]
@@ -50,6 +55,7 @@ struct AuthPayload {
     username: String,
     password: String,
     ts: i64, // unix 秒，用于抗重放
+    ssh_pubkey: Option<String>,
 }
 
 /// /auth/token 响应体
@@ -58,6 +64,8 @@ struct TokenResponse {
     access_token: String,
     token_type: &'static str,
     expires_in: i64,
+    ssh_user_cert: Option<String>,  // OpenSSH 用户证书（文本，一行）
+    ssh_user_cert_exp: Option<i64>, // 证书到期时间（unix 秒）
 }
 
 /// 统一错误响应结构
@@ -102,6 +110,89 @@ impl IntoResponse for ApiError {
         };
         (status, Json(ErrorMessage { error: msg })).into_response()
     }
+}
+
+/// 将 OffsetDateTime 格式化为 ssh-keygen 需要的 UTC "YYYYMMDDHHMMSS"
+fn fmt_utc(ts: OffsetDateTime) -> String {
+    // OpenSSH 要求无分隔紧凑格式
+    // 统一转为 UTC
+    let ts_utc = ts.to_offset(time::UtcOffset::UTC);
+    ts_utc
+        .format(&format_description!(
+            "[year][month][day][hour][minute][second]"
+        ))
+        .unwrap()
+}
+
+/// 调用 ssh-keygen 使用 CA 私钥签发用户证书，返回证书文本（*-cert.pub 一行）
+fn issue_ssh_user_cert(
+    ca_key_path: &str,
+    principal: &str,
+    valid_after: OffsetDateTime,
+    valid_before: OffsetDateTime,
+    ssh_pubkey: &str,
+    extensions: &[&str],
+    serial_base: u64,
+) -> Result<String, ApiError> {
+    // 1) 用户公钥写入临时文件
+    let tmp_dir = env::var("SSH_CERT_TMP_DIR").unwrap_or_else(|_| "/tmp".into());
+    let mut pub_tmp = NamedTempFile::new_in(tmp_dir).map_err(|_| ApiError::Internal("tmpfile"))?;
+    pub_tmp
+        .write_all(ssh_pubkey.as_bytes())
+        .map_err(|_| ApiError::Internal("tmp write"))?;
+    pub_tmp.flush().ok();
+
+    let pub_path = pub_tmp.path().to_owned();
+    let cert_path = pub_path.with_file_name(format!(
+        "{}-cert.pub",
+        pub_path.file_name().unwrap().to_string_lossy()
+    ));
+
+    // 2) 随机序列号（基于 serial_base 做偏移）
+    let mut rnd = [0u8; 8];
+    OsRng.fill_bytes(&mut rnd);
+    let serial = serial_base.wrapping_add(u64::from_le_bytes(rnd));
+
+    // 3) 组织 ssh-keygen 参数
+    let from = fmt_utc(valid_after);
+    let to = fmt_utc(valid_before);
+    let key_id = format!(
+        "pam-jwt-issuer:{}:{}",
+        principal,
+        valid_after.unix_timestamp()
+    );
+
+    let mut cmd = Command::new("ssh-keygen");
+    cmd.arg("-s")
+        .arg(ca_key_path)
+        .arg("-I")
+        .arg(&key_id)
+        .arg("-n")
+        .arg(principal)
+        .arg("-V")
+        .arg(format!("{}:{}", from, to))
+        .arg("-z")
+        .arg(serial.to_string())
+        .arg(&pub_path);
+
+    for ext in extensions {
+        if !ext.is_empty() {
+            cmd.arg("-O").arg(ext);
+        }
+    }
+
+    let output = cmd
+        .output()
+        .map_err(|_| ApiError::Internal("ssh-keygen spawn"))?;
+    if !output.status.success() {
+        let stderr = String::from_utf8_lossy(&output.stderr);
+        error!("ssh-keygen failed: {}", stderr);
+        return Err(ApiError::Internal("ssh-keygen failed"));
+    }
+
+    // 4) 读取生成的证书文本
+    let cert_text = fs::read_to_string(&cert_path).map_err(|_| ApiError::Internal("read cert"))?;
+    Ok(cert_text.trim().to_string())
 }
 
 #[tokio::main]
@@ -250,9 +341,51 @@ async fn issue_token(
     // 立刻解析头部核对
     let h = decode_header(&token).map_err(|_| ApiError::Internal("decode header"))?;
     assert_eq!(h.alg, Algorithm::HS256);
-    
-    let token =
-        encode(&header, &claims, &state.jwt_key).map_err(|_| ApiError::Internal("jwt encode"))?;
+
+    // === 可选签发 OpenSSH 用户证书 ===
+    let mut ssh_user_cert_text: Option<String> = None;
+    let mut ssh_user_cert_exp: Option<i64> = None;
+
+    if let Some(ref ssh_pub) = payload.ssh_pubkey {
+        // 粗略校验 OpenSSH 公钥前缀
+        let looks_like_ssh_pub = ssh_pub.starts_with("ssh-ed25519 ")
+            || ssh_pub.starts_with("ssh-rsa ")
+            || ssh_pub.starts_with("sk-");
+        if !looks_like_ssh_pub {
+            return Err(ApiError::BadRequest("invalid ssh_pubkey"));
+        }
+
+        let ca_path = env::var("SSH_CA_KEY_PATH").unwrap_or_else(|_| "/etc/ssh/ssh_user_ca".into());
+        let ext_env = env::var("SSH_CERT_EXTENSIONS").unwrap_or_default();
+        let extensions: Vec<&str> = ext_env
+            .split(',')
+            .map(|s| s.trim())
+            .filter(|s| !s.is_empty())
+            .collect();
+        let serial_base = env::var("SSH_CERT_SERIAL_BASE")
+            .ok()
+            .and_then(|s| s.parse::<u64>().ok())
+            .unwrap_or(0);
+
+        match issue_ssh_user_cert(
+            &ca_path,
+            username,
+            now,
+            exp,
+            ssh_pub,
+            &extensions,
+            serial_base,
+        ) {
+            Ok(cert_txt) => {
+                ssh_user_cert_text = Some(cert_txt);
+                ssh_user_cert_exp = Some(exp.unix_timestamp());
+            }
+            Err(e) => {
+                // 证书失败不影响 JWT；仅记录日志
+                error!("issue ssh cert error: {:?}", e);
+            }
+        }
+    }
 
     Ok((
         StatusCode::OK,
@@ -260,6 +393,8 @@ async fn issue_token(
             access_token: token,
             token_type: "Bearer",
             expires_in: state.jwt_exp_minutes * 60,
+            ssh_user_cert: ssh_user_cert_text,
+            ssh_user_cert_exp,
         }),
     ))
 }

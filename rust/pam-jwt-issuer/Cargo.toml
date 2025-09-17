@@ -1,6 +1,6 @@
 [package]
 name = "pam-jwt-issuer"
-version = "0.1.0"
+version = "0.2.0"
 edition = "2024"
 authors = ["CharlesHsu<charles040318@gmail.com>"]
 
@@ -23,3 +23,4 @@ sha2 = "0.10"
 base64 = "0.22"
 rand = "0.8"
 pem = "3"
+tempfile = "3"
