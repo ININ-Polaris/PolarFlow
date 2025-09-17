@@ -1,9 +1,12 @@
-from typing import TYPE_CHECKING, Any
+from typing import TYPE_CHECKING, Annotated, Any
 
+import httpx
 import typer
 
 from polar_flow.cli.client import SlurmClient
-from polar_flow.cli.printers import print_error, print_info, print_kv
+from polar_flow.cli.printers import PrintProgress, print_error, print_info, print_json_ex, print_kv
+
+from .ann import job_info_ann
 
 if TYPE_CHECKING:
     from polar_flow.cli.config import AppConfig
@@ -14,74 +17,260 @@ job_app = typer.Typer(help="作业提交/查看/控制")
 @job_app.command("list")
 def job_list(
     ctx: typer.Context,
-    state: str | None = typer.Option(None, help="筛选状态，如 RUNNING,PENDING 等"),
-    detail: bool = typer.Option(False, help="详细输出，会打印所有获取到的信息"),
 ) -> None:
-    """列出作业（/jobs/ 或 /jobs/state/）"""
-    cfg: AppConfig = ctx.obj["cfg"]
-    token: str = ctx.obj["token"]
-    debug: bool = ctx.obj["debug"]
-    c = SlurmClient(cfg, token, debug=debug)
-    data = c.get("/jobs/state/") if state else c.get("/jobs/")
+    """列出作业"""
+    with PrintProgress():
+        cfg: AppConfig = ctx.obj["cfg"]
+        token: str = ctx.obj["token"]
+        debug: bool = ctx.obj["debug"]
+        c = SlurmClient(cfg, token, debug=debug)
+        data = c.get("/jobs/state/")
+        data_detail = c.get("/jobs/")
 
-    if detail:
-        title = f"作业列表（状态={state}）" if state else "作业列表"
-        print_kv(title, data, cfg.logging.dict_style)
+    title = "作业状态"
+    print_json_ex(
+        title,
+        data={"jobs": data["jobs"]},
+        key_priority=["jobs"],
+        expand=True,
+        show_raw=debug,
+        annotations=job_info_ann,
+        show_side_notes_for_tables=True,
+        notes_panel_title="注释",
+        show_side_notes_for_dicts=True,
+        dict_notes_min_hits=2,
+        dict_notes_max_depth=3,
+        dict_notes_panel_title="相关信息",
+    )
 
+    title = "作业列表"
+    print_json_ex(
+        title,
+        data={"jobs": data_detail["jobs"]},
+        key_priority=["jobs"],
+        expand=True,
+        show_raw=debug,
+        annotations=job_info_ann,
+        show_side_notes_for_tables=True,
+        notes_panel_title="注释",
+        show_side_notes_for_dicts=True,
+        dict_notes_min_hits=2,
+        dict_notes_max_depth=3,
+        dict_notes_panel_title="相关信息",
+    )
 
 
 @job_app.command("show")
 def job_show(ctx: typer.Context, job_id: int = typer.Argument(..., help="作业 ID")) -> None:
     """查看单个作业详情（/job/{job_id}）"""
-    cfg: AppConfig = ctx.obj["cfg"]
-    token: str = ctx.obj["token"]
-    debug: bool = ctx.obj["debug"]
-    c = SlurmClient(cfg, token, debug=debug)
-    data = c.get(f"/job/{job_id}")
-    print_kv(f"作业 {job_id}", data, cfg.logging.dict_style)
+    with PrintProgress():
+        cfg: AppConfig = ctx.obj["cfg"]
+        token: str = ctx.obj["token"]
+        debug: bool = ctx.obj["debug"]
+        c = SlurmClient(cfg, token, debug=debug)
+        data = c.get(f"/job/{job_id}")
+    print_json_ex(
+        "作业详情",
+        data={"jobs": data["jobs"]},
+        key_priority=["jobs"],
+        expand=True,
+        show_raw=debug,
+        annotations=job_info_ann,
+        show_side_notes_for_tables=True,
+        notes_panel_title="注释",
+        show_side_notes_for_dicts=True,
+        dict_notes_min_hits=2,
+        dict_notes_max_depth=3,
+        dict_notes_panel_title="相关信息",
+    )
 
 
 @job_app.command("submit")
 def job_submit(  # noqa: PLR0913
     ctx: typer.Context,
-    script: str | None = typer.Option(None, "--script", help="脚本内容（直接传入）"),
-    script_path: str | None = typer.Option(None, "--file", help="脚本路径（读取后提交）"),
-    partition: str | None = typer.Option(None, "--partition", help="分区"),
-    qos: str | None = typer.Option(None, "--qos", help="QOS"),
-    account: str | None = typer.Option(None, "--account", help="账务账户"),
-    time_limit: str | None = typer.Option(None, "--time", help="时限，如 01:00:00"),
-    nodes: int | None = typer.Option(None, "--nodes", help="节点数"),
-    ntasks: int | None = typer.Option(None, "--ntasks", help="任务数"),
+    # 彻底禁止直接传脚本内容
+    script_path: str = typer.Argument(help="脚本路径（从文件读取后提交）"),
+    # 账务 / 分区 / QOS
+    account: Annotated[str | None, typer.Option(..., "--account", help="账务账户")] = None,
+    partition: Annotated[str | None, typer.Option(..., "--partition", help="分区")] = None,
+    qos: Annotated[str | None, typer.Option(..., "--qos", help="QOS")] = None,
+    # 资源与时间
+    time_limit: Annotated[str | None, typer.Option(..., "--time", help="时限，如 01:00:00")] = None,
+    nodes: Annotated[
+        str | None,
+        typer.Option(..., "--nodes", help="节点数或范围（如 1 或 1-2）"),
+    ] = None,
+    ntasks: Annotated[int | None, typer.Option(..., "--ntasks", help="任务数（tasks）")] = None,
+    cpus_per_task: Annotated[
+        int | None,
+        typer.Option(..., "--cpus-per-task", help="每个任务的CPU核数"),
+    ] = None,
+    gpus: Annotated[
+        int | None,
+        typer.Option(..., "--gpus", help="每节点GPU数（自动映射为 gres/gpu:N）"),
+    ] = None,
+    mem: Annotated[int | None, typer.Option(..., "--mem", help="每节点内存（MiB）")] = None,
+    # 约束与排队
+    constraint: Annotated[
+        str | None,
+        typer.Option(
+            ...,
+            "--constraint",
+            help="节点特性约束（如 a100|h100）",
+        ),
+    ] = None,
+    exclude: Annotated[
+        str | None,
+        typer.Option(..., "--exclude", help="排除节点，逗号分隔"),
+    ] = None,
+    reservation: Annotated[
+        str | None,
+        typer.Option(..., "--reservation", help="使用预留名"),
+    ] = None,
+    dependency: Annotated[
+        str | None,
+        typer.Option(
+            ...,
+            "--dependency",
+            help="依赖（如 afterok:12345）",
+        ),
+    ] = None,
+    begin_time: Annotated[
+        str | None,
+        typer.Option(
+            ...,
+            "--begin",
+            help="延迟开始时间（如 now+10min 或 23:00）",
+        ),
+    ] = None,
+    # I/O 与目录
+    name: Annotated[str | None, typer.Option(..., "--name", help="作业名")] = None,
+    chdir: Annotated[str | None, typer.Option(..., "--chdir", help="作业工作目录")] = None,
+    output: Annotated[
+        str | None,
+        typer.Option(
+            ...,
+            "--output",
+            help="标准输出路径（如 /path/slurm-%j.out）",
+        ),
+    ] = None,
+    error: Annotated[
+        str | None,
+        typer.Option(
+            ...,
+            "--error",
+            help="标准错误路径（如 /path/slurm-%j.err）",
+        ),
+    ] = None,
+    # 通知
+    mail_user: Annotated[
+        str | None,
+        typer.Option(..., "--mail-user", help="邮件通知收件人（暂不可用）"),
+    ] = None,
+    mail_type: Annotated[
+        list[str] | None,
+        typer.Option(
+            ...,
+            "--mail-type",
+            help="邮件通知类型，可多次传入（如 --mail-type END --mail-type FAIL）",
+        ),
+    ] = None,
+    # 环境变量（可多次传入 KEY=VAL）
+    env: Annotated[
+        list[str] | None,
+        typer.Option(
+            ...,
+            "--env",
+            help="附加环境变量（可多次传入，如 --env FOO=bar）",
+        ),
+    ] = None,
 ) -> None:
-    """提交新作业（POST /job/submit）"""
-    if not script and not script_path:
-        print_error("请使用 --script 或 --file 提供作业脚本内容")
-        raise typer.Exit(code=2)
-    if script_path and not script:
-        try:
-            with open(script_path, encoding="utf-8") as file:
-                script = file.read()
-        except Exception as e:  # noqa: BLE001
-            print_error(f"读取脚本失败：{e}")
-            raise typer.Exit(code=1) from None
+    """提交新作业（POST /slurm/v0.0.43/job/submit）"""
+    # 读取脚本
+    try:
+        with open(script_path, encoding="utf-8") as f:
+            script_text = f.read()
+    except Exception as e:  # noqa: BLE001
+        print_error(f"读取脚本失败：{e}")
+        raise typer.Exit(code=1) from None
 
-    req: dict[str, Any] = {"script": script}
-    # 可根据需要补充更多请求字段
-    opts = {
-        "partition": partition,
-        "qos": qos,
-        "account": account,
-        "time_limit": time_limit,
-        "nodes": nodes,
-        "ntasks": ntasks,
-    }
-    req.update({k: v for k, v in opts.items() if v is not None})
+    # 组装 REST 请求体（对应 v0.0.43_job_desc_msg 的字段）
+    job: dict[str, Any] = {"script": script_text}
+
+    # ——— 基础字段（名字/分区/QOS/账户） ———
+    if name:
+        job["name"] = name
+    if partition:
+        job["partition"] = partition
+    if qos:
+        job["qos"] = qos
+    if account:
+        job["account"] = account
+
+    # ——— 资源与时间 ———
+    # nodes：REST 支持范围字符串（如 "1" 或 "1-2"）
+    if nodes:
+        job["nodes"] = str(nodes)
+    if ntasks is not None:
+        job["tasks"] = ntasks  # REST 字段是 tasks（非 ntasks）
+    if cpus_per_task is not None:
+        job["cpus_per_task"] = cpus_per_task
+    if gpus is not None:
+        job["tres_per_node"] = f"gres/gpu:{gpus}"  # 通用 GPU 申请写法（TRES/GRES）
+    if mem is not None:
+        job["memory_per_node"] = mem  # 单位 MiB；部分站点也接受 GiB 需按站点约定
+    if time_limit:
+        job["time_limit"] = time_limit  # 常见集群接受 "HH:MM:SS" 或分钟值
+
+    # ——— I/O 与目录 ———
+    if output:
+        job["standard_output"] = output
+    if error:
+        job["standard_error"] = error
+    if chdir:
+        job["current_working_directory"] = chdir
+
+    # ——— 约束/排除/预留/依赖/延时 ———
+    if constraint:
+        job["constraints"] = constraint
+    if exclude:
+        job["excluded_nodes"] = exclude
+    if reservation:
+        job["reservation"] = reservation
+    if dependency:
+        job["dependency"] = dependency
+    if begin_time:
+        job["begin_time"] = begin_time
+
+    # ——— 邮件通知 ———
+    if mail_user:
+        job["mail_user"] = mail_user
+    if mail_type:
+        job["mail_type"] = mail_type  # 例如 ["END","FAIL"]
+
+    # ——— 环境变量 ———
+    job["environment"] = []
+    if env:
+        env_map: dict[str, str] = {}
+        for kv in env:
+            if "=" not in kv:
+                print_error(f"--env 需要 KEY=VAL 形式，收到：{kv}")
+                raise typer.Exit(code=2)
+            k, v = kv.split("=", 1)
+            env_map[k] = v
+        job["environment"] = [f"{k}={v}" for k, v in env_map.items()]
+
+    job["environment"].append("_THERE_MUST_BE_A_ENV_VAR_=THIS_IS_A_BUG")
+
+    req: dict[str, Any] = {"job": job}
 
     cfg: AppConfig = ctx.obj["cfg"]
     token: str = ctx.obj["token"]
     debug: bool = ctx.obj["debug"]
     c = SlurmClient(cfg, token, debug=debug)
-    resp = c.post_json("/job/submit", body=req)  # POST /slurm/v0.0.43/job/submit
+
+    # POST /slurm/v0.0.43/job/submit
+    resp = c.post_json("/job/submit", body=req)
     if resp.get("errors"):
         print_error("提交失败")
         print_kv("错误", resp["errors"], cfg.logging.dict_style)
@@ -100,7 +289,7 @@ def job_cancel(
         help="发送信号而非直接取消，例如 TERM,KILL",
     ),
 ) -> None:
-    """取消/信号作业（DELETE /job/{job_id}，可带 ?signal=）"""
+    """取消/信号作业"""
     cfg: AppConfig = ctx.obj["cfg"]
     token: str = ctx.obj["token"]
     debug: bool = ctx.obj["debug"]

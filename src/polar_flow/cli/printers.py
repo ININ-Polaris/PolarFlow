@@ -18,6 +18,8 @@ from rich.table import Table
 from rich.text import Text
 from rich.tree import Tree
 
+from .commands.utils import no_val_nested, version_nested
+
 _console = Console()
 
 
@@ -41,23 +43,23 @@ def _panel(
     )
 
 
-def print_info(msg: str, title: str = "INFO") -> None:
+def print_info(msg: str | Text, title: str = "INFO") -> None:
     _console.print(_panel(msg, title=title, border="cyan"))
 
 
-def print_success(msg: str, title: str = "OK") -> None:
+def print_success(msg: str | Text, title: str = "OK") -> None:
     _console.print(_panel(msg, title=title, border="green"))
 
 
-def print_warning(msg: str, title: str = "WARN") -> None:
+def print_warning(msg: str | Text, title: str = "WARN") -> None:
     _console.print(_panel(msg, title=title, border="yellow"))
 
 
-def print_error(msg: str, title: str = "ERROR") -> None:
+def print_error(msg: str | Text, title: str = "ERROR") -> None:
     _console.print(_panel(msg, title=title, border="red"))
 
 
-def print_debug(msg: str, title: str = "DEBUG", debug: bool = False) -> None:
+def print_debug(msg: str | Text, title: str = "DEBUG", debug: bool = False) -> None:
     if debug:
         _console.print(_panel(Text(str(msg), style="dim"), title=title, border="bright_black"))
 
@@ -274,6 +276,10 @@ def print_json_ex(  # noqa: PLR0913
         for k, v in annotations.items():
             ann_map[k] = v if isinstance(v, Annotation) else Annotation(text=str(v))
 
+    # 处理 NO_VAL
+    data = no_val_nested(data)
+    data = version_nested(data)
+
     # 包装非 Mapping
     if not isinstance(data, Mapping):
         data = {"root": data}
@@ -362,7 +368,7 @@ def print_json_ex(  # noqa: PLR0913
             box=box.SIMPLE,
             header_style="bold magenta",
             show_lines=False,
-            expand=False,
+            expand=True,
         )
         note_tbl.add_column("Field", style="yellow", no_wrap=True)
         note_tbl.add_column("Annotation", overflow="fold", ratio=1)
@@ -376,6 +382,7 @@ def print_json_ex(  # noqa: PLR0913
             title_align="left",
             border_style="magenta",
             width=notes_panel_width,
+            expand=False,
         )
 
     def _render_list_as_table(
@@ -443,13 +450,20 @@ def print_json_ex(  # noqa: PLR0913
             box=box.SIMPLE,
             header_style="bold magenta",
             show_lines=False,
-            expand=False,
+            expand=True,
         )
         note_tbl.add_column("Field", style="yellow", no_wrap=True)
         note_tbl.add_column("Annotation", overflow="fold", ratio=1)
         for field, tip in hits:
             note_tbl.add_row(field, tip)
-        return Panel(note_tbl, title=title, title_align="left", border_style="magenta", width=width)
+        return Panel(
+            note_tbl,
+            title=title,
+            title_align="left",
+            border_style="magenta",
+            width=width,
+            expand=False,
+        )
 
     def _sorted_items(d: Mapping[str, Any]) -> Iterable[tuple[str, Any]]:
         keys = list(d.keys())
@@ -592,11 +606,20 @@ def print_json_ex(  # noqa: PLR0913
         )
 
 
-def get_progress(text: str = "[bold cyan]请稍候，正在处理...[/]") -> Progress:
-    return Progress(
-        SpinnerColumn(style="cyan"),
-        TextColumn(text),
-        TimeElapsedColumn(),  # 显示耗时
-        transient=True,  # 完成后移除
-        console=_console,
-    )
+class PrintProgress:
+    def __init__(self, text: str = "[bold cyan]请稍候，正在处理...[/]") -> None:
+        self.progress = Progress(
+            SpinnerColumn(style="cyan"),
+            TextColumn(text),
+            TimeElapsedColumn(),
+            transient=True,
+            console=_console,
+        )
+
+    def __enter__(self) -> Progress:
+        self.progress.__enter__()
+        self.task_id = self.progress.add_task("loading", total=None)
+        return self.progress
+
+    def __exit__(self, exc_type, exc, tb) -> None:
+        return self.progress.__exit__(exc_type, exc, tb)
