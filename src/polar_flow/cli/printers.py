@@ -1,6 +1,7 @@
 # utils/console.py
 from __future__ import annotations
 
+from collections import Counter
 import json
 from collections.abc import Iterable, Mapping, MutableMapping, Sequence
 from dataclasses import dataclass
@@ -9,7 +10,7 @@ from typing import Any
 
 from rich import box
 from rich.columns import Columns
-from rich.console import Console
+from rich.console import Console, Group
 from rich.json import JSON as RICH_JSON
 from rich.panel import Panel
 from rich.pretty import Pretty
@@ -19,6 +20,8 @@ from rich.text import Text
 from rich.tree import Tree
 
 from .commands.utils import no_val_nested, version_nested
+
+Renderable = Table | Columns | Group
 
 _console = Console()
 
@@ -297,15 +300,41 @@ def print_json_ex(  # noqa: PLR0913
         dicts = [x for x in seq if isinstance(x, Mapping)]
         return bool(dicts) and (len(dicts) / len(seq) >= min_ratio)
 
-    def _collect_keys(seq: list[Mapping[str, Any]], max_keys: int) -> list[str]:
-        from collections import Counter  # noqa: PLC0415
+    def _collect_keys(
+        seq: Iterable[Mapping[str, Any]],
+        max_keys: int,
+        *,
+        sort_keys: bool = False,
+    ) -> list[list[str]]:
+        """
+        将所有 key 按出现频率降序、同频按字典序排序后，
+        按 max_keys 分页返回（list of pages）。
+
+        Arg:
+            seq: 由 mapping 组成的可迭代对象
+            max_keys: 每页最多的 key 数，必须 > 0
+            sort_keys: 是否对“每一页”内再按字母序排序
+        Return:
+            形如 [["k1","k2",...], ["kN+1",...], ...]
+        """
+        if max_keys <= 0:
+            raise ValueError("max_keys must be > 0")
 
         c = Counter()
         for d in seq:
             c.update(d.keys())
-        # 频率降序 + 字典序
-        keys = [k for k, _ in sorted(c.items(), key=lambda kv: (-kv[1], kv[0]))[:max_keys]]
-        return sorted(keys) if sort_keys else keys
+
+        # 全量排序：频率降序 + 字典序
+        ordered_keys = [k for k, _ in sorted(c.items(), key=lambda kv: (-kv[1], kv[0]))]
+
+        # 分页
+        pages = [ordered_keys[i : i + max_keys] for i in range(0, len(ordered_keys), max_keys)]
+
+        # 可选：页内再排序为字母序（不改变跨页的全局顺序）
+        if sort_keys:
+            pages = [sorted(page) for page in pages]
+
+        return pages
 
     def _value_preview(v: Any, max_len: int) -> str:
         try:
@@ -389,43 +418,64 @@ def print_json_ex(  # noqa: PLR0913
         label: str | None,
         path: str,
         seq: list[Mapping[str, Any]],
-    ) -> Table | Columns:
+    ) -> Renderable:
         """
-        原有函数：返回 Rich Table。
-        现在改成：默认返回 Table；若开启 show_side_notes_for_tables 且有注释命中，
-        则返回一个 Columns，把表格和右侧注释面板并排显示。
+        默认返回 Table（当只有一页列时）；
+        若列按 max_keys 分页产生多页，则把多张 Table 用 Group 纵向拼接；
+        若开启 show_side_notes_for_tables 且有注释命中，则返回 Columns：
+        左侧是 Group(所有表)，右侧是注释面板。
         """
-        cols = _collect_keys(seq, table_max_keys)
-        table = Table(
-            title=label or None,
-            box=box.SIMPLE_HEAVY,
-            header_style="bold cyan",
-            show_lines=False,
-            title_style="bold",
-        )
-        table.add_column("#", style="dim", no_wrap=True)
-        for k in cols:
-            table.add_column(k, overflow="fold")
+        # 收集所有分页列
+        pages: list[list[str]] = list(
+            _collect_keys(seq, table_max_keys),
+        )  # 这里的 _collect_keys 已改为分页版
+        all_cols_union: list[str] = sorted({k for page in pages for k in page})
 
-        max_rows = (
-            max_items_per_list if _should_expand(path, level=0) else min(50, max_items_per_list)
-        )
-        for idx, item in enumerate(seq[:max_rows]):
-            row = [str(idx)]
-            for k in cols:
-                v = item.get(k, None)
-                row.append(_value_preview(v, deep_preview_max if expand else preview_max))
-            table.add_row(*row)
-        if len(seq) > max_rows:
-            table.caption = f"... ({len(seq) - max_rows} more rows)"
+        tables: list[Table] = []
+
+        for page_cols in pages:
+            table = Table(
+                title=label or None,
+                box=box.SIMPLE_HEAVY,
+                header_style="bold cyan",
+                show_lines=False,
+                title_style="bold",
+            )
+            table.add_column("#", style="dim", no_wrap=True)
+            for k in page_cols:
+                table.add_column(k, overflow="fold", no_wrap=False)
+
+            max_rows = (
+                max_items_per_list if _should_expand(path, level=0) else min(50, max_items_per_list)
+            )
+            for idx, item in enumerate(seq[:max_rows]):
+                row = [str(idx)]
+                for k in page_cols:
+                    v = item.get(k, None)
+                    row.append(_value_preview(v, deep_preview_max if expand else preview_max))
+                table.add_row(*row)
+
+            if len(seq) > max_rows:
+                table.caption = f"... ({len(seq) - max_rows} more rows)"
+
+            tables.append(table)
+
+        if len(tables) == 1:
+            single_table = tables[0]
+            if show_side_notes_for_tables:
+                notes_panel = _render_notes_panel_for_table(path, all_cols_union)
+                if notes_panel is not None:
+                    return Columns([single_table, notes_panel], expand=True, equal=False, padding=1)
+            return single_table
+
+        stacked = Group(*tables)
 
         if show_side_notes_for_tables:
-            notes_panel = _render_notes_panel_for_table(path, cols)
+            notes_panel = _render_notes_panel_for_table(path, all_cols_union)
             if notes_panel is not None:
-                # 并排显示：左侧表格自适应，右侧面板固定宽度
-                return Columns([table, notes_panel], expand=True, equal=False, padding=1)
+                return Columns([stacked, notes_panel], expand=True, equal=False, padding=1)
 
-        return table
+        return stacked
 
     def _collect_child_key_notes(path: str, items: list[tuple[str, Any]]) -> list[tuple[str, str]]:
         """
