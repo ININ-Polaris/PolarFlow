@@ -13,6 +13,7 @@ from rich.console import Console
 from rich.json import JSON as RICH_JSON
 from rich.panel import Panel
 from rich.pretty import Pretty
+from rich.progress import Progress, SpinnerColumn, TextColumn, TimeElapsedColumn
 from rich.table import Table
 from rich.text import Text
 from rich.tree import Tree
@@ -253,12 +254,12 @@ def print_json_ex(  # noqa: PLR0913
     # 侧边注释面板相关
     show_side_notes_for_tables: bool = True,
     notes_panel_title: str = "Notes",
-    notes_panel_width: int = 48,  # 固定列宽
+    notes_panel_width: int | None = None,  # 固定列宽
     show_side_notes_for_dicts: bool = True,
     dict_notes_min_hits: int = 2,  # 至少命中多少条注释才展示侧栏
     dict_notes_max_depth: int = 4,  # 超过该深度就不再画侧栏，避免过深层级拥挤
     dict_notes_panel_title: str = "Field Notes",
-    dict_notes_panel_width: int = 48,
+    dict_notes_panel_width: int | None = None,
 ) -> None:
     """
     通用大 JSON 打印器（Rich）。
@@ -279,7 +280,7 @@ def print_json_ex(  # noqa: PLR0913
 
     console.rule(f"[bold magenta]{title}")
 
-    # 优先区块（与原函数兼容）
+    # 优先区块
     sections_order = list(key_priority)
     shown: set[str] = set()
 
@@ -358,7 +359,6 @@ def print_json_ex(  # noqa: PLR0913
             return None
 
         note_tbl = Table(
-            title=notes_panel_title,
             box=box.SIMPLE,
             header_style="bold magenta",
             show_lines=False,
@@ -370,7 +370,13 @@ def print_json_ex(  # noqa: PLR0913
         for field, tip in hits:
             note_tbl.add_row(field, tip)
 
-        return Panel(note_tbl, border_style="magenta", width=notes_panel_width)
+        return Panel(
+            note_tbl,
+            title=notes_panel_title,
+            title_align="left",
+            border_style="magenta",
+            width=notes_panel_width,
+        )
 
     def _render_list_as_table(
         label: str | None,
@@ -431,10 +437,9 @@ def print_json_ex(  # noqa: PLR0913
         hits: list[tuple[str, str]],
         *,
         title: str,
-        width: int,
+        width: int | None,
     ) -> Panel:
         note_tbl = Table(
-            title=title,
             box=box.SIMPLE,
             header_style="bold magenta",
             show_lines=False,
@@ -444,7 +449,7 @@ def print_json_ex(  # noqa: PLR0913
         note_tbl.add_column("Annotation", overflow="fold", ratio=1)
         for field, tip in hits:
             note_tbl.add_row(field, tip)
-        return Panel(note_tbl, border_style="magenta", width=width)
+        return Panel(note_tbl, title=title, title_align="left", border_style="magenta", width=width)
 
     def _sorted_items(d: Mapping[str, Any]) -> Iterable[tuple[str, Any]]:
         keys = list(d.keys())
@@ -484,7 +489,9 @@ def print_json_ex(  # noqa: PLR0913
                 hits = _collect_child_key_notes(path, visible_items)
                 if len(hits) >= dict_notes_min_hits:
                     side_panel = _render_notes_panel_for_keys(
-                        hits, title=dict_notes_panel_title, width=dict_notes_panel_width
+                        hits,
+                        title=dict_notes_panel_title,
+                        width=dict_notes_panel_width,
                     )
 
             if side_panel is None:
@@ -583,3 +590,13 @@ def print_json_ex(  # noqa: PLR0913
                 expand=True,
             ),
         )
+
+
+def get_progress(text: str = "[bold cyan]请稍候，正在处理...[/]") -> Progress:
+    return Progress(
+        SpinnerColumn(style="cyan"),
+        TextColumn(text),
+        TimeElapsedColumn(),  # 显示耗时
+        transient=True,  # 完成后移除
+        console=_console,
+    )
