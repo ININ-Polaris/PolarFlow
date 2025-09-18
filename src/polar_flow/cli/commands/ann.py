@@ -103,23 +103,17 @@ stats_ann = {
     "*.pending_rpcs_by_hostlist": "代理队列中前若干个具体待发RPC条目（含目标主机列表）",
 }
 job_info_ann = {
-    # # job 基本标识与状态
-    # "jobs.account": "作业所属的账户／项目",
-    # "jobs.array_job_id": "数组作业的 ID 或标识",
-    # "jobs.array_task_id": "数组作业的 ID 或标识",
-    # "jobs.accrue_time": "额外增加的时间",
-    # "jobs.admin_comment": "管理员注释",
-    # "jobs.allocating_node": "分配节点",
-    # "jobs.array_max_tasks": "数组作业最大任务数量",
-    # "jobs.array_task_string": "任务 ID",
-    # "jobs.association_id": "关联 ID",
-    # "jobs.batch_features": "批处理脚本节点所需的功能",
-    # "jobs.batch_flag": "是否为批处理作业",
-    # "jobs.billable_tres": "",
-    # "jobs.burst_buffer": "突发缓冲区规格",
-    # "jobs.burst_buffer_state": "突发缓冲区规格状态",
     # job 基本标识与状态
+    "jobs.command": "作业的运行入口",
+    "jobs.current_working_directory": "作业的工作目录",
+    "jobs.flags": "作业的标志（特性/特征）",
     "jobs.job_id": "作业的 ID，用来唯一标识该作业",
+    "jobs.hold": "作业是否暂停",
+    "jobs.group_id": "作拥有该作业的用户的组 ID",
+    "jobs.group_name": "作拥有该作业的用户的组名称",
+    "jobs.job_state": "作业当前的状态",
+    "jobs.state_reason": "作业处于当前状态的原因",
+    "jobs.tres_req_str": "作业所请求分配的资源",
     "jobs.name": "提交作业时指定的作业名称",
     "jobs.user": "提交作业的用户名",
     "jobs.account": "作业所属的账户／项目",
@@ -172,6 +166,8 @@ job_info_ann = {
     "jobs.cancelled": "作业是否被取消",
     "jobs.cancel_time": "取消时间（如果有）",
     "jobs.fail_reason": "失败原因／错误信息（如果作业状态为失败或取消）",
+    # 其他
+    "jobs.state_reason": "作业处于当前状态的原因",
 }
 ping_ann = {
     "*.hostname": "主机名",

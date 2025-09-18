@@ -16,7 +16,7 @@ job_app = typer.Typer(help="作业提交/查看/控制")
 @job_app.command("list")
 def job_list(
     ctx: typer.Context,
-    detail: Annotated[bool, typer.Option(..., "--detail", help="列出完整信息（会非常多）")] = False,
+    vvv: Annotated[bool, typer.Option(..., "--vvv", help="列出完整信息（会非常多）")] = False,
 ) -> None:
     """列出作业"""
     with PrintProgress():
@@ -42,7 +42,7 @@ def job_list(
         dict_notes_panel_title="相关信息",
     )
 
-    if detail:
+    if vvv:
         with PrintProgress("[bold cyan]请稍候，正在获取详细信息...[/]"):
             data_detail = c.get("/jobs/")
         title = "作业列表"
@@ -64,7 +64,11 @@ def job_list(
 
 
 @job_app.command("show")
-def job_show(ctx: typer.Context, job_id: int = typer.Argument(..., help="作业 ID")) -> None:
+def job_show(
+    ctx: typer.Context,
+    job_id: int = typer.Argument(..., help="作业 ID"),
+    vvv: Annotated[bool, typer.Option(..., "--vvv", help="列出完整信息（会非常多）")] = False,
+) -> None:
     """查看单个作业详情（/job/{job_id}）"""
     with PrintProgress():
         cfg: AppConfig = ctx.obj["cfg"]
@@ -72,9 +76,39 @@ def job_show(ctx: typer.Context, job_id: int = typer.Argument(..., help="作业 
         debug: bool = ctx.obj["debug"]
         c = SlurmClient(cfg, token, debug=debug)
         data = c.get(f"/job/{job_id}")
+
+    jobs = data.get("jobs", [])
+
+    KEEP_KEYS = {
+        "command",
+        "current_working_directory",
+        "flags",
+        "job_id",
+        "hold",
+        "group_id",
+        "group_name",
+        "job_state",
+        "state_reason",
+        "tres_req_str",
+        "name",
+        "user",
+        "account",
+        "partition",
+        "qos",
+    }
+
+    filtered_jobs = jobs
+    max_cols = 8
+    if not vvv:
+        filtered_jobs = []
+        max_cols = 4
+        for job in jobs:
+            filtered_job = {k: job[k] for k in KEEP_KEYS if k in job}
+            filtered_jobs.append(filtered_job)
+
     print_json_ex(
         "作业详情",
-        data={"jobs": data["jobs"]},
+        data={"jobs": filtered_jobs},
         key_priority=["jobs"],
         expand=True,
         show_raw=debug,
@@ -85,6 +119,7 @@ def job_show(ctx: typer.Context, job_id: int = typer.Argument(..., help="作业 
         dict_notes_min_hits=2,
         dict_notes_max_depth=3,
         dict_notes_panel_title="相关信息",
+        table_max_keys=max_cols,
     )
 
 
@@ -543,9 +578,9 @@ def job_cancel(
     status = resp.get("status")
     if status:
         error: dict[str, Any] = status[0].get("error", None)
-        print_error(f"失败原因：{error["message"]}",f"取消失败 [{error["code"]}]")
+        print_error(f"失败原因：{error['message']}", f"取消失败 [{error['code']}]")
     elif status == []:
-        print_info(f"已取消分配的作业，ID[{job_id}]","取消成功")
+        print_info(f"已取消分配的作业，ID[{job_id}]", "取消成功")
     else:
         print_error("请联系管理员", "未知错误")
     # print_kv("操作结果", resp, cfg.logging.dict_style)
