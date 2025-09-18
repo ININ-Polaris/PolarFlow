@@ -10,7 +10,7 @@ DEBUG = False
 
 app = typer.Typer(
     add_completion=False,
-    help="BIT ININ 自用 SLURM 包装",
+    help="BIT ININ GPU 资源管理工具 [beta 0.0.6]",
 )
 
 

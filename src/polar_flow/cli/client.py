@@ -14,6 +14,13 @@ if TYPE_CHECKING:
 
 DEFAULT_TIMEOUT = 10.0
 
+ERROR_MESSAGES = {
+    400: ("请求错误，请联系管理员、检查配置或网络连接", None),
+    401: ("未登录，请重新登录或检查网络连接", None),
+    404: ("请检查 ID NAME 等是否正确", None),
+    511: ("认证失败或权限不足，请重新登录并确认权限正确", "Network Authentication Required"),
+}
+
 
 class SlurmClient:
     def __init__(self, cfg: AppConfig, token: str, debug: bool = False, prefix: str = "slurm"):
@@ -33,22 +40,16 @@ class SlurmClient:
             code = r.status_code
             content = json.loads(r.content.decode())
             r.raise_for_status()
-        except httpx.HTTPStatusError:
-            if code == 401:
-                print_error("未登录，请重新登录或检查网络连接", "Unauthorized")
-            elif code == 404:
-                print_error("请检查 ID NAME 等是否正确", "资源不存在")
-            elif code == 511:
-                print_error(
-                    "认证失败或权限不足，请重新登录并确认权限正确",
-                    "Network Authentication Required",
-                )
-            elif code == 500:
+        except httpx.HTTPStatusError as e:
+            if code == 500:
                 error = content["errors"][0]
                 print_error(
                     error["error"],
                     title=f"{error['description']} [{error['error_number']}]",
                 )
+            elif code in ERROR_MESSAGES:
+                msg, title = ERROR_MESSAGES[code]
+                print_error(msg, str(e) if title is None else title)
             elif not self._debug:
                 print_error("请联系管理员，或使用 --debug", "未知错误")
             else:

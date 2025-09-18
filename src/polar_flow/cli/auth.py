@@ -82,7 +82,7 @@ def login(
     print_kv(
         "成功认证",
         {
-            "token": token,
+            "token": token if debug else "********",
             "expires": f"{expires} s",
         },
         cfg.logging.dict_style,
