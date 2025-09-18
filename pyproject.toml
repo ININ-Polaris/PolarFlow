@@ -42,10 +42,11 @@ dev = [
 ]
 
 [project.scripts]
-server = "polar_flow.server.app:main"
-worker = "polar_flow.server.worker:main"
+# server = "polar_flow.server.app:main"
+# worker = "polar_flow.server.worker:main"
+# admin = "polar_flow.cli.create_admin:main"
 polar-flow = "polar_flow.cli.entry:entry"
-admin = "polar_flow.cli.create_admin:main"
+pf = "polar_flow.cli.entry:entry"
 
 # ---- hatchling 构建细节 ----
 [tool.hatch.build.targets.wheel]

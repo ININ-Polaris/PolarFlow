@@ -115,7 +115,7 @@ job_info_ann = {
     "jobs.state_reason": "作业处于当前状态的原因",
     "jobs.tres_req_str": "作业所请求分配的资源",
     "jobs.name": "提交作业时指定的作业名称",
-    "jobs.user": "提交作业的用户名",
+    "jobs.user_name": "提交作业的用户名",
     "jobs.account": "作业所属的账户／项目",
     "jobs.partition": "作业提交或分配所在的分区（partition）",
     "jobs.qos": "作业使用的 QoS（Quality of Service）",

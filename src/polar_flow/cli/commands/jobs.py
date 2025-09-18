@@ -3,7 +3,14 @@ from typing import TYPE_CHECKING, Annotated, Any
 import typer
 
 from polar_flow.cli.client import SlurmClient
-from polar_flow.cli.printers import PrintProgress, print_error, print_info, print_json_ex, print_kv
+from polar_flow.cli.printers import (
+    PrintProgress,
+    print_debug,
+    print_error,
+    print_info,
+    print_json_ex,
+    print_kv,
+)
 
 from .ann import job_info_ann, submit_ann
 
@@ -19,17 +26,39 @@ def job_list(
     vvv: Annotated[bool, typer.Option(..., "--vvv", help="列出完整信息（会非常多）")] = False,
 ) -> None:
     """列出作业"""
-    with PrintProgress():
+    progress_msg = "[bold cyan]请稍候，正在获取...[/]"
+    if vvv:
+        progress_msg = "[bold cyan]请稍候，正在获取详细信息...[/]"
+
+    with PrintProgress(progress_msg):
         cfg: AppConfig = ctx.obj["cfg"]
         token: str = ctx.obj["token"]
         debug: bool = ctx.obj["debug"]
         c = SlurmClient(cfg, token, debug=debug)
-        data = c.get("/jobs/state/")
+        data = c.get("/jobs/")
 
-    title = "作业状态"
+    jobs = data.get("jobs", [])
+
+    keep_keys = {
+        "job_id",
+        "name",
+        "user_name",
+        "group_name",
+        "job_state",
+        "state_reason",
+    }
+
+    filtered_jobs = jobs
+    if not vvv:
+        filtered_jobs = []
+        for job in jobs:
+            filtered_job = {k: job[k] for k in keep_keys if k in job}
+            filtered_jobs.append(filtered_job)
+
+    title = "作业列表"
     print_json_ex(
         title,
-        data={"jobs": data["jobs"]},
+        data={"jobs": filtered_jobs},
         key_priority=["jobs"],
         expand=True,
         show_raw=debug,
@@ -40,27 +69,8 @@ def job_list(
         dict_notes_min_hits=2,
         dict_notes_max_depth=3,
         dict_notes_panel_title="相关信息",
+        table_max_keys=8,
     )
-
-    if vvv:
-        with PrintProgress("[bold cyan]请稍候，正在获取详细信息...[/]"):
-            data_detail = c.get("/jobs/")
-        title = "作业列表"
-        print_json_ex(
-            title,
-            data={"jobs": data_detail["jobs"]},
-            key_priority=["jobs"],
-            expand=True,
-            show_raw=debug,
-            annotations=job_info_ann,
-            show_side_notes_for_tables=True,
-            notes_panel_title="注释",
-            show_side_notes_for_dicts=True,
-            dict_notes_min_hits=2,
-            dict_notes_max_depth=3,
-            dict_notes_panel_title="相关信息",
-            table_max_keys=8,
-        )
 
 
 @job_app.command("show")
@@ -79,7 +89,7 @@ def job_show(
 
     jobs = data.get("jobs", [])
 
-    KEEP_KEYS = {
+    keep_keys = {
         "command",
         "current_working_directory",
         "flags",
@@ -91,7 +101,7 @@ def job_show(
         "state_reason",
         "tres_req_str",
         "name",
-        "user",
+        "user_name",
         "account",
         "partition",
         "qos",
@@ -103,7 +113,7 @@ def job_show(
         filtered_jobs = []
         max_cols = 4
         for job in jobs:
-            filtered_job = {k: job[k] for k in KEEP_KEYS if k in job}
+            filtered_job = {k: job[k] for k in keep_keys if k in job}
             filtered_jobs.append(filtered_job)
 
     print_json_ex(
@@ -183,7 +193,7 @@ def job_submit(  # noqa: PLR0913
     ] = None,
     # I/O 与目录
     name: Annotated[str | None, typer.Option(..., "--name", help="作业名")] = None,
-    chdir: Annotated[str | None, typer.Option(..., "--chdir", help="作业工作目录")] = None,
+    chdir: Annotated[str, typer.Option(..., "--chdir", help="作业工作目录")] = "~",
     output: Annotated[
         str | None,
         typer.Option(
@@ -203,7 +213,7 @@ def job_submit(  # noqa: PLR0913
     # 通知
     mail_user: Annotated[
         str | None,
-        typer.Option(..., "--mail-user", help="邮件通知收件人（暂不可用）"),
+        typer.Option(..., "--mail-user", help="邮件通知收件人（暂不可用）", hidden=True),
     ] = None,
     mail_type: Annotated[
         list[str] | None,
@@ -211,6 +221,7 @@ def job_submit(  # noqa: PLR0913
             ...,
             "--mail-type",
             help="邮件通知类型，可多次传入（如 --mail-type END --mail-type FAIL）",
+            hidden=True,
         ),
     ] = None,
     # 其他信息
@@ -403,7 +414,7 @@ def job_alloc(  # noqa: PLR0913
     ] = None,
     # I/O 与目录
     name: Annotated[str | None, typer.Option(..., "--name", help="作业名")] = None,
-    chdir: Annotated[str | None, typer.Option(..., "--chdir", help="作业工作目录")] = None,
+    chdir: Annotated[str, typer.Option(..., "--chdir", help="作业工作目录")] = "~",
     output: Annotated[
         str | None,
         typer.Option(
@@ -423,7 +434,7 @@ def job_alloc(  # noqa: PLR0913
     # 通知
     mail_user: Annotated[
         str | None,
-        typer.Option(..., "--mail-user", help="邮件通知收件人（暂不可用）"),
+        typer.Option(..., "--mail-user", help="邮件通知收件人（暂不可用）", hidden=True),
     ] = None,
     mail_type: Annotated[
         list[str] | None,
@@ -431,6 +442,7 @@ def job_alloc(  # noqa: PLR0913
             ...,
             "--mail-type",
             help="邮件通知类型，可多次传入（如 --mail-type END --mail-type FAIL）",
+            hide_input=True,
         ),
     ] = None,
     # 其他信息
@@ -532,6 +544,7 @@ def job_alloc(  # noqa: PLR0913
         # POST /slurm/v0.0.43/job/allocate
         resp = c.post_json("/job/allocate", body=req)
 
+    print_debug(resp, "原始数据", debug=debug)
     if resp.get("errors"):
         print_error("提交失败")
         print_kv("错误", resp["errors"], cfg.logging.dict_style)
