@@ -1,0 +1,1 @@
+slurm_client 0.1.0 from slurm restful api v0.0.43
