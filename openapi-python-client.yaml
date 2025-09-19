@@ -1,0 +1,8 @@
+# openapi-python-client.yaml
+project_name_override: slurm_client
+package_name_override: slurm_client
+package_version_override: 0.1.0
+field_prefix: attr_
+post_hooks:
+  - "ruff check . --fix"
+  - "ruff format ."
