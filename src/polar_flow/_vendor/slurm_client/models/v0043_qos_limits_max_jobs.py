@@ -17,13 +17,6 @@ T = TypeVar("T", bound="V0043QosLimitsMaxJobs")
 
 @_attrs_define
 class V0043QosLimitsMaxJobs:
-    """
-    Attributes:
-        count (Union[Unset, V0043Uint32NoValStruct]):
-        active_jobs (Union[Unset, V0043QosLimitsMaxJobsActiveJobs]):
-        per (Union[Unset, V0043QosLimitsMaxJobsPer]):
-    """
-
     count: Union[Unset, "V0043Uint32NoValStruct"] = UNSET
     active_jobs: Union[Unset, "V0043QosLimitsMaxJobsActiveJobs"] = UNSET
     per: Union[Unset, "V0043QosLimitsMaxJobsPer"] = UNSET

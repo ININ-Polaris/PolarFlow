@@ -28,52 +28,32 @@ T = TypeVar("T", bound="V0043PartitionInfo")
 
 @_attrs_define
 class V0043PartitionInfo:
-    """
-    Attributes:
-        nodes (Union[Unset, V0043PartitionInfoNodes]):
-        accounts (Union[Unset, V0043PartitionInfoAccounts]):
-        groups (Union[Unset, V0043PartitionInfoGroups]):
-        qos (Union[Unset, V0043PartitionInfoQos]):
-        alternate (Union[Unset, str]): Alternate - Partition name of alternate partition to be used if the state of this
-            partition is DRAIN or INACTIVE
-        tres (Union[Unset, V0043PartitionInfoTres]):
-        cluster (Union[Unset, str]): Cluster name
-        select_type (Union[Unset, list[V0043PartitionInfoSelectTypeItem]]): Scheduler consumable resource selection type
-        cpus (Union[Unset, V0043PartitionInfoCpus]):
-        defaults (Union[Unset, V0043PartitionInfoDefaults]):
-        grace_time (Union[Unset, int]): GraceTime - Grace time in seconds to be extended to a job which has been
-            selected for preemption
-        maximums (Union[Unset, V0043PartitionInfoMaximums]):
-        minimums (Union[Unset, V0043PartitionInfoMinimums]):
-        name (Union[Unset, str]): PartitionName - Name by which the partition may be referenced
-        node_sets (Union[Unset, str]): NodeSets - Comma-separated list of nodesets which are associated with this
-            partition
-        priority (Union[Unset, V0043PartitionInfoPriority]):
-        timeouts (Union[Unset, V0043PartitionInfoTimeouts]):
-        topology (Union[Unset, str]): Topology - Name of the topology, defined in topology.yaml, used by jobs in this
-            partition
-        partition (Union[Unset, V0043PartitionInfoPartition]):
-        suspend_time (Union[Unset, V0043Uint32NoValStruct]):
-    """
-
     nodes: Union[Unset, "V0043PartitionInfoNodes"] = UNSET
     accounts: Union[Unset, "V0043PartitionInfoAccounts"] = UNSET
     groups: Union[Unset, "V0043PartitionInfoGroups"] = UNSET
     qos: Union[Unset, "V0043PartitionInfoQos"] = UNSET
     alternate: Union[Unset, str] = UNSET
+    """ Alternate - Partition name of alternate partition to be used if the state of this partition is DRAIN or
+    INACTIVE """
     tres: Union[Unset, "V0043PartitionInfoTres"] = UNSET
     cluster: Union[Unset, str] = UNSET
+    """ Cluster name """
     select_type: Union[Unset, list[V0043PartitionInfoSelectTypeItem]] = UNSET
+    """ Scheduler consumable resource selection type """
     cpus: Union[Unset, "V0043PartitionInfoCpus"] = UNSET
     defaults: Union[Unset, "V0043PartitionInfoDefaults"] = UNSET
     grace_time: Union[Unset, int] = UNSET
+    """ GraceTime - Grace time in seconds to be extended to a job which has been selected for preemption """
     maximums: Union[Unset, "V0043PartitionInfoMaximums"] = UNSET
     minimums: Union[Unset, "V0043PartitionInfoMinimums"] = UNSET
     name: Union[Unset, str] = UNSET
+    """ PartitionName - Name by which the partition may be referenced """
     node_sets: Union[Unset, str] = UNSET
+    """ NodeSets - Comma-separated list of nodesets which are associated with this partition """
     priority: Union[Unset, "V0043PartitionInfoPriority"] = UNSET
     timeouts: Union[Unset, "V0043PartitionInfoTimeouts"] = UNSET
     topology: Union[Unset, str] = UNSET
+    """ Topology - Name of the topology, defined in topology.yaml, used by jobs in this partition """
     partition: Union[Unset, "V0043PartitionInfoPartition"] = UNSET
     suspend_time: Union[Unset, "V0043Uint32NoValStruct"] = UNSET
     additional_properties: dict[str, Any] = _attrs_field(init=False, factory=dict)

@@ -17,15 +17,8 @@ T = TypeVar("T", bound="V0043KillJobsRespJob")
 
 @_attrs_define
 class V0043KillJobsRespJob:
-    """
-    Attributes:
-        step_id (str): Job or Step ID that signaling failed
-        job_id (V0043Uint32NoValStruct):
-        error (Union[Unset, V0043KillJobsRespJobError]):
-        federation (Union[Unset, V0043KillJobsRespJobFederation]):
-    """
-
     step_id: str
+    """ Job or Step ID that signaling failed """
     job_id: "V0043Uint32NoValStruct"
     error: Union[Unset, "V0043KillJobsRespJobError"] = UNSET
     federation: Union[Unset, "V0043KillJobsRespJobFederation"] = UNSET

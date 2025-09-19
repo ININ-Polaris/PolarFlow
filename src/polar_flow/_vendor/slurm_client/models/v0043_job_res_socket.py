@@ -13,13 +13,8 @@ T = TypeVar("T", bound="V0043JobResSocket")
 
 @_attrs_define
 class V0043JobResSocket:
-    """
-    Attributes:
-        index (int): Core index
-        cores (list['V0043JobResCore']):
-    """
-
     index: int
+    """ Core index """
     cores: list["V0043JobResCore"]
     additional_properties: dict[str, Any] = _attrs_field(init=False, factory=dict)
 

@@ -17,16 +17,10 @@ T = TypeVar("T", bound="V0043JobRes")
 
 @_attrs_define
 class V0043JobRes:
-    """
-    Attributes:
-        select_type (list[V0043JobResSelectTypeItem]): Scheduler consumable resource selection type
-        cpus (int): Number of allocated CPUs
-        threads_per_core (V0043Uint16NoValStruct):
-        nodes (Union[Unset, V0043JobResNodes]):
-    """
-
     select_type: list[V0043JobResSelectTypeItem]
+    """ Scheduler consumable resource selection type """
     cpus: int
+    """ Number of allocated CPUs """
     threads_per_core: "V0043Uint16NoValStruct"
     nodes: Union[Unset, "V0043JobResNodes"] = UNSET
     additional_properties: dict[str, Any] = _attrs_field(init=False, factory=dict)

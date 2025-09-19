@@ -15,11 +15,6 @@ T = TypeVar("T", bound="V0043QosLimitsMaxJobsActiveJobs")
 
 @_attrs_define
 class V0043QosLimitsMaxJobsActiveJobs:
-    """
-    Attributes:
-        per (Union[Unset, V0043QosLimitsMaxJobsActiveJobsPer]):
-    """
-
     per: Union[Unset, "V0043QosLimitsMaxJobsActiveJobsPer"] = UNSET
     additional_properties: dict[str, Any] = _attrs_field(init=False, factory=dict)
 

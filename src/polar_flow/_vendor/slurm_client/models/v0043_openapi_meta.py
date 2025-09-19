@@ -17,14 +17,6 @@ T = TypeVar("T", bound="V0043OpenapiMeta")
 
 @_attrs_define
 class V0043OpenapiMeta:
-    """
-    Attributes:
-        plugin (Union[Unset, V0043OpenapiMetaPlugin]):
-        client (Union[Unset, V0043OpenapiMetaClient]):
-        command (Union[Unset, list[str]]):
-        slurm (Union[Unset, V0043OpenapiMetaSlurm]):
-    """
-
     plugin: Union[Unset, "V0043OpenapiMetaPlugin"] = UNSET
     client: Union[Unset, "V0043OpenapiMetaClient"] = UNSET
     command: Union[Unset, list[str]] = UNSET

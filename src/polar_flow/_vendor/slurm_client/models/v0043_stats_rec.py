@@ -17,16 +17,9 @@ T = TypeVar("T", bound="V0043StatsRec")
 
 @_attrs_define
 class V0043StatsRec:
-    """
-    Attributes:
-        time_start (Union[Unset, int]): When data collection started (UNIX timestamp) (UNIX timestamp or time string
-            recognized by Slurm (e.g., '[MM/DD[/YY]-]HH:MM[:SS]'))
-        rollups (Union[Unset, V0043RollupStats]):
-        rp_cs (Union[Unset, list['V0043StatsRpc']]):
-        users (Union[Unset, list['V0043StatsUser']]):
-    """
-
     time_start: Union[Unset, int] = UNSET
+    """ When data collection started (UNIX timestamp) (UNIX timestamp or time string recognized by Slurm (e.g.,
+    '[MM/DD[/YY]-]HH:MM[:SS]')) """
     rollups: Union[Unset, "V0043RollupStats"] = UNSET
     rp_cs: Union[Unset, list["V0043StatsRpc"]] = UNSET
     users: Union[Unset, list["V0043StatsUser"]] = UNSET

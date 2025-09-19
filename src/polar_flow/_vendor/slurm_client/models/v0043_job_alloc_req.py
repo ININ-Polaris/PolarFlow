@@ -15,12 +15,6 @@ T = TypeVar("T", bound="V0043JobAllocReq")
 
 @_attrs_define
 class V0043JobAllocReq:
-    """
-    Attributes:
-        hetjob (Union[Unset, list['V0043JobDescMsg']]):
-        job (Union[Unset, V0043JobDescMsg]):
-    """
-
     hetjob: Union[Unset, list["V0043JobDescMsg"]] = UNSET
     job: Union[Unset, "V0043JobDescMsg"] = UNSET
     additional_properties: dict[str, Any] = _attrs_field(init=False, factory=dict)

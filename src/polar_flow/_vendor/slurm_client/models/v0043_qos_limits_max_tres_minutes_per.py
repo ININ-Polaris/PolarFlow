@@ -15,14 +15,6 @@ T = TypeVar("T", bound="V0043QosLimitsMaxTresMinutesPer")
 
 @_attrs_define
 class V0043QosLimitsMaxTresMinutesPer:
-    """
-    Attributes:
-        qos (Union[Unset, list['V0043Tres']]):
-        job (Union[Unset, list['V0043Tres']]):
-        account (Union[Unset, list['V0043Tres']]):
-        user (Union[Unset, list['V0043Tres']]):
-    """
-
     qos: Union[Unset, list["V0043Tres"]] = UNSET
     job: Union[Unset, list["V0043Tres"]] = UNSET
     account: Union[Unset, list["V0043Tres"]] = UNSET

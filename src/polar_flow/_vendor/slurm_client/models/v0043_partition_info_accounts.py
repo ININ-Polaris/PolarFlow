@@ -11,16 +11,10 @@ T = TypeVar("T", bound="V0043PartitionInfoAccounts")
 
 @_attrs_define
 class V0043PartitionInfoAccounts:
-    """
-    Attributes:
-        allowed (Union[Unset, str]): AllowAccounts - Comma-separated list of accounts which may execute jobs in the
-            partition
-        deny (Union[Unset, str]): DenyAccounts - Comma-separated list of accounts which may not execute jobs in the
-            partition
-    """
-
     allowed: Union[Unset, str] = UNSET
+    """ AllowAccounts - Comma-separated list of accounts which may execute jobs in the partition """
     deny: Union[Unset, str] = UNSET
+    """ DenyAccounts - Comma-separated list of accounts which may not execute jobs in the partition """
     additional_properties: dict[str, Any] = _attrs_field(init=False, factory=dict)
 
     def to_dict(self) -> dict[str, Any]:

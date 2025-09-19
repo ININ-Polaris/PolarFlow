@@ -12,14 +12,10 @@ T = TypeVar("T", bound="V0043JobState")
 
 @_attrs_define
 class V0043JobState:
-    """
-    Attributes:
-        current (Union[Unset, list[V0043JobStateCurrentItem]]): Current state
-        reason (Union[Unset, str]): Reason for previous Pending or Failed state
-    """
-
     current: Union[Unset, list[V0043JobStateCurrentItem]] = UNSET
+    """ Current state """
     reason: Union[Unset, str] = UNSET
+    """ Reason for previous Pending or Failed state """
     additional_properties: dict[str, Any] = _attrs_field(init=False, factory=dict)
 
     def to_dict(self) -> dict[str, Any]:

@@ -11,22 +11,18 @@ T = TypeVar("T", bound="V0043BfExitFields")
 
 @_attrs_define
 class V0043BfExitFields:
-    """
-    Attributes:
-        end_job_queue (Union[Unset, int]): Reached end of queue
-        bf_max_job_start (Union[Unset, int]): Reached number of jobs allowed to start
-        bf_max_job_test (Union[Unset, int]): Reached number of jobs allowed to be tested
-        bf_max_time (Union[Unset, int]): Reached maximum allowed scheduler time
-        bf_node_space_size (Union[Unset, int]): Reached table size limit
-        state_changed (Union[Unset, int]): System state changed
-    """
-
     end_job_queue: Union[Unset, int] = UNSET
+    """ Reached end of queue """
     bf_max_job_start: Union[Unset, int] = UNSET
+    """ Reached number of jobs allowed to start """
     bf_max_job_test: Union[Unset, int] = UNSET
+    """ Reached number of jobs allowed to be tested """
     bf_max_time: Union[Unset, int] = UNSET
+    """ Reached maximum allowed scheduler time """
     bf_node_space_size: Union[Unset, int] = UNSET
+    """ Reached table size limit """
     state_changed: Union[Unset, int] = UNSET
+    """ System state changed """
     additional_properties: dict[str, Any] = _attrs_field(init=False, factory=dict)
 
     def to_dict(self) -> dict[str, Any]:

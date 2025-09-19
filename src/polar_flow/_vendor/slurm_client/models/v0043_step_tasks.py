@@ -11,12 +11,8 @@ T = TypeVar("T", bound="V0043StepTasks")
 
 @_attrs_define
 class V0043StepTasks:
-    """
-    Attributes:
-        count (Union[Unset, int]): Total number of tasks
-    """
-
     count: Union[Unset, int] = UNSET
+    """ Total number of tasks """
     additional_properties: dict[str, Any] = _attrs_field(init=False, factory=dict)
 
     def to_dict(self) -> dict[str, Any]:

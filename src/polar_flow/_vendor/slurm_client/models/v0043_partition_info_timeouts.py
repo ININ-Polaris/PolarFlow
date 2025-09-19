@@ -15,12 +15,6 @@ T = TypeVar("T", bound="V0043PartitionInfoTimeouts")
 
 @_attrs_define
 class V0043PartitionInfoTimeouts:
-    """
-    Attributes:
-        resume (Union[Unset, V0043Uint16NoValStruct]):
-        suspend (Union[Unset, V0043Uint16NoValStruct]):
-    """
-
     resume: Union[Unset, "V0043Uint16NoValStruct"] = UNSET
     suspend: Union[Unset, "V0043Uint16NoValStruct"] = UNSET
     additional_properties: dict[str, Any] = _attrs_field(init=False, factory=dict)

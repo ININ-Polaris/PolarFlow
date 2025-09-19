@@ -11,14 +11,10 @@ T = TypeVar("T", bound="V0043SharesFloat128Tres")
 
 @_attrs_define
 class V0043SharesFloat128Tres:
-    """
-    Attributes:
-        name (Union[Unset, str]): TRES name
-        value (Union[Unset, float]): TRES value
-    """
-
     name: Union[Unset, str] = UNSET
+    """ TRES name """
     value: Union[Unset, float] = UNSET
+    """ TRES value """
     additional_properties: dict[str, Any] = _attrs_field(init=False, factory=dict)
 
     def to_dict(self) -> dict[str, Any]:

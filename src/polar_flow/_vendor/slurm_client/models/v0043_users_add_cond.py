@@ -15,16 +15,6 @@ T = TypeVar("T", bound="V0043UsersAddCond")
 
 @_attrs_define
 class V0043UsersAddCond:
-    """
-    Attributes:
-        users (list[str]):
-        accounts (Union[Unset, list[str]]):
-        association (Union[Unset, V0043AssocRecSet]):
-        clusters (Union[Unset, list[str]]):
-        partitions (Union[Unset, list[str]]):
-        wckeys (Union[Unset, list[str]]):
-    """
-
     users: list[str]
     accounts: Union[Unset, list[str]] = UNSET
     association: Union[Unset, "V0043AssocRecSet"] = UNSET

@@ -20,25 +20,17 @@ T = TypeVar("T", bound="V0043User")
 
 @_attrs_define
 class V0043User:
-    """
-    Attributes:
-        name (str): User name
-        administrator_level (Union[Unset, list[V0043UserAdministratorLevelItem]]): AdminLevel granted to the user
-        associations (Union[Unset, list['V0043AssocShort']]):
-        coordinators (Union[Unset, list['V0043Coord']]):
-        default (Union[Unset, V0043UserDefault]):
-        flags (Union[Unset, list[V0043UserFlagsItem]]): Flags associated with this user
-        old_name (Union[Unset, str]): Previous user name
-        wckeys (Union[Unset, list['V0043Wckey']]):
-    """
-
     name: str
+    """ User name """
     administrator_level: Union[Unset, list[V0043UserAdministratorLevelItem]] = UNSET
+    """ AdminLevel granted to the user """
     associations: Union[Unset, list["V0043AssocShort"]] = UNSET
     coordinators: Union[Unset, list["V0043Coord"]] = UNSET
     default: Union[Unset, "V0043UserDefault"] = UNSET
     flags: Union[Unset, list[V0043UserFlagsItem]] = UNSET
+    """ Flags associated with this user """
     old_name: Union[Unset, str] = UNSET
+    """ Previous user name """
     wckeys: Union[Unset, list["V0043Wckey"]] = UNSET
     additional_properties: dict[str, Any] = _attrs_field(init=False, factory=dict)
 

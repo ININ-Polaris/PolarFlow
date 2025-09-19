@@ -24,30 +24,17 @@ T = TypeVar("T", bound="V0043Step")
 
 @_attrs_define
 class V0043Step:
-    """
-    Attributes:
-        time (Union[Unset, V0043StepTime]):
-        exit_code (Union[Unset, V0043ProcessExitCodeVerbose]):
-        nodes (Union[Unset, V0043StepNodes]):
-        tasks (Union[Unset, V0043StepTasks]):
-        pid (Union[Unset, str]): Deprecated; Process ID
-        cpu (Union[Unset, V0043StepCPU]):
-        kill_request_user (Union[Unset, str]): User ID that requested termination of the step
-        state (Union[Unset, list[V0043StepStateItem]]): Current state
-        statistics (Union[Unset, V0043StepStatistics]):
-        step (Union[Unset, V0043StepStep]):
-        task (Union[Unset, V0043StepTask]):
-        tres (Union[Unset, V0043StepTres]):
-    """
-
     time: Union[Unset, "V0043StepTime"] = UNSET
     exit_code: Union[Unset, "V0043ProcessExitCodeVerbose"] = UNSET
     nodes: Union[Unset, "V0043StepNodes"] = UNSET
     tasks: Union[Unset, "V0043StepTasks"] = UNSET
     pid: Union[Unset, str] = UNSET
+    """ Deprecated; Process ID """
     cpu: Union[Unset, "V0043StepCPU"] = UNSET
     kill_request_user: Union[Unset, str] = UNSET
+    """ User ID that requested termination of the step """
     state: Union[Unset, list[V0043StepStateItem]] = UNSET
+    """ Current state """
     statistics: Union[Unset, "V0043StepStatistics"] = UNSET
     step: Union[Unset, "V0043StepStep"] = UNSET
     task: Union[Unset, "V0043StepTask"] = UNSET

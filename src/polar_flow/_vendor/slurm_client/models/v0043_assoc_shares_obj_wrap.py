@@ -19,36 +19,26 @@ T = TypeVar("T", bound="V0043AssocSharesObjWrap")
 
 @_attrs_define
 class V0043AssocSharesObjWrap:
-    """
-    Attributes:
-        id (Union[Unset, int]): Association ID
-        cluster (Union[Unset, str]): Cluster name
-        name (Union[Unset, str]): Share name
-        parent (Union[Unset, str]): Parent name
-        partition (Union[Unset, str]): Partition name
-        shares_normalized (Union[Unset, V0043Float64NoValStruct]):
-        shares (Union[Unset, V0043Uint32NoValStruct]):
-        tres (Union[Unset, V0043AssocSharesObjWrapTres]):
-        effective_usage (Union[Unset, V0043Float64NoValStruct]):
-        usage_normalized (Union[Unset, V0043Float64NoValStruct]):
-        usage (Union[Unset, int]): Measure of tresbillableunits usage
-        fairshare (Union[Unset, V0043AssocSharesObjWrapFairshare]):
-        type_ (Union[Unset, list[V0043AssocSharesObjWrapTypeItem]]): User or account association
-    """
-
     id: Union[Unset, int] = UNSET
+    """ Association ID """
     cluster: Union[Unset, str] = UNSET
+    """ Cluster name """
     name: Union[Unset, str] = UNSET
+    """ Share name """
     parent: Union[Unset, str] = UNSET
+    """ Parent name """
     partition: Union[Unset, str] = UNSET
+    """ Partition name """
     shares_normalized: Union[Unset, "V0043Float64NoValStruct"] = UNSET
     shares: Union[Unset, "V0043Uint32NoValStruct"] = UNSET
     tres: Union[Unset, "V0043AssocSharesObjWrapTres"] = UNSET
     effective_usage: Union[Unset, "V0043Float64NoValStruct"] = UNSET
     usage_normalized: Union[Unset, "V0043Float64NoValStruct"] = UNSET
     usage: Union[Unset, int] = UNSET
+    """ Measure of tresbillableunits usage """
     fairshare: Union[Unset, "V0043AssocSharesObjWrapFairshare"] = UNSET
     type_: Union[Unset, list[V0043AssocSharesObjWrapTypeItem]] = UNSET
+    """ User or account association """
     additional_properties: dict[str, Any] = _attrs_field(init=False, factory=dict)
 
     def to_dict(self) -> dict[str, Any]:

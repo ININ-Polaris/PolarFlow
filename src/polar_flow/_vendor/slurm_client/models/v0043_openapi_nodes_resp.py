@@ -19,15 +19,6 @@ T = TypeVar("T", bound="V0043OpenapiNodesResp")
 
 @_attrs_define
 class V0043OpenapiNodesResp:
-    """
-    Attributes:
-        nodes (list['V0043Node']):
-        last_update (V0043Uint64NoValStruct):
-        meta (Union[Unset, V0043OpenapiMeta]):
-        errors (Union[Unset, list['V0043OpenapiError']]):
-        warnings (Union[Unset, list['V0043OpenapiWarning']]):
-    """
-
     nodes: list["V0043Node"]
     last_update: "V0043Uint64NoValStruct"
     meta: Union[Unset, "V0043OpenapiMeta"] = UNSET

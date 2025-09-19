@@ -18,25 +18,17 @@ T = TypeVar("T", bound="V0043ClusterRec")
 
 @_attrs_define
 class V0043ClusterRec:
-    """
-    Attributes:
-        controller (Union[Unset, V0043ClusterRecController]):
-        flags (Union[Unset, list[V0043ClusterRecFlagsItem]]): Flags
-        name (Union[Unset, str]): ClusterName
-        nodes (Union[Unset, str]): Node names
-        select_plugin (Union[Unset, str]):
-        associations (Union[Unset, V0043ClusterRecAssociations]):
-        rpc_version (Union[Unset, int]): RPC version used in the cluster
-        tres (Union[Unset, list['V0043Tres']]):
-    """
-
     controller: Union[Unset, "V0043ClusterRecController"] = UNSET
     flags: Union[Unset, list[V0043ClusterRecFlagsItem]] = UNSET
+    """ Flags """
     name: Union[Unset, str] = UNSET
+    """ ClusterName """
     nodes: Union[Unset, str] = UNSET
+    """ Node names """
     select_plugin: Union[Unset, str] = UNSET
     associations: Union[Unset, "V0043ClusterRecAssociations"] = UNSET
     rpc_version: Union[Unset, int] = UNSET
+    """ RPC version used in the cluster """
     tres: Union[Unset, list["V0043Tres"]] = UNSET
     additional_properties: dict[str, Any] = _attrs_field(init=False, factory=dict)
 

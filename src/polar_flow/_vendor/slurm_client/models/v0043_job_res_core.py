@@ -11,14 +11,10 @@ T = TypeVar("T", bound="V0043JobResCore")
 
 @_attrs_define
 class V0043JobResCore:
-    """
-    Attributes:
-        index (int): Core index
-        status (list[V0043JobResCoreStatusItem]): Core status
-    """
-
     index: int
+    """ Core index """
     status: list[V0043JobResCoreStatusItem]
+    """ Core status """
     additional_properties: dict[str, Any] = _attrs_field(init=False, factory=dict)
 
     def to_dict(self) -> dict[str, Any]:

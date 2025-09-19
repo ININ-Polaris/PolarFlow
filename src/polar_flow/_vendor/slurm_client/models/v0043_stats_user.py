@@ -15,15 +15,10 @@ T = TypeVar("T", bound="V0043StatsUser")
 
 @_attrs_define
 class V0043StatsUser:
-    """
-    Attributes:
-        user (Union[Unset, str]): User ID
-        count (Union[Unset, int]): Number of RPCs processed
-        time (Union[Unset, V0043StatsUserTime]):
-    """
-
     user: Union[Unset, str] = UNSET
+    """ User ID """
     count: Union[Unset, int] = UNSET
+    """ Number of RPCs processed """
     time: Union[Unset, "V0043StatsUserTime"] = UNSET
     additional_properties: dict[str, Any] = _attrs_field(init=False, factory=dict)
 

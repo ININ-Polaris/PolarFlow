@@ -11,12 +11,8 @@ T = TypeVar("T", bound="V0043JobArrayLimitsMaxRunning")
 
 @_attrs_define
 class V0043JobArrayLimitsMaxRunning:
-    """
-    Attributes:
-        tasks (Union[Unset, int]): Maximum number of simultaneously running tasks, 0 if no limit
-    """
-
     tasks: Union[Unset, int] = UNSET
+    """ Maximum number of simultaneously running tasks, 0 if no limit """
     additional_properties: dict[str, Any] = _attrs_field(init=False, factory=dict)
 
     def to_dict(self) -> dict[str, Any]:

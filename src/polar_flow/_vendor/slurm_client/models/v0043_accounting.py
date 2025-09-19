@@ -16,20 +16,14 @@ T = TypeVar("T", bound="V0043Accounting")
 
 @_attrs_define
 class V0043Accounting:
-    """
-    Attributes:
-        allocated (Union[Unset, V0043AccountingAllocated]):
-        id (Union[Unset, int]): Association ID or Workload characterization key ID
-        id_alt (Union[Unset, int]): Alternate ID (not currently used)
-        start (Union[Unset, int]): When the record was started (UNIX timestamp) (UNIX timestamp or time string
-            recognized by Slurm (e.g., '[MM/DD[/YY]-]HH:MM[:SS]'))
-        tres (Union[Unset, V0043Tres]):
-    """
-
     allocated: Union[Unset, "V0043AccountingAllocated"] = UNSET
     id: Union[Unset, int] = UNSET
+    """ Association ID or Workload characterization key ID """
     id_alt: Union[Unset, int] = UNSET
+    """ Alternate ID (not currently used) """
     start: Union[Unset, int] = UNSET
+    """ When the record was started (UNIX timestamp) (UNIX timestamp or time string recognized by Slurm (e.g.,
+    '[MM/DD[/YY]-]HH:MM[:SS]')) """
     tres: Union[Unset, "V0043Tres"] = UNSET
     additional_properties: dict[str, Any] = _attrs_field(init=False, factory=dict)
 

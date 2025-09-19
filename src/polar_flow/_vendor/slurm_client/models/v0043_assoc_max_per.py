@@ -15,11 +15,6 @@ T = TypeVar("T", bound="V0043AssocMaxPer")
 
 @_attrs_define
 class V0043AssocMaxPer:
-    """
-    Attributes:
-        account (Union[Unset, V0043AssocMaxPerAccount]):
-    """
-
     account: Union[Unset, "V0043AssocMaxPerAccount"] = UNSET
     additional_properties: dict[str, Any] = _attrs_field(init=False, factory=dict)
 

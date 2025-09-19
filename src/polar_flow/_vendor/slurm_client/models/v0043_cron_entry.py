@@ -16,28 +16,23 @@ T = TypeVar("T", bound="V0043CronEntry")
 
 @_attrs_define
 class V0043CronEntry:
-    """
-    Attributes:
-        flags (Union[Unset, list[V0043CronEntryFlagsItem]]): Flags
-        minute (Union[Unset, str]): Ranged string specifying eligible minute values (e.g. 0-10,50)
-        hour (Union[Unset, str]): Ranged string specifying eligible hour values (e.g. 0-5,23)
-        day_of_month (Union[Unset, str]): Ranged string specifying eligible day of month values (e.g. 0-10,29)
-        month (Union[Unset, str]): Ranged string specifying eligible month values (e.g. 0-5,12)
-        day_of_week (Union[Unset, str]): Ranged string specifying eligible day of week values (e.g.0-3,7)
-        specification (Union[Unset, str]): Complete time specification (* means valid for all allowed values) - minute
-            hour day_of_month month day_of_week
-        command (Union[Unset, str]): Command to run
-        line (Union[Unset, V0043CronEntryLine]):
-    """
-
     flags: Union[Unset, list[V0043CronEntryFlagsItem]] = UNSET
+    """ Flags """
     minute: Union[Unset, str] = UNSET
+    """ Ranged string specifying eligible minute values (e.g. 0-10,50) """
     hour: Union[Unset, str] = UNSET
+    """ Ranged string specifying eligible hour values (e.g. 0-5,23) """
     day_of_month: Union[Unset, str] = UNSET
+    """ Ranged string specifying eligible day of month values (e.g. 0-10,29) """
     month: Union[Unset, str] = UNSET
+    """ Ranged string specifying eligible month values (e.g. 0-5,12) """
     day_of_week: Union[Unset, str] = UNSET
+    """ Ranged string specifying eligible day of week values (e.g.0-3,7) """
     specification: Union[Unset, str] = UNSET
+    """ Complete time specification (* means valid for all allowed values) - minute hour day_of_month month
+    day_of_week """
     command: Union[Unset, str] = UNSET
+    """ Command to run """
     line: Union[Unset, "V0043CronEntryLine"] = UNSET
     additional_properties: dict[str, Any] = _attrs_field(init=False, factory=dict)
 

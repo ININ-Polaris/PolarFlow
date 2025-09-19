@@ -18,14 +18,6 @@ T = TypeVar("T", bound="V0043AssocMaxTres")
 
 @_attrs_define
 class V0043AssocMaxTres:
-    """
-    Attributes:
-        total (Union[Unset, list['V0043Tres']]):
-        group (Union[Unset, V0043AssocMaxTresGroup]):
-        minutes (Union[Unset, V0043AssocMaxTresMinutes]):
-        per (Union[Unset, V0043AssocMaxTresPer]):
-    """
-
     total: Union[Unset, list["V0043Tres"]] = UNSET
     group: Union[Unset, "V0043AssocMaxTresGroup"] = UNSET
     minutes: Union[Unset, "V0043AssocMaxTresMinutes"] = UNSET

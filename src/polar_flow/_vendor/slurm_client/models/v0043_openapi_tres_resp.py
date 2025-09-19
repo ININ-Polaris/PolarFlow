@@ -18,14 +18,6 @@ T = TypeVar("T", bound="V0043OpenapiTresResp")
 
 @_attrs_define
 class V0043OpenapiTresResp:
-    """
-    Attributes:
-        tres (list['V0043Tres']):
-        meta (Union[Unset, V0043OpenapiMeta]):
-        errors (Union[Unset, list['V0043OpenapiError']]):
-        warnings (Union[Unset, list['V0043OpenapiWarning']]):
-    """
-
     tres: list["V0043Tres"]
     meta: Union[Unset, "V0043OpenapiMeta"] = UNSET
     errors: Union[Unset, list["V0043OpenapiError"]] = UNSET

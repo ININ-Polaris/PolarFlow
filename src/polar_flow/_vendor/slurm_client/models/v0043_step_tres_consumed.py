@@ -15,14 +15,6 @@ T = TypeVar("T", bound="V0043StepTresConsumed")
 
 @_attrs_define
 class V0043StepTresConsumed:
-    """
-    Attributes:
-        max_ (Union[Unset, list['V0043Tres']]):
-        min_ (Union[Unset, list['V0043Tres']]):
-        average (Union[Unset, list['V0043Tres']]):
-        total (Union[Unset, list['V0043Tres']]):
-    """
-
     max_: Union[Unset, list["V0043Tres"]] = UNSET
     min_: Union[Unset, list["V0043Tres"]] = UNSET
     average: Union[Unset, list["V0043Tres"]] = UNSET

@@ -16,14 +16,6 @@ T = TypeVar("T", bound="V0043AssocMaxJobs")
 
 @_attrs_define
 class V0043AssocMaxJobs:
-    """
-    Attributes:
-        per (Union[Unset, V0043AssocMaxJobsPer]):
-        active (Union[Unset, V0043Uint32NoValStruct]):
-        accruing (Union[Unset, V0043Uint32NoValStruct]):
-        total (Union[Unset, V0043Uint32NoValStruct]):
-    """
-
     per: Union[Unset, "V0043AssocMaxJobsPer"] = UNSET
     active: Union[Unset, "V0043Uint32NoValStruct"] = UNSET
     accruing: Union[Unset, "V0043Uint32NoValStruct"] = UNSET

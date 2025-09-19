@@ -11,15 +11,11 @@ T = TypeVar("T", bound="V0043PartitionInfoTres")
 
 @_attrs_define
 class V0043PartitionInfoTres:
-    """
-    Attributes:
-        billing_weights (Union[Unset, str]): TRESBillingWeights - Billing weights of each tracked TRES type that will be
-            used in calculating the usage of a job
-        configured (Union[Unset, str]): TRES - Number of each applicable TRES type available in this partition
-    """
-
     billing_weights: Union[Unset, str] = UNSET
+    """ TRESBillingWeights - Billing weights of each tracked TRES type that will be used in calculating the usage of
+    a job """
     configured: Union[Unset, str] = UNSET
+    """ TRES - Number of each applicable TRES type available in this partition """
     additional_properties: dict[str, Any] = _attrs_field(init=False, factory=dict)
 
     def to_dict(self) -> dict[str, Any]:

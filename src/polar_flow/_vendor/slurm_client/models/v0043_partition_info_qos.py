@@ -11,16 +11,12 @@ T = TypeVar("T", bound="V0043PartitionInfoQos")
 
 @_attrs_define
 class V0043PartitionInfoQos:
-    """
-    Attributes:
-        allowed (Union[Unset, str]): AllowQOS - Comma-separated list of Qos which may execute jobs in the partition
-        deny (Union[Unset, str]): DenyQOS - Comma-separated list of Qos which may not execute jobs in the partition
-        assigned (Union[Unset, str]): QOS - QOS name containing limits that will apply to all jobs in this partition
-    """
-
     allowed: Union[Unset, str] = UNSET
+    """ AllowQOS - Comma-separated list of Qos which may execute jobs in the partition """
     deny: Union[Unset, str] = UNSET
+    """ DenyQOS - Comma-separated list of Qos which may not execute jobs in the partition """
     assigned: Union[Unset, str] = UNSET
+    """ QOS - QOS name containing limits that will apply to all jobs in this partition """
     additional_properties: dict[str, Any] = _attrs_field(init=False, factory=dict)
 
     def to_dict(self) -> dict[str, Any]:

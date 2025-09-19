@@ -9,18 +9,14 @@ T = TypeVar("T", bound="V0043SlurmdbdPing")
 
 @_attrs_define
 class V0043SlurmdbdPing:
-    """
-    Attributes:
-        hostname (str): Target for ping
-        responding (bool): If ping RPC responded with pong from slurmdbd
-        latency (int): Number of microseconds it took to successfully ping or timeout
-        primary (bool): Is responding slurmdbd the primary controller (Is responding slurmctld the primary controller)
-    """
-
     hostname: str
+    """ Target for ping """
     responding: bool
+    """ If ping RPC responded with pong from slurmdbd """
     latency: int
+    """ Number of microseconds it took to successfully ping or timeout """
     primary: bool
+    """ Is responding slurmdbd the primary controller (Is responding slurmctld the primary controller) """
     additional_properties: dict[str, Any] = _attrs_field(init=False, factory=dict)
 
     def to_dict(self) -> dict[str, Any]:

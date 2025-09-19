@@ -15,11 +15,6 @@ T = TypeVar("T", bound="V0043AssocMaxTresMinutesPer")
 
 @_attrs_define
 class V0043AssocMaxTresMinutesPer:
-    """
-    Attributes:
-        job (Union[Unset, list['V0043Tres']]):
-    """
-
     job: Union[Unset, list["V0043Tres"]] = UNSET
     additional_properties: dict[str, Any] = _attrs_field(init=False, factory=dict)
 

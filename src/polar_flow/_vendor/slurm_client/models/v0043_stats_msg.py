@@ -21,127 +21,109 @@ T = TypeVar("T", bound="V0043StatsMsg")
 
 @_attrs_define
 class V0043StatsMsg:
-    """
-    Attributes:
-        parts_packed (Union[Unset, int]): Zero if only RPC statistic included
-        req_time (Union[Unset, V0043Uint64NoValStruct]):
-        req_time_start (Union[Unset, V0043Uint64NoValStruct]):
-        server_thread_count (Union[Unset, int]): Number of current active slurmctld threads
-        agent_queue_size (Union[Unset, int]): Number of enqueued outgoing RPC requests in an internal retry list
-        agent_count (Union[Unset, int]): Number of agent threads
-        agent_thread_count (Union[Unset, int]): Total number of active threads created by all agent threads
-        dbd_agent_queue_size (Union[Unset, int]): Number of messages for SlurmDBD that are queued
-        gettimeofday_latency (Union[Unset, int]): Latency of 1000 calls to the gettimeofday() syscall in microseconds,
-            as measured at controller startup
-        schedule_cycle_max (Union[Unset, int]): Max time of any scheduling cycle in microseconds since last reset
-        schedule_cycle_last (Union[Unset, int]): Time in microseconds for last scheduling cycle
-        schedule_cycle_sum (Union[Unset, int]): Total run time in microseconds for all scheduling cycles since last
-            reset
-        schedule_cycle_total (Union[Unset, int]): Number of scheduling cycles since last reset
-        schedule_cycle_mean (Union[Unset, int]): Mean time in microseconds for all scheduling cycles since last reset
-        schedule_cycle_mean_depth (Union[Unset, int]): Mean of the number of jobs processed in a scheduling cycle
-        schedule_cycle_per_minute (Union[Unset, int]): Number of scheduling executions per minute
-        schedule_cycle_depth (Union[Unset, int]): Total number of jobs processed in scheduling cycles
-        schedule_exit (Union[Unset, V0043ScheduleExitFields]):
-        schedule_queue_length (Union[Unset, int]): Number of jobs pending in queue
-        jobs_submitted (Union[Unset, int]): Number of jobs submitted since last reset
-        jobs_started (Union[Unset, int]): Number of jobs started since last reset
-        jobs_completed (Union[Unset, int]): Number of jobs completed since last reset
-        jobs_canceled (Union[Unset, int]): Number of jobs canceled since the last reset
-        jobs_failed (Union[Unset, int]): Number of jobs failed due to slurmd or other internal issues since last reset
-        jobs_pending (Union[Unset, int]): Number of jobs pending at the time of listed in job_state_ts
-        jobs_running (Union[Unset, int]): Number of jobs running at the time of listed in job_state_ts
-        job_states_ts (Union[Unset, V0043Uint64NoValStruct]):
-        bf_backfilled_jobs (Union[Unset, int]): Number of jobs started through backfilling since last slurm start
-        bf_last_backfilled_jobs (Union[Unset, int]): Number of jobs started through backfilling since last reset
-        bf_backfilled_het_jobs (Union[Unset, int]): Number of heterogeneous job components started through backfilling
-            since last Slurm start
-        bf_cycle_counter (Union[Unset, int]): Number of backfill scheduling cycles since last reset
-        bf_cycle_mean (Union[Unset, int]): Mean time in microseconds of backfilling scheduling cycles since last reset
-        bf_depth_mean (Union[Unset, int]): Mean number of eligible to run jobs processed during all backfilling
-            scheduling cycles since last reset
-        bf_depth_mean_try (Union[Unset, int]): The subset of Depth Mean that the backfill scheduler attempted to
-            schedule
-        bf_cycle_sum (Union[Unset, int]): Total time in microseconds of backfilling scheduling cycles since last reset
-        bf_cycle_last (Union[Unset, int]): Execution time in microseconds of last backfill scheduling cycle
-        bf_cycle_max (Union[Unset, int]): Execution time in microseconds of longest backfill scheduling cycle
-        bf_exit (Union[Unset, V0043BfExitFields]):
-        bf_last_depth (Union[Unset, int]): Number of processed jobs during last backfilling scheduling cycle
-        bf_last_depth_try (Union[Unset, int]): Number of processed jobs during last backfilling scheduling cycle that
-            had a chance to start using available resources
-        bf_depth_sum (Union[Unset, int]): Total number of jobs processed during all backfilling scheduling cycles since
-            last reset
-        bf_depth_try_sum (Union[Unset, int]): Subset of bf_depth_sum that the backfill scheduler attempted to schedule
-        bf_queue_len (Union[Unset, int]): Number of jobs pending to be processed by backfilling algorithm
-        bf_queue_len_mean (Union[Unset, int]): Mean number of jobs pending to be processed by backfilling algorithm
-        bf_queue_len_sum (Union[Unset, int]): Total number of jobs pending to be processed by backfilling algorithm
-            since last reset
-        bf_table_size (Union[Unset, int]): Number of different time slots tested by the backfill scheduler in its last
-            iteration
-        bf_table_size_sum (Union[Unset, int]): Total number of different time slots tested by the backfill scheduler
-        bf_table_size_mean (Union[Unset, int]): Mean number of different time slots tested by the backfill scheduler
-        bf_when_last_cycle (Union[Unset, V0043Uint64NoValStruct]):
-        bf_active (Union[Unset, bool]): Backfill scheduler currently running
-        rpcs_by_message_type (Union[Unset, list['V0043StatsMsgRpcType']]): RPCs by type
-        rpcs_by_user (Union[Unset, list['V0043StatsMsgRpcUser']]): RPCs by user
-        pending_rpcs (Union[Unset, list['V0043StatsMsgRpcQueue']]): Pending RPCs
-        pending_rpcs_by_hostlist (Union[Unset, list['V0043StatsMsgRpcDump']]): Pending RPCs by hostlist
-    """
-
     parts_packed: Union[Unset, int] = UNSET
+    """ Zero if only RPC statistic included """
     req_time: Union[Unset, "V0043Uint64NoValStruct"] = UNSET
     req_time_start: Union[Unset, "V0043Uint64NoValStruct"] = UNSET
     server_thread_count: Union[Unset, int] = UNSET
+    """ Number of current active slurmctld threads """
     agent_queue_size: Union[Unset, int] = UNSET
+    """ Number of enqueued outgoing RPC requests in an internal retry list """
     agent_count: Union[Unset, int] = UNSET
+    """ Number of agent threads """
     agent_thread_count: Union[Unset, int] = UNSET
+    """ Total number of active threads created by all agent threads """
     dbd_agent_queue_size: Union[Unset, int] = UNSET
+    """ Number of messages for SlurmDBD that are queued """
     gettimeofday_latency: Union[Unset, int] = UNSET
+    """ Latency of 1000 calls to the gettimeofday() syscall in microseconds, as measured at controller startup """
     schedule_cycle_max: Union[Unset, int] = UNSET
+    """ Max time of any scheduling cycle in microseconds since last reset """
     schedule_cycle_last: Union[Unset, int] = UNSET
+    """ Time in microseconds for last scheduling cycle """
     schedule_cycle_sum: Union[Unset, int] = UNSET
+    """ Total run time in microseconds for all scheduling cycles since last reset """
     schedule_cycle_total: Union[Unset, int] = UNSET
+    """ Number of scheduling cycles since last reset """
     schedule_cycle_mean: Union[Unset, int] = UNSET
+    """ Mean time in microseconds for all scheduling cycles since last reset """
     schedule_cycle_mean_depth: Union[Unset, int] = UNSET
+    """ Mean of the number of jobs processed in a scheduling cycle """
     schedule_cycle_per_minute: Union[Unset, int] = UNSET
+    """ Number of scheduling executions per minute """
     schedule_cycle_depth: Union[Unset, int] = UNSET
+    """ Total number of jobs processed in scheduling cycles """
     schedule_exit: Union[Unset, "V0043ScheduleExitFields"] = UNSET
     schedule_queue_length: Union[Unset, int] = UNSET
+    """ Number of jobs pending in queue """
     jobs_submitted: Union[Unset, int] = UNSET
+    """ Number of jobs submitted since last reset """
     jobs_started: Union[Unset, int] = UNSET
+    """ Number of jobs started since last reset """
     jobs_completed: Union[Unset, int] = UNSET
+    """ Number of jobs completed since last reset """
     jobs_canceled: Union[Unset, int] = UNSET
+    """ Number of jobs canceled since the last reset """
     jobs_failed: Union[Unset, int] = UNSET
+    """ Number of jobs failed due to slurmd or other internal issues since last reset """
     jobs_pending: Union[Unset, int] = UNSET
+    """ Number of jobs pending at the time of listed in job_state_ts """
     jobs_running: Union[Unset, int] = UNSET
+    """ Number of jobs running at the time of listed in job_state_ts """
     job_states_ts: Union[Unset, "V0043Uint64NoValStruct"] = UNSET
     bf_backfilled_jobs: Union[Unset, int] = UNSET
+    """ Number of jobs started through backfilling since last slurm start """
     bf_last_backfilled_jobs: Union[Unset, int] = UNSET
+    """ Number of jobs started through backfilling since last reset """
     bf_backfilled_het_jobs: Union[Unset, int] = UNSET
+    """ Number of heterogeneous job components started through backfilling since last Slurm start """
     bf_cycle_counter: Union[Unset, int] = UNSET
+    """ Number of backfill scheduling cycles since last reset """
     bf_cycle_mean: Union[Unset, int] = UNSET
+    """ Mean time in microseconds of backfilling scheduling cycles since last reset """
     bf_depth_mean: Union[Unset, int] = UNSET
+    """ Mean number of eligible to run jobs processed during all backfilling scheduling cycles since last reset """
     bf_depth_mean_try: Union[Unset, int] = UNSET
+    """ The subset of Depth Mean that the backfill scheduler attempted to schedule """
     bf_cycle_sum: Union[Unset, int] = UNSET
+    """ Total time in microseconds of backfilling scheduling cycles since last reset """
     bf_cycle_last: Union[Unset, int] = UNSET
+    """ Execution time in microseconds of last backfill scheduling cycle """
     bf_cycle_max: Union[Unset, int] = UNSET
+    """ Execution time in microseconds of longest backfill scheduling cycle """
     bf_exit: Union[Unset, "V0043BfExitFields"] = UNSET
     bf_last_depth: Union[Unset, int] = UNSET
+    """ Number of processed jobs during last backfilling scheduling cycle """
     bf_last_depth_try: Union[Unset, int] = UNSET
+    """ Number of processed jobs during last backfilling scheduling cycle that had a chance to start using available
+    resources """
     bf_depth_sum: Union[Unset, int] = UNSET
+    """ Total number of jobs processed during all backfilling scheduling cycles since last reset """
     bf_depth_try_sum: Union[Unset, int] = UNSET
+    """ Subset of bf_depth_sum that the backfill scheduler attempted to schedule """
     bf_queue_len: Union[Unset, int] = UNSET
+    """ Number of jobs pending to be processed by backfilling algorithm """
     bf_queue_len_mean: Union[Unset, int] = UNSET
+    """ Mean number of jobs pending to be processed by backfilling algorithm """
     bf_queue_len_sum: Union[Unset, int] = UNSET
+    """ Total number of jobs pending to be processed by backfilling algorithm since last reset """
     bf_table_size: Union[Unset, int] = UNSET
+    """ Number of different time slots tested by the backfill scheduler in its last iteration """
     bf_table_size_sum: Union[Unset, int] = UNSET
+    """ Total number of different time slots tested by the backfill scheduler """
     bf_table_size_mean: Union[Unset, int] = UNSET
+    """ Mean number of different time slots tested by the backfill scheduler """
     bf_when_last_cycle: Union[Unset, "V0043Uint64NoValStruct"] = UNSET
     bf_active: Union[Unset, bool] = UNSET
+    """ Backfill scheduler currently running """
     rpcs_by_message_type: Union[Unset, list["V0043StatsMsgRpcType"]] = UNSET
+    """ RPCs by type """
     rpcs_by_user: Union[Unset, list["V0043StatsMsgRpcUser"]] = UNSET
+    """ RPCs by user """
     pending_rpcs: Union[Unset, list["V0043StatsMsgRpcQueue"]] = UNSET
+    """ Pending RPCs """
     pending_rpcs_by_hostlist: Union[Unset, list["V0043StatsMsgRpcDump"]] = UNSET
+    """ Pending RPCs by hostlist """
     additional_properties: dict[str, Any] = _attrs_field(init=False, factory=dict)
 
     def to_dict(self) -> dict[str, Any]:

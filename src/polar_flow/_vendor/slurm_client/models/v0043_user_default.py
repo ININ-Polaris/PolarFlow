@@ -11,14 +11,10 @@ T = TypeVar("T", bound="V0043UserDefault")
 
 @_attrs_define
 class V0043UserDefault:
-    """
-    Attributes:
-        account (Union[Unset, str]): Default account
-        wckey (Union[Unset, str]): Default WCKey
-    """
-
     account: Union[Unset, str] = UNSET
+    """ Default account """
     wckey: Union[Unset, str] = UNSET
+    """ Default WCKey """
     additional_properties: dict[str, Any] = _attrs_field(init=False, factory=dict)
 
     def to_dict(self) -> dict[str, Any]:

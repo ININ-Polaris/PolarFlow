@@ -11,14 +11,10 @@ T = TypeVar("T", bound="V0043WckeyTagStruct")
 
 @_attrs_define
 class V0043WckeyTagStruct:
-    """
-    Attributes:
-        wckey (str): WCKey name
-        flags (list[V0043WckeyTagStructFlagsItem]): Active flags
-    """
-
     wckey: str
+    """ WCKey name """
     flags: list[V0043WckeyTagStructFlagsItem]
+    """ Active flags """
     additional_properties: dict[str, Any] = _attrs_field(init=False, factory=dict)
 
     def to_dict(self) -> dict[str, Any]:

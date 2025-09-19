@@ -15,14 +15,9 @@ T = TypeVar("T", bound="V0043SharesRespMsg")
 
 @_attrs_define
 class V0043SharesRespMsg:
-    """
-    Attributes:
-        shares (Union[Unset, list['V0043AssocSharesObjWrap']]):
-        total_shares (Union[Unset, int]): Total number of shares
-    """
-
     shares: Union[Unset, list["V0043AssocSharesObjWrap"]] = UNSET
     total_shares: Union[Unset, int] = UNSET
+    """ Total number of shares """
     additional_properties: dict[str, Any] = _attrs_field(init=False, factory=dict)
 
     def to_dict(self) -> dict[str, Any]:

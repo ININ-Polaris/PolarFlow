@@ -15,12 +15,6 @@ T = TypeVar("T", bound="V0043QosLimitsMaxActiveJobs")
 
 @_attrs_define
 class V0043QosLimitsMaxActiveJobs:
-    """
-    Attributes:
-        accruing (Union[Unset, V0043Uint32NoValStruct]):
-        count (Union[Unset, V0043Uint32NoValStruct]):
-    """
-
     accruing: Union[Unset, "V0043Uint32NoValStruct"] = UNSET
     count: Union[Unset, "V0043Uint32NoValStruct"] = UNSET
     additional_properties: dict[str, Any] = _attrs_field(init=False, factory=dict)

@@ -11,26 +11,22 @@ T = TypeVar("T", bound="V0043StepStep")
 
 @_attrs_define
 class V0043StepStep:
-    """
-    Attributes:
-        id (Union[Unset, str]): Step ID (Slurm job step ID)
-        name (Union[Unset, str]): Step name
-        stderr (Union[Unset, str]): Path to stderr file
-        stdin (Union[Unset, str]): Path to stdin file
-        stdout (Union[Unset, str]): Path to stdout file
-        stderr_expanded (Union[Unset, str]): Step stderr with expanded fields
-        stdin_expanded (Union[Unset, str]): Step stdin with expanded fields
-        stdout_expanded (Union[Unset, str]): Step stdout with expanded fields
-    """
-
     id: Union[Unset, str] = UNSET
+    """ Step ID (Slurm job step ID) """
     name: Union[Unset, str] = UNSET
+    """ Step name """
     stderr: Union[Unset, str] = UNSET
+    """ Path to stderr file """
     stdin: Union[Unset, str] = UNSET
+    """ Path to stdin file """
     stdout: Union[Unset, str] = UNSET
+    """ Path to stdout file """
     stderr_expanded: Union[Unset, str] = UNSET
+    """ Step stderr with expanded fields """
     stdin_expanded: Union[Unset, str] = UNSET
+    """ Step stdin with expanded fields """
     stdout_expanded: Union[Unset, str] = UNSET
+    """ Step stdout with expanded fields """
     additional_properties: dict[str, Any] = _attrs_field(init=False, factory=dict)
 
     def to_dict(self) -> dict[str, Any]:

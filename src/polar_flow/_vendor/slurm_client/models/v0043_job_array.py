@@ -16,18 +16,12 @@ T = TypeVar("T", bound="V0043JobArray")
 
 @_attrs_define
 class V0043JobArray:
-    """
-    Attributes:
-        job_id (Union[Unset, int]): Job ID of job array, or 0 if N/A
-        limits (Union[Unset, V0043JobArrayLimits]):
-        task_id (Union[Unset, V0043Uint32NoValStruct]):
-        task (Union[Unset, str]): String expression of task IDs in this record
-    """
-
     job_id: Union[Unset, int] = UNSET
+    """ Job ID of job array, or 0 if N/A """
     limits: Union[Unset, "V0043JobArrayLimits"] = UNSET
     task_id: Union[Unset, "V0043Uint32NoValStruct"] = UNSET
     task: Union[Unset, str] = UNSET
+    """ String expression of task IDs in this record """
     additional_properties: dict[str, Any] = _attrs_field(init=False, factory=dict)
 
     def to_dict(self) -> dict[str, Any]:

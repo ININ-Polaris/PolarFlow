@@ -15,11 +15,6 @@ T = TypeVar("T", bound="V0043JobArrayLimits")
 
 @_attrs_define
 class V0043JobArrayLimits:
-    """
-    Attributes:
-        max_ (Union[Unset, V0043JobArrayLimitsMax]):
-    """
-
     max_: Union[Unset, "V0043JobArrayLimitsMax"] = UNSET
     additional_properties: dict[str, Any] = _attrs_field(init=False, factory=dict)
 

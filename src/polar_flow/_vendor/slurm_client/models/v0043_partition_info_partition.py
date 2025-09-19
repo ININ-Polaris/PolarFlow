@@ -12,12 +12,8 @@ T = TypeVar("T", bound="V0043PartitionInfoPartition")
 
 @_attrs_define
 class V0043PartitionInfoPartition:
-    """
-    Attributes:
-        state (Union[Unset, list[V0043PartitionInfoPartitionStateItem]]): Current state(s)
-    """
-
     state: Union[Unset, list[V0043PartitionInfoPartitionStateItem]] = UNSET
+    """ Current state(s) """
     additional_properties: dict[str, Any] = _attrs_field(init=False, factory=dict)
 
     def to_dict(self) -> dict[str, Any]:

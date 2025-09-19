@@ -11,14 +11,10 @@ T = TypeVar("T", bound="V0043CronEntryLine")
 
 @_attrs_define
 class V0043CronEntryLine:
-    """
-    Attributes:
-        start (Union[Unset, int]): Start of this entry in file
-        end (Union[Unset, int]): End of this entry in file
-    """
-
     start: Union[Unset, int] = UNSET
+    """ Start of this entry in file """
     end: Union[Unset, int] = UNSET
+    """ End of this entry in file """
     additional_properties: dict[str, Any] = _attrs_field(init=False, factory=dict)
 
     def to_dict(self) -> dict[str, Any]:

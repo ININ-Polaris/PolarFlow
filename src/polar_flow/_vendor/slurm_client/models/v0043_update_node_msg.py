@@ -16,39 +16,28 @@ T = TypeVar("T", bound="V0043UpdateNodeMsg")
 
 @_attrs_define
 class V0043UpdateNodeMsg:
-    """
-    Attributes:
-        comment (Union[Unset, str]): Arbitrary comment
-        cpu_bind (Union[Unset, int]): Default method for binding tasks to allocated CPUs
-        extra (Union[Unset, str]): Arbitrary string used for node filtering if extra constraints are enabled
-        features (Union[Unset, list[str]]):
-        features_act (Union[Unset, list[str]]):
-        gres (Union[Unset, str]): Generic resources
-        address (Union[Unset, list[str]]):
-        hostname (Union[Unset, list[str]]):
-        name (Union[Unset, list[str]]):
-        state (Union[Unset, list[V0043UpdateNodeMsgStateItem]]): New state to assign to the node
-        reason (Union[Unset, str]): Reason for node being DOWN or DRAINING
-        reason_uid (Union[Unset, str]): User ID to associate with the reason (needed if user root is sending message)
-        resume_after (Union[Unset, V0043Uint32NoValStruct]):
-        topology_str (Union[Unset, str]): Topology
-        weight (Union[Unset, V0043Uint32NoValStruct]):
-    """
-
     comment: Union[Unset, str] = UNSET
+    """ Arbitrary comment """
     cpu_bind: Union[Unset, int] = UNSET
+    """ Default method for binding tasks to allocated CPUs """
     extra: Union[Unset, str] = UNSET
+    """ Arbitrary string used for node filtering if extra constraints are enabled """
     features: Union[Unset, list[str]] = UNSET
     features_act: Union[Unset, list[str]] = UNSET
     gres: Union[Unset, str] = UNSET
+    """ Generic resources """
     address: Union[Unset, list[str]] = UNSET
     hostname: Union[Unset, list[str]] = UNSET
     name: Union[Unset, list[str]] = UNSET
     state: Union[Unset, list[V0043UpdateNodeMsgStateItem]] = UNSET
+    """ New state to assign to the node """
     reason: Union[Unset, str] = UNSET
+    """ Reason for node being DOWN or DRAINING """
     reason_uid: Union[Unset, str] = UNSET
+    """ User ID to associate with the reason (needed if user root is sending message) """
     resume_after: Union[Unset, "V0043Uint32NoValStruct"] = UNSET
     topology_str: Union[Unset, str] = UNSET
+    """ Topology """
     weight: Union[Unset, "V0043Uint32NoValStruct"] = UNSET
     additional_properties: dict[str, Any] = _attrs_field(init=False, factory=dict)
 

@@ -17,17 +17,10 @@ T = TypeVar("T", bound="V0043OpenapiJobAllocResp")
 
 @_attrs_define
 class V0043OpenapiJobAllocResp:
-    """
-    Attributes:
-        job_id (Union[Unset, int]): Submitted Job ID
-        job_submit_user_msg (Union[Unset, str]): Job submission user message
-        meta (Union[Unset, V0043OpenapiMeta]):
-        errors (Union[Unset, list['V0043OpenapiError']]):
-        warnings (Union[Unset, list['V0043OpenapiWarning']]):
-    """
-
     job_id: Union[Unset, int] = UNSET
+    """ Submitted Job ID """
     job_submit_user_msg: Union[Unset, str] = UNSET
+    """ Job submission user message """
     meta: Union[Unset, "V0043OpenapiMeta"] = UNSET
     errors: Union[Unset, list["V0043OpenapiError"]] = UNSET
     warnings: Union[Unset, list["V0043OpenapiWarning"]] = UNSET

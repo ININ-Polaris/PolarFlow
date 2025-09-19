@@ -11,14 +11,10 @@ T = TypeVar("T", bound="V0043JobResNodeMemory")
 
 @_attrs_define
 class V0043JobResNodeMemory:
-    """
-    Attributes:
-        used (Union[Unset, int]): Total memory (MiB) used by job
-        allocated (Union[Unset, int]): Total memory (MiB) allocated to job
-    """
-
     used: Union[Unset, int] = UNSET
+    """ Total memory (MiB) used by job """
     allocated: Union[Unset, int] = UNSET
+    """ Total memory (MiB) allocated to job """
     additional_properties: dict[str, Any] = _attrs_field(init=False, factory=dict)
 
     def to_dict(self) -> dict[str, Any]:

@@ -19,15 +19,6 @@ T = TypeVar("T", bound="V0043OpenapiAccountsAddCondResp")
 
 @_attrs_define
 class V0043OpenapiAccountsAddCondResp:
-    """
-    Attributes:
-        association_condition (Union[Unset, V0043AccountsAddCond]):
-        account (Union[Unset, V0043AccountShort]):
-        meta (Union[Unset, V0043OpenapiMeta]):
-        errors (Union[Unset, list['V0043OpenapiError']]):
-        warnings (Union[Unset, list['V0043OpenapiWarning']]):
-    """
-
     association_condition: Union[Unset, "V0043AccountsAddCond"] = UNSET
     account: Union[Unset, "V0043AccountShort"] = UNSET
     meta: Union[Unset, "V0043OpenapiMeta"] = UNSET

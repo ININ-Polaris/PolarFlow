@@ -15,12 +15,6 @@ T = TypeVar("T", bound="V0043JobTres")
 
 @_attrs_define
 class V0043JobTres:
-    """
-    Attributes:
-        allocated (Union[Unset, list['V0043Tres']]):
-        requested (Union[Unset, list['V0043Tres']]):
-    """
-
     allocated: Union[Unset, list["V0043Tres"]] = UNSET
     requested: Union[Unset, list["V0043Tres"]] = UNSET
     additional_properties: dict[str, Any] = _attrs_field(init=False, factory=dict)

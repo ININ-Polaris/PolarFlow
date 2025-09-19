@@ -15,13 +15,6 @@ T = TypeVar("T", bound="V0043AccountsAddCond")
 
 @_attrs_define
 class V0043AccountsAddCond:
-    """
-    Attributes:
-        accounts (list[str]):
-        association (Union[Unset, V0043AssocRecSet]):
-        clusters (Union[Unset, list[str]]):
-    """
-
     accounts: list[str]
     association: Union[Unset, "V0043AssocRecSet"] = UNSET
     clusters: Union[Unset, list[str]] = UNSET

@@ -11,16 +11,12 @@ T = TypeVar("T", bound="V0043OpenapiMetaClient")
 
 @_attrs_define
 class V0043OpenapiMetaClient:
-    """
-    Attributes:
-        source (Union[Unset, str]): Client source description
-        user (Union[Unset, str]): Client user (if known)
-        group (Union[Unset, str]): Client group (if known)
-    """
-
     source: Union[Unset, str] = UNSET
+    """ Client source description """
     user: Union[Unset, str] = UNSET
+    """ Client user (if known) """
     group: Union[Unset, str] = UNSET
+    """ Client group (if known) """
     additional_properties: dict[str, Any] = _attrs_field(init=False, factory=dict)
 
     def to_dict(self) -> dict[str, Any]:

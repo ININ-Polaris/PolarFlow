@@ -11,20 +11,16 @@ T = TypeVar("T", bound="V0043JobArrayResponseMsgEntry")
 
 @_attrs_define
 class V0043JobArrayResponseMsgEntry:
-    """
-    Attributes:
-        job_id (Union[Unset, int]): Job ID for updated job
-        step_id (Union[Unset, str]): Step ID for updated job
-        error (Union[Unset, str]): Verbose update status or error
-        error_code (Union[Unset, int]): Verbose update status or error
-        why (Union[Unset, str]): Update response message
-    """
-
     job_id: Union[Unset, int] = UNSET
+    """ Job ID for updated job """
     step_id: Union[Unset, str] = UNSET
+    """ Step ID for updated job """
     error: Union[Unset, str] = UNSET
+    """ Verbose update status or error """
     error_code: Union[Unset, int] = UNSET
+    """ Verbose update status or error """
     why: Union[Unset, str] = UNSET
+    """ Update response message """
     additional_properties: dict[str, Any] = _attrs_field(init=False, factory=dict)
 
     def to_dict(self) -> dict[str, Any]:

@@ -19,15 +19,6 @@ T = TypeVar("T", bound="V0043OpenapiLicensesResp")
 
 @_attrs_define
 class V0043OpenapiLicensesResp:
-    """
-    Attributes:
-        licenses (list['V0043License']):
-        last_update (V0043Uint64NoValStruct):
-        meta (Union[Unset, V0043OpenapiMeta]):
-        errors (Union[Unset, list['V0043OpenapiError']]):
-        warnings (Union[Unset, list['V0043OpenapiWarning']]):
-    """
-
     licenses: list["V0043License"]
     last_update: "V0043Uint64NoValStruct"
     meta: Union[Unset, "V0043OpenapiMeta"] = UNSET

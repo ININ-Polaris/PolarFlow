@@ -11,12 +11,8 @@ T = TypeVar("T", bound="V0043StepTask")
 
 @_attrs_define
 class V0043StepTask:
-    """
-    Attributes:
-        distribution (Union[Unset, str]): The layout of the step was when it was running
-    """
-
     distribution: Union[Unset, str] = UNSET
+    """ The layout of the step was when it was running """
     additional_properties: dict[str, Any] = _attrs_field(init=False, factory=dict)
 
     def to_dict(self) -> dict[str, Any]:

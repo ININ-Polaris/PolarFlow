@@ -11,16 +11,12 @@ T = TypeVar("T", bound="V0043JobComment")
 
 @_attrs_define
 class V0043JobComment:
-    """
-    Attributes:
-        administrator (Union[Unset, str]): Arbitrary comment made by administrator
-        job (Union[Unset, str]): Arbitrary comment made by user
-        system (Union[Unset, str]): Arbitrary comment from slurmctld
-    """
-
     administrator: Union[Unset, str] = UNSET
+    """ Arbitrary comment made by administrator """
     job: Union[Unset, str] = UNSET
+    """ Arbitrary comment made by user """
     system: Union[Unset, str] = UNSET
+    """ Arbitrary comment from slurmctld """
     additional_properties: dict[str, Any] = _attrs_field(init=False, factory=dict)
 
     def to_dict(self) -> dict[str, Any]:

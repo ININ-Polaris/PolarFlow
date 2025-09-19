@@ -15,12 +15,6 @@ T = TypeVar("T", bound="V0043QosLimitsMaxWallClockPer")
 
 @_attrs_define
 class V0043QosLimitsMaxWallClockPer:
-    """
-    Attributes:
-        qos (Union[Unset, V0043Uint32NoValStruct]):
-        job (Union[Unset, V0043Uint32NoValStruct]):
-    """
-
     qos: Union[Unset, "V0043Uint32NoValStruct"] = UNSET
     job: Union[Unset, "V0043Uint32NoValStruct"] = UNSET
     additional_properties: dict[str, Any] = _attrs_field(init=False, factory=dict)

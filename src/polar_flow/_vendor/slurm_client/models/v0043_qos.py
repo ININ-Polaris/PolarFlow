@@ -19,24 +19,15 @@ T = TypeVar("T", bound="V0043Qos")
 
 @_attrs_define
 class V0043Qos:
-    """
-    Attributes:
-        description (Union[Unset, str]): Arbitrary description
-        flags (Union[Unset, list[V0043QosFlagsItem]]): Flags, to avoid modifying current values specify NOT_SET
-        id (Union[Unset, int]): Unique ID
-        limits (Union[Unset, V0043QosLimits]):
-        name (Union[Unset, str]): Name
-        preempt (Union[Unset, V0043QosPreempt]):
-        priority (Union[Unset, V0043Uint32NoValStruct]):
-        usage_factor (Union[Unset, V0043Float64NoValStruct]):
-        usage_threshold (Union[Unset, V0043Float64NoValStruct]):
-    """
-
     description: Union[Unset, str] = UNSET
+    """ Arbitrary description """
     flags: Union[Unset, list[V0043QosFlagsItem]] = UNSET
+    """ Flags, to avoid modifying current values specify NOT_SET """
     id: Union[Unset, int] = UNSET
+    """ Unique ID """
     limits: Union[Unset, "V0043QosLimits"] = UNSET
     name: Union[Unset, str] = UNSET
+    """ Name """
     preempt: Union[Unset, "V0043QosPreempt"] = UNSET
     priority: Union[Unset, "V0043Uint32NoValStruct"] = UNSET
     usage_factor: Union[Unset, "V0043Float64NoValStruct"] = UNSET

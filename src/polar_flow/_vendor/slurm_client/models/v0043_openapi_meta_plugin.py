@@ -11,18 +11,14 @@ T = TypeVar("T", bound="V0043OpenapiMetaPlugin")
 
 @_attrs_define
 class V0043OpenapiMetaPlugin:
-    """
-    Attributes:
-        type_ (Union[Unset, str]): Slurm plugin type (if applicable)
-        name (Union[Unset, str]): Slurm plugin name (if applicable)
-        data_parser (Union[Unset, str]): Slurm data_parser plugin
-        accounting_storage (Union[Unset, str]): Slurm accounting plugin
-    """
-
     type_: Union[Unset, str] = UNSET
+    """ Slurm plugin type (if applicable) """
     name: Union[Unset, str] = UNSET
+    """ Slurm plugin name (if applicable) """
     data_parser: Union[Unset, str] = UNSET
+    """ Slurm data_parser plugin """
     accounting_storage: Union[Unset, str] = UNSET
+    """ Slurm accounting plugin """
     additional_properties: dict[str, Any] = _attrs_field(init=False, factory=dict)
 
     def to_dict(self) -> dict[str, Any]:

@@ -29,104 +29,85 @@ T = TypeVar("T", bound="V0043Job")
 
 @_attrs_define
 class V0043Job:
-    """
-    Attributes:
-        account (Union[Unset, str]): Account the job ran under
-        comment (Union[Unset, V0043JobComment]):
-        allocation_nodes (Union[Unset, int]): List of nodes allocated to the job
-        array (Union[Unset, V0043JobArray]):
-        association (Union[Unset, V0043AssocShort]):
-        block (Union[Unset, str]): The name of the block to be used (used with Blue Gene systems)
-        cluster (Union[Unset, str]): Cluster name
-        constraints (Union[Unset, str]): Feature(s) the job requested as a constraint
-        container (Union[Unset, str]): Absolute path to OCI container bundle
-        derived_exit_code (Union[Unset, V0043ProcessExitCodeVerbose]):
-        time (Union[Unset, V0043JobTime]):
-        exit_code (Union[Unset, V0043ProcessExitCodeVerbose]):
-        extra (Union[Unset, str]): Arbitrary string used for node filtering if extra constraints are enabled
-        failed_node (Union[Unset, str]): Name of node that caused job failure
-        flags (Union[Unset, list[V0043JobFlagsItem]]): Flags associated with this job
-        group (Union[Unset, str]): Group ID of the user that owns the job
-        het (Union[Unset, V0043JobHet]):
-        job_id (Union[Unset, int]): Job ID
-        name (Union[Unset, str]): Job name
-        licenses (Union[Unset, str]): License(s) required by the job
-        mcs (Union[Unset, V0043JobMcs]):
-        nodes (Union[Unset, str]): Node(s) allocated to the job
-        partition (Union[Unset, str]): Partition assigned to the job
-        hold (Union[Unset, bool]): Hold (true) or release (false) job (Job held)
-        priority (Union[Unset, V0043Uint32NoValStruct]):
-        qos (Union[Unset, str]): Quality of Service assigned to the job
-        qosreq (Union[Unset, str]): Requested QOS
-        required (Union[Unset, V0043JobRequired]):
-        kill_request_user (Union[Unset, str]): User ID that requested termination of the job
-        restart_cnt (Union[Unset, int]): How many times this job has been requeued/restarted
-        reservation (Union[Unset, V0043JobReservation]):
-        script (Union[Unset, str]): Job batch script; only the first component in a HetJob is populated or honored
-        segment_size (Union[Unset, int]): Requested segment size
-        stdin_expanded (Union[Unset, str]): Job stdin with expanded fields
-        stdout_expanded (Union[Unset, str]): Job stdout with expanded fields
-        stderr_expanded (Union[Unset, str]): Job stderr with expanded fields
-        stdout (Union[Unset, str]): Path to stdout file
-        stderr (Union[Unset, str]): Path to stderr file
-        stdin (Union[Unset, str]): Path to stdin file
-        state (Union[Unset, V0043JobState]):
-        steps (Union[Unset, list['V0043Step']]):
-        submit_line (Union[Unset, str]): Command used to submit the job
-        tres (Union[Unset, V0043JobTres]):
-        used_gres (Union[Unset, str]): Generic resources used by job
-        user (Union[Unset, str]): User that owns the job
-        wckey (Union[Unset, V0043WckeyTagStruct]):
-        working_directory (Union[Unset, str]): Path to current working directory
-    """
-
     account: Union[Unset, str] = UNSET
+    """ Account the job ran under """
     comment: Union[Unset, "V0043JobComment"] = UNSET
     allocation_nodes: Union[Unset, int] = UNSET
+    """ List of nodes allocated to the job """
     array: Union[Unset, "V0043JobArray"] = UNSET
     association: Union[Unset, "V0043AssocShort"] = UNSET
     block: Union[Unset, str] = UNSET
+    """ The name of the block to be used (used with Blue Gene systems) """
     cluster: Union[Unset, str] = UNSET
+    """ Cluster name """
     constraints: Union[Unset, str] = UNSET
+    """ Feature(s) the job requested as a constraint """
     container: Union[Unset, str] = UNSET
+    """ Absolute path to OCI container bundle """
     derived_exit_code: Union[Unset, "V0043ProcessExitCodeVerbose"] = UNSET
     time: Union[Unset, "V0043JobTime"] = UNSET
     exit_code: Union[Unset, "V0043ProcessExitCodeVerbose"] = UNSET
     extra: Union[Unset, str] = UNSET
+    """ Arbitrary string used for node filtering if extra constraints are enabled """
     failed_node: Union[Unset, str] = UNSET
+    """ Name of node that caused job failure """
     flags: Union[Unset, list[V0043JobFlagsItem]] = UNSET
+    """ Flags associated with this job """
     group: Union[Unset, str] = UNSET
+    """ Group ID of the user that owns the job """
     het: Union[Unset, "V0043JobHet"] = UNSET
     job_id: Union[Unset, int] = UNSET
+    """ Job ID """
     name: Union[Unset, str] = UNSET
+    """ Job name """
     licenses: Union[Unset, str] = UNSET
+    """ License(s) required by the job """
     mcs: Union[Unset, "V0043JobMcs"] = UNSET
     nodes: Union[Unset, str] = UNSET
+    """ Node(s) allocated to the job """
     partition: Union[Unset, str] = UNSET
+    """ Partition assigned to the job """
     hold: Union[Unset, bool] = UNSET
+    """ Hold (true) or release (false) job (Job held) """
     priority: Union[Unset, "V0043Uint32NoValStruct"] = UNSET
     qos: Union[Unset, str] = UNSET
+    """ Quality of Service assigned to the job """
     qosreq: Union[Unset, str] = UNSET
+    """ Requested QOS """
     required: Union[Unset, "V0043JobRequired"] = UNSET
     kill_request_user: Union[Unset, str] = UNSET
+    """ User ID that requested termination of the job """
     restart_cnt: Union[Unset, int] = UNSET
+    """ How many times this job has been requeued/restarted """
     reservation: Union[Unset, "V0043JobReservation"] = UNSET
     script: Union[Unset, str] = UNSET
+    """ Job batch script; only the first component in a HetJob is populated or honored """
     segment_size: Union[Unset, int] = UNSET
+    """ Requested segment size """
     stdin_expanded: Union[Unset, str] = UNSET
+    """ Job stdin with expanded fields """
     stdout_expanded: Union[Unset, str] = UNSET
+    """ Job stdout with expanded fields """
     stderr_expanded: Union[Unset, str] = UNSET
+    """ Job stderr with expanded fields """
     stdout: Union[Unset, str] = UNSET
+    """ Path to stdout file """
     stderr: Union[Unset, str] = UNSET
+    """ Path to stderr file """
     stdin: Union[Unset, str] = UNSET
+    """ Path to stdin file """
     state: Union[Unset, "V0043JobState"] = UNSET
     steps: Union[Unset, list["V0043Step"]] = UNSET
     submit_line: Union[Unset, str] = UNSET
+    """ Command used to submit the job """
     tres: Union[Unset, "V0043JobTres"] = UNSET
     used_gres: Union[Unset, str] = UNSET
+    """ Generic resources used by job """
     user: Union[Unset, str] = UNSET
+    """ User that owns the job """
     wckey: Union[Unset, "V0043WckeyTagStruct"] = UNSET
     working_directory: Union[Unset, str] = UNSET
+    """ Path to current working directory """
     additional_properties: dict[str, Any] = _attrs_field(init=False, factory=dict)
 
     def to_dict(self) -> dict[str, Any]:

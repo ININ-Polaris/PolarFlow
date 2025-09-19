@@ -11,16 +11,12 @@ T = TypeVar("T", bound="V0043RollupStatsHourlyDuration")
 
 @_attrs_define
 class V0043RollupStatsHourlyDuration:
-    """
-    Attributes:
-        last (Union[Unset, int]): Total time spent doing last daily rollup (seconds)
-        max_ (Union[Unset, int]): Longest hourly rollup time (seconds)
-        time (Union[Unset, int]): Total time spent doing hourly rollups (seconds)
-    """
-
     last: Union[Unset, int] = UNSET
+    """ Total time spent doing last daily rollup (seconds) """
     max_: Union[Unset, int] = UNSET
+    """ Longest hourly rollup time (seconds) """
     time: Union[Unset, int] = UNSET
+    """ Total time spent doing hourly rollups (seconds) """
     additional_properties: dict[str, Any] = _attrs_field(init=False, factory=dict)
 
     def to_dict(self) -> dict[str, Any]:

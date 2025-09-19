@@ -11,12 +11,8 @@ T = TypeVar("T", bound="V0043KillJobsRespJobFederation")
 
 @_attrs_define
 class V0043KillJobsRespJobFederation:
-    """
-    Attributes:
-        sibling (Union[Unset, str]): Name of federation sibling (may be empty for non-federation)
-    """
-
     sibling: Union[Unset, str] = UNSET
+    """ Name of federation sibling (may be empty for non-federation) """
     additional_properties: dict[str, Any] = _attrs_field(init=False, factory=dict)
 
     def to_dict(self) -> dict[str, Any]:

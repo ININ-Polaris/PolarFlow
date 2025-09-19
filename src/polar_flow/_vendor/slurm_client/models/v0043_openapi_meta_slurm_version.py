@@ -11,16 +11,12 @@ T = TypeVar("T", bound="V0043OpenapiMetaSlurmVersion")
 
 @_attrs_define
 class V0043OpenapiMetaSlurmVersion:
-    """
-    Attributes:
-        major (Union[Unset, str]): Slurm release major version
-        micro (Union[Unset, str]): Slurm release micro version
-        minor (Union[Unset, str]): Slurm release minor version
-    """
-
     major: Union[Unset, str] = UNSET
+    """ Slurm release major version """
     micro: Union[Unset, str] = UNSET
+    """ Slurm release micro version """
     minor: Union[Unset, str] = UNSET
+    """ Slurm release minor version """
     additional_properties: dict[str, Any] = _attrs_field(init=False, factory=dict)
 
     def to_dict(self) -> dict[str, Any]:

@@ -15,16 +15,11 @@ T = TypeVar("T", bound="V0043RollupStatsDaily")
 
 @_attrs_define
 class V0043RollupStatsDaily:
-    """
-    Attributes:
-        count (Union[Unset, int]): Number of daily rollups since last_run
-        last_run (Union[Unset, int]): Last time daily rollup ran (UNIX timestamp) (UNIX timestamp or time string
-            recognized by Slurm (e.g., '[MM/DD[/YY]-]HH:MM[:SS]'))
-        duration (Union[Unset, V0043RollupStatsDailyDuration]):
-    """
-
     count: Union[Unset, int] = UNSET
+    """ Number of daily rollups since last_run """
     last_run: Union[Unset, int] = UNSET
+    """ Last time daily rollup ran (UNIX timestamp) (UNIX timestamp or time string recognized by Slurm (e.g.,
+    '[MM/DD[/YY]-]HH:MM[:SS]')) """
     duration: Union[Unset, "V0043RollupStatsDailyDuration"] = UNSET
     additional_properties: dict[str, Any] = _attrs_field(init=False, factory=dict)
 

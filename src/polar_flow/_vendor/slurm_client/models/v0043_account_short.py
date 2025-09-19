@@ -11,14 +11,10 @@ T = TypeVar("T", bound="V0043AccountShort")
 
 @_attrs_define
 class V0043AccountShort:
-    """
-    Attributes:
-        description (Union[Unset, str]): Arbitrary string describing the account
-        organization (Union[Unset, str]): Organization to which the account belongs
-    """
-
     description: Union[Unset, str] = UNSET
+    """ Arbitrary string describing the account """
     organization: Union[Unset, str] = UNSET
+    """ Organization to which the account belongs """
     additional_properties: dict[str, Any] = _attrs_field(init=False, factory=dict)
 
     def to_dict(self) -> dict[str, Any]:

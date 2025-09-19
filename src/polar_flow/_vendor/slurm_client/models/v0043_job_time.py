@@ -19,32 +19,23 @@ T = TypeVar("T", bound="V0043JobTime")
 
 @_attrs_define
 class V0043JobTime:
-    """
-    Attributes:
-        elapsed (Union[Unset, int]): Elapsed time in seconds
-        eligible (Union[Unset, int]): Time when the job became eligible to run (UNIX timestamp) (UNIX timestamp or time
-            string recognized by Slurm (e.g., '[MM/DD[/YY]-]HH:MM[:SS]'))
-        end (Union[Unset, int]): End time (UNIX timestamp) (UNIX timestamp or time string recognized by Slurm (e.g.,
-            '[MM/DD[/YY]-]HH:MM[:SS]'))
-        planned (Union[Unset, V0043Uint64NoValStruct]):
-        start (Union[Unset, int]): Time execution began (UNIX timestamp) (UNIX timestamp or time string recognized by
-            Slurm (e.g., '[MM/DD[/YY]-]HH:MM[:SS]'))
-        submission (Union[Unset, int]): Time when the job was submitted (UNIX timestamp) (UNIX timestamp or time string
-            recognized by Slurm (e.g., '[MM/DD[/YY]-]HH:MM[:SS]'))
-        suspended (Union[Unset, int]): Total time in suspended state in seconds
-        system (Union[Unset, V0043JobTimeSystem]):
-        limit (Union[Unset, V0043Uint32NoValStruct]):
-        total (Union[Unset, V0043JobTimeTotal]):
-        user (Union[Unset, V0043JobTimeUser]):
-    """
-
     elapsed: Union[Unset, int] = UNSET
+    """ Elapsed time in seconds """
     eligible: Union[Unset, int] = UNSET
+    """ Time when the job became eligible to run (UNIX timestamp) (UNIX timestamp or time string recognized by Slurm
+    (e.g., '[MM/DD[/YY]-]HH:MM[:SS]')) """
     end: Union[Unset, int] = UNSET
+    """ End time (UNIX timestamp) (UNIX timestamp or time string recognized by Slurm (e.g.,
+    '[MM/DD[/YY]-]HH:MM[:SS]')) """
     planned: Union[Unset, "V0043Uint64NoValStruct"] = UNSET
     start: Union[Unset, int] = UNSET
+    """ Time execution began (UNIX timestamp) (UNIX timestamp or time string recognized by Slurm (e.g.,
+    '[MM/DD[/YY]-]HH:MM[:SS]')) """
     submission: Union[Unset, int] = UNSET
+    """ Time when the job was submitted (UNIX timestamp) (UNIX timestamp or time string recognized by Slurm (e.g.,
+    '[MM/DD[/YY]-]HH:MM[:SS]')) """
     suspended: Union[Unset, int] = UNSET
+    """ Total time in suspended state in seconds """
     system: Union[Unset, "V0043JobTimeSystem"] = UNSET
     limit: Union[Unset, "V0043Uint32NoValStruct"] = UNSET
     total: Union[Unset, "V0043JobTimeTotal"] = UNSET

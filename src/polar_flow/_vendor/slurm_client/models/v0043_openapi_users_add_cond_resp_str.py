@@ -17,15 +17,8 @@ T = TypeVar("T", bound="V0043OpenapiUsersAddCondRespStr")
 
 @_attrs_define
 class V0043OpenapiUsersAddCondRespStr:
-    """
-    Attributes:
-        added_users (str): added_users
-        meta (Union[Unset, V0043OpenapiMeta]):
-        errors (Union[Unset, list['V0043OpenapiError']]):
-        warnings (Union[Unset, list['V0043OpenapiWarning']]):
-    """
-
     added_users: str
+    """ added_users """
     meta: Union[Unset, "V0043OpenapiMeta"] = UNSET
     errors: Union[Unset, list["V0043OpenapiError"]] = UNSET
     warnings: Union[Unset, list["V0043OpenapiWarning"]] = UNSET

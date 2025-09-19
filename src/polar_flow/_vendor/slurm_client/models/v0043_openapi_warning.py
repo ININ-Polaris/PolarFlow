@@ -11,14 +11,10 @@ T = TypeVar("T", bound="V0043OpenapiWarning")
 
 @_attrs_define
 class V0043OpenapiWarning:
-    """
-    Attributes:
-        description (Union[Unset, str]): Long form warning description
-        source (Union[Unset, str]): Source of warning or where warning was first detected
-    """
-
     description: Union[Unset, str] = UNSET
+    """ Long form warning description """
     source: Union[Unset, str] = UNSET
+    """ Source of warning or where warning was first detected """
     additional_properties: dict[str, Any] = _attrs_field(init=False, factory=dict)
 
     def to_dict(self) -> dict[str, Any]:

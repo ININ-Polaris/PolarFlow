@@ -18,14 +18,6 @@ T = TypeVar("T", bound="V0043OpenapiWckeyResp")
 
 @_attrs_define
 class V0043OpenapiWckeyResp:
-    """
-    Attributes:
-        wckeys (list['V0043Wckey']):
-        meta (Union[Unset, V0043OpenapiMeta]):
-        errors (Union[Unset, list['V0043OpenapiError']]):
-        warnings (Union[Unset, list['V0043OpenapiWarning']]):
-    """
-
     wckeys: list["V0043Wckey"]
     meta: Union[Unset, "V0043OpenapiMeta"] = UNSET
     errors: Union[Unset, list["V0043OpenapiError"]] = UNSET

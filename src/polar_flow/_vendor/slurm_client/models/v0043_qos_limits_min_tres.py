@@ -15,11 +15,6 @@ T = TypeVar("T", bound="V0043QosLimitsMinTres")
 
 @_attrs_define
 class V0043QosLimitsMinTres:
-    """
-    Attributes:
-        per (Union[Unset, V0043QosLimitsMinTresPer]):
-    """
-
     per: Union[Unset, "V0043QosLimitsMinTresPer"] = UNSET
     additional_properties: dict[str, Any] = _attrs_field(init=False, factory=dict)
 

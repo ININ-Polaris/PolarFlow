@@ -19,15 +19,6 @@ T = TypeVar("T", bound="V0043OpenapiReservationResp")
 
 @_attrs_define
 class V0043OpenapiReservationResp:
-    """
-    Attributes:
-        reservations (list['V0043ReservationInfo']):
-        last_update (V0043Uint64NoValStruct):
-        meta (Union[Unset, V0043OpenapiMeta]):
-        errors (Union[Unset, list['V0043OpenapiError']]):
-        warnings (Union[Unset, list['V0043OpenapiWarning']]):
-    """
-
     reservations: list["V0043ReservationInfo"]
     last_update: "V0043Uint64NoValStruct"
     meta: Union[Unset, "V0043OpenapiMeta"] = UNSET

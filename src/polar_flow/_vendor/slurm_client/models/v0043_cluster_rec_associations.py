@@ -15,11 +15,6 @@ T = TypeVar("T", bound="V0043ClusterRecAssociations")
 
 @_attrs_define
 class V0043ClusterRecAssociations:
-    """
-    Attributes:
-        root (Union[Unset, V0043AssocShort]):
-    """
-
     root: Union[Unset, "V0043AssocShort"] = UNSET
     additional_properties: dict[str, Any] = _attrs_field(init=False, factory=dict)
 

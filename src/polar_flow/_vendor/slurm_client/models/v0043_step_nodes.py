@@ -11,15 +11,10 @@ T = TypeVar("T", bound="V0043StepNodes")
 
 @_attrs_define
 class V0043StepNodes:
-    """
-    Attributes:
-        count (Union[Unset, int]): Number of nodes in the job step
-        range_ (Union[Unset, str]): Node(s) allocated to the job step
-        list_ (Union[Unset, list[str]]):
-    """
-
     count: Union[Unset, int] = UNSET
+    """ Number of nodes in the job step """
     range_: Union[Unset, str] = UNSET
+    """ Node(s) allocated to the job step """
     list_: Union[Unset, list[str]] = UNSET
     additional_properties: dict[str, Any] = _attrs_field(init=False, factory=dict)
 

@@ -11,30 +11,25 @@ T = TypeVar("T", bound="V0043License")
 
 @_attrs_define
 class V0043License:
-    """
-    Attributes:
-        license_name (Union[Unset, str]): Name of the license
-        total (Union[Unset, int]): Total number of licenses present
-        used (Union[Unset, int]): Number of licenses in use
-        free (Union[Unset, int]): Number of licenses currently available
-        remote (Union[Unset, bool]): Indicates whether licenses are served by the database
-        reserved (Union[Unset, int]): Number of licenses reserved
-        last_consumed (Union[Unset, int]): Last known number of licenses that were consumed in the license manager
-            (Remote Only)
-        last_deficit (Union[Unset, int]): Number of "missing licenses" from the cluster's perspective
-        last_update (Union[Unset, int]): When the license information was last updated (UNIX Timestamp) (UNIX timestamp
-            or time string recognized by Slurm (e.g., '[MM/DD[/YY]-]HH:MM[:SS]'))
-    """
-
     license_name: Union[Unset, str] = UNSET
+    """ Name of the license """
     total: Union[Unset, int] = UNSET
+    """ Total number of licenses present """
     used: Union[Unset, int] = UNSET
+    """ Number of licenses in use """
     free: Union[Unset, int] = UNSET
+    """ Number of licenses currently available """
     remote: Union[Unset, bool] = UNSET
+    """ Indicates whether licenses are served by the database """
     reserved: Union[Unset, int] = UNSET
+    """ Number of licenses reserved """
     last_consumed: Union[Unset, int] = UNSET
+    """ Last known number of licenses that were consumed in the license manager (Remote Only) """
     last_deficit: Union[Unset, int] = UNSET
+    """ Number of "missing licenses" from the cluster's perspective """
     last_update: Union[Unset, int] = UNSET
+    """ When the license information was last updated (UNIX Timestamp) (UNIX timestamp or time string recognized by
+    Slurm (e.g., '[MM/DD[/YY]-]HH:MM[:SS]')) """
     additional_properties: dict[str, Any] = _attrs_field(init=False, factory=dict)
 
     def to_dict(self) -> dict[str, Any]:

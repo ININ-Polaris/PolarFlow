@@ -11,14 +11,10 @@ T = TypeVar("T", bound="V0043ReservationCoreSpec")
 
 @_attrs_define
 class V0043ReservationCoreSpec:
-    """
-    Attributes:
-        node (Union[Unset, str]): Name of reserved node
-        core (Union[Unset, str]): IDs of reserved cores
-    """
-
     node: Union[Unset, str] = UNSET
+    """ Name of reserved node """
     core: Union[Unset, str] = UNSET
+    """ IDs of reserved cores """
     additional_properties: dict[str, Any] = _attrs_field(init=False, factory=dict)
 
     def to_dict(self) -> dict[str, Any]:

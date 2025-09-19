@@ -14,15 +14,10 @@ T = TypeVar("T", bound="V0043PartitionInfoMaximumsOversubscribe")
 
 @_attrs_define
 class V0043PartitionInfoMaximumsOversubscribe:
-    """
-    Attributes:
-        jobs (Union[Unset, int]): Maximum number of jobs allowed to oversubscribe resources
-        flags (Union[Unset, list[V0043PartitionInfoMaximumsOversubscribeFlagsItem]]): Flags applicable to the
-            OverSubscribe setting
-    """
-
     jobs: Union[Unset, int] = UNSET
+    """ Maximum number of jobs allowed to oversubscribe resources """
     flags: Union[Unset, list[V0043PartitionInfoMaximumsOversubscribeFlagsItem]] = UNSET
+    """ Flags applicable to the OverSubscribe setting """
     additional_properties: dict[str, Any] = _attrs_field(init=False, factory=dict)
 
     def to_dict(self) -> dict[str, Any]:

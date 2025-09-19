@@ -13,27 +13,22 @@ T = TypeVar("T", bound="V0043StatsMsgRpcType")
 
 @_attrs_define
 class V0043StatsMsgRpcType:
-    """
-    Attributes:
-        type_id (int): Message type as integer
-        message_type (str): Message type as string (Slurm RPC message type)
-        count (int): Number of RPCs received
-        queued (int): Number of RPCs queued
-        dropped (int): Number of RPCs dropped
-        cycle_last (int): Number of RPCs processed within the last RPC queue cycle
-        cycle_max (int): Maximum number of RPCs processed within a RPC queue cycle since start
-        total_time (int): Total time spent processing RPC in seconds
-        average_time (V0043Uint64NoValStruct):
-    """
-
     type_id: int
+    """ Message type as integer """
     message_type: str
+    """ Message type as string (Slurm RPC message type) """
     count: int
+    """ Number of RPCs received """
     queued: int
+    """ Number of RPCs queued """
     dropped: int
+    """ Number of RPCs dropped """
     cycle_last: int
+    """ Number of RPCs processed within the last RPC queue cycle """
     cycle_max: int
+    """ Maximum number of RPCs processed within a RPC queue cycle since start """
     total_time: int
+    """ Total time spent processing RPC in seconds """
     average_time: "V0043Uint64NoValStruct"
     additional_properties: dict[str, Any] = _attrs_field(init=False, factory=dict)
 

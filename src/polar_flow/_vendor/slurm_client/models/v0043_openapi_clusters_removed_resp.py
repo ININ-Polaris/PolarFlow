@@ -17,14 +17,6 @@ T = TypeVar("T", bound="V0043OpenapiClustersRemovedResp")
 
 @_attrs_define
 class V0043OpenapiClustersRemovedResp:
-    """
-    Attributes:
-        deleted_clusters (list[str]):
-        meta (Union[Unset, V0043OpenapiMeta]):
-        errors (Union[Unset, list['V0043OpenapiError']]):
-        warnings (Union[Unset, list['V0043OpenapiWarning']]):
-    """
-
     deleted_clusters: list[str]
     meta: Union[Unset, "V0043OpenapiMeta"] = UNSET
     errors: Union[Unset, list["V0043OpenapiError"]] = UNSET

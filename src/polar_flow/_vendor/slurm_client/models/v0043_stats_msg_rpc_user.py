@@ -13,19 +13,14 @@ T = TypeVar("T", bound="V0043StatsMsgRpcUser")
 
 @_attrs_define
 class V0043StatsMsgRpcUser:
-    """
-    Attributes:
-        user_id (int): User ID (numeric)
-        user (str): User name
-        count (int): Number of RPCs received
-        total_time (int): Total time spent processing RPC in seconds
-        average_time (V0043Uint64NoValStruct):
-    """
-
     user_id: int
+    """ User ID (numeric) """
     user: str
+    """ User name """
     count: int
+    """ Number of RPCs received """
     total_time: int
+    """ Total time spent processing RPC in seconds """
     average_time: "V0043Uint64NoValStruct"
     additional_properties: dict[str, Any] = _attrs_field(init=False, factory=dict)
 

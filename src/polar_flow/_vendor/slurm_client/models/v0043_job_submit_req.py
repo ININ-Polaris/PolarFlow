@@ -15,14 +15,8 @@ T = TypeVar("T", bound="V0043JobSubmitReq")
 
 @_attrs_define
 class V0043JobSubmitReq:
-    """
-    Attributes:
-        script (Union[Unset, str]): Deprecated; Populate script field in jobs[0] or job
-        jobs (Union[Unset, list['V0043JobDescMsg']]):
-        job (Union[Unset, V0043JobDescMsg]):
-    """
-
     script: Union[Unset, str] = UNSET
+    """ Deprecated; Populate script field in jobs[0] or job """
     jobs: Union[Unset, list["V0043JobDescMsg"]] = UNSET
     job: Union[Unset, "V0043JobDescMsg"] = UNSET
     additional_properties: dict[str, Any] = _attrs_field(init=False, factory=dict)

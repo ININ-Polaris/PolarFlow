@@ -11,12 +11,8 @@ T = TypeVar("T", bound="V0043AccountingAllocated")
 
 @_attrs_define
 class V0043AccountingAllocated:
-    """
-    Attributes:
-        seconds (Union[Unset, int]): Number of seconds allocated
-    """
-
     seconds: Union[Unset, int] = UNSET
+    """ Number of seconds allocated """
     additional_properties: dict[str, Any] = _attrs_field(init=False, factory=dict)
 
     def to_dict(self) -> dict[str, Any]:

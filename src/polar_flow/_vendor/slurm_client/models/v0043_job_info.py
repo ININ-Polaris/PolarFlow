@@ -27,169 +27,50 @@ T = TypeVar("T", bound="V0043JobInfo")
 
 @_attrs_define
 class V0043JobInfo:
-    """
-    Attributes:
-        account (Union[Unset, str]): Account associated with the job
-        accrue_time (Union[Unset, V0043Uint64NoValStruct]):
-        admin_comment (Union[Unset, str]): Arbitrary comment made by administrator
-        allocating_node (Union[Unset, str]): Local node making the resource allocation
-        array_job_id (Union[Unset, V0043Uint32NoValStruct]):
-        array_task_id (Union[Unset, V0043Uint32NoValStruct]):
-        array_max_tasks (Union[Unset, V0043Uint32NoValStruct]):
-        array_task_string (Union[Unset, str]): String expression of task IDs in this record
-        association_id (Union[Unset, int]): Unique identifier for the association
-        batch_features (Union[Unset, str]): Features required for batch script's node
-        batch_flag (Union[Unset, bool]): True if batch job
-        batch_host (Union[Unset, str]): Name of host running batch script
-        flags (Union[Unset, list[V0043JobInfoFlagsItem]]): Job flags
-        burst_buffer (Union[Unset, str]): Burst buffer specifications
-        burst_buffer_state (Union[Unset, str]): Burst buffer state details
-        cluster (Union[Unset, str]): Cluster name
-        cluster_features (Union[Unset, str]): List of required cluster features
-        command (Union[Unset, str]): Executed command
-        comment (Union[Unset, str]): Arbitrary comment
-        container (Union[Unset, str]): Absolute path to OCI container bundle
-        container_id (Union[Unset, str]): OCI container ID
-        contiguous (Union[Unset, bool]): True if job requires contiguous nodes
-        core_spec (Union[Unset, int]): Specialized core count
-        thread_spec (Union[Unset, int]): Specialized thread count
-        cores_per_socket (Union[Unset, V0043Uint16NoValStruct]):
-        billable_tres (Union[Unset, V0043Float64NoValStruct]):
-        cpus_per_task (Union[Unset, V0043Uint16NoValStruct]):
-        cpu_frequency_minimum (Union[Unset, V0043Uint32NoValStruct]):
-        cpu_frequency_maximum (Union[Unset, V0043Uint32NoValStruct]):
-        cpu_frequency_governor (Union[Unset, V0043Uint32NoValStruct]):
-        cpus_per_tres (Union[Unset, str]): Semicolon delimited list of TRES=# values indicating how many CPUs should be
-            allocated for each specified TRES (currently only used for gres/gpu)
-        cron (Union[Unset, str]): Time specification for scrontab job
-        deadline (Union[Unset, V0043Uint64NoValStruct]):
-        delay_boot (Union[Unset, V0043Uint32NoValStruct]):
-        dependency (Union[Unset, str]): Other jobs that must meet certain criteria before this job can start
-        derived_exit_code (Union[Unset, V0043ProcessExitCodeVerbose]):
-        eligible_time (Union[Unset, V0043Uint64NoValStruct]):
-        end_time (Union[Unset, V0043Uint64NoValStruct]):
-        excluded_nodes (Union[Unset, str]): Comma-separated list of nodes that may not be used
-        exit_code (Union[Unset, V0043ProcessExitCodeVerbose]):
-        extra (Union[Unset, str]): Arbitrary string used for node filtering if extra constraints are enabled
-        failed_node (Union[Unset, str]): Name of node that caused job failure
-        features (Union[Unset, str]): Comma-separated list of features that are required
-        federation_origin (Union[Unset, str]): Origin cluster's name (when using federation)
-        federation_siblings_active (Union[Unset, str]): Active sibling job names
-        federation_siblings_viable (Union[Unset, str]): Viable sibling job names
-        gres_detail (Union[Unset, list[str]]):
-        group_id (Union[Unset, int]): Group ID of the user that owns the job
-        group_name (Union[Unset, str]): Group name of the user that owns the job
-        het_job_id (Union[Unset, V0043Uint32NoValStruct]):
-        het_job_id_set (Union[Unset, str]): Job ID range for all heterogeneous job components
-        het_job_offset (Union[Unset, V0043Uint32NoValStruct]):
-        job_id (Union[Unset, int]): Job ID
-        job_resources (Union[Unset, V0043JobRes]):
-        job_size_str (Union[Unset, list[str]]):
-        job_state (Union[Unset, list[V0043JobInfoJobStateItem]]): Current state
-        last_sched_evaluation (Union[Unset, V0043Uint64NoValStruct]):
-        licenses (Union[Unset, str]): License(s) required by the job
-        licenses_allocated (Union[Unset, str]): License(s) allocated to the job
-        mail_type (Union[Unset, list[V0043JobInfoMailTypeItem]]): Mail event type(s)
-        mail_user (Union[Unset, str]): User to receive email notifications
-        max_cpus (Union[Unset, V0043Uint32NoValStruct]):
-        max_nodes (Union[Unset, V0043Uint32NoValStruct]):
-        mcs_label (Union[Unset, str]): Multi-Category Security label on the job
-        memory_per_tres (Union[Unset, str]): Semicolon delimited list of TRES=# values indicating how much memory in
-            megabytes should be allocated for each specified TRES (currently only used for gres/gpu)
-        name (Union[Unset, str]): Job name
-        network (Union[Unset, str]): Network specs for the job
-        nodes (Union[Unset, str]): Node(s) allocated to the job
-        nice (Union[Unset, int]): Requested job priority change
-        tasks_per_core (Union[Unset, V0043Uint16NoValStruct]):
-        tasks_per_tres (Union[Unset, V0043Uint16NoValStruct]):
-        tasks_per_node (Union[Unset, V0043Uint16NoValStruct]):
-        tasks_per_socket (Union[Unset, V0043Uint16NoValStruct]):
-        tasks_per_board (Union[Unset, V0043Uint16NoValStruct]):
-        cpus (Union[Unset, V0043Uint32NoValStruct]):
-        node_count (Union[Unset, V0043Uint32NoValStruct]):
-        tasks (Union[Unset, V0043Uint32NoValStruct]):
-        partition (Union[Unset, str]): Partition assigned to the job
-        prefer (Union[Unset, str]): Feature(s) the job requested but that are not required
-        memory_per_cpu (Union[Unset, V0043Uint64NoValStruct]):
-        memory_per_node (Union[Unset, V0043Uint64NoValStruct]):
-        minimum_cpus_per_node (Union[Unset, V0043Uint16NoValStruct]):
-        minimum_tmp_disk_per_node (Union[Unset, V0043Uint32NoValStruct]):
-        power (Union[Unset, V0043JobInfoPower]):
-        preempt_time (Union[Unset, V0043Uint64NoValStruct]):
-        preemptable_time (Union[Unset, V0043Uint64NoValStruct]):
-        pre_sus_time (Union[Unset, V0043Uint64NoValStruct]):
-        hold (Union[Unset, bool]): Hold (true) or release (false) job (Job held)
-        priority (Union[Unset, V0043Uint32NoValStruct]):
-        priority_by_partition (Union[Unset, list['V0043PartPrio']]):
-        profile (Union[Unset, list[V0043JobInfoProfileItem]]): Profile used by the acct_gather_profile plugin
-        qos (Union[Unset, str]): Quality of Service assigned to the job, if pending the QOS requested
-        reboot (Union[Unset, bool]): Node reboot requested before start
-        required_nodes (Union[Unset, str]): Comma-separated list of required nodes
-        required_switches (Union[Unset, int]): Maximum number of switches
-        requeue (Union[Unset, bool]): Determines whether the job may be requeued
-        resize_time (Union[Unset, V0043Uint64NoValStruct]):
-        restart_cnt (Union[Unset, int]): Number of job restarts
-        resv_name (Union[Unset, str]): Name of reservation to use
-        scheduled_nodes (Union[Unset, str]): List of nodes scheduled to be used for the job
-        segment_size (Union[Unset, int]): Requested segment size
-        selinux_context (Union[Unset, str]): SELinux context
-        shared (Union[Unset, list[V0043JobInfoSharedItem]]): How the job can share resources with other jobs, if at all
-        sockets_per_board (Union[Unset, int]): Number of sockets per board required
-        sockets_per_node (Union[Unset, V0043Uint16NoValStruct]):
-        start_time (Union[Unset, V0043Uint64NoValStruct]):
-        state_description (Union[Unset, str]): Optional details for state_reason
-        state_reason (Union[Unset, str]): Reason for current Pending or Failed state
-        standard_input (Union[Unset, str]): Path to stdin file
-        standard_output (Union[Unset, str]): Path to stdout file
-        standard_error (Union[Unset, str]): Path to stderr file
-        stdin_expanded (Union[Unset, str]): Job stdin with expanded fields
-        stdout_expanded (Union[Unset, str]): Job stdout with expanded fields
-        stderr_expanded (Union[Unset, str]): Job stderr with expanded fields
-        submit_time (Union[Unset, V0043Uint64NoValStruct]):
-        suspend_time (Union[Unset, V0043Uint64NoValStruct]):
-        system_comment (Union[Unset, str]): Arbitrary comment from slurmctld
-        time_limit (Union[Unset, V0043Uint32NoValStruct]):
-        time_minimum (Union[Unset, V0043Uint32NoValStruct]):
-        threads_per_core (Union[Unset, V0043Uint16NoValStruct]):
-        tres_bind (Union[Unset, str]): Task to TRES binding directives
-        tres_freq (Union[Unset, str]): TRES frequency directives
-        tres_per_job (Union[Unset, str]): Comma-separated list of TRES=# values to be allocated per job
-        tres_per_node (Union[Unset, str]): Comma-separated list of TRES=# values to be allocated per node
-        tres_per_socket (Union[Unset, str]): Comma-separated list of TRES=# values to be allocated per socket
-        tres_per_task (Union[Unset, str]): Comma-separated list of TRES=# values to be allocated per task
-        tres_req_str (Union[Unset, str]): TRES requested by the job
-        tres_alloc_str (Union[Unset, str]): TRES used by the job
-        user_id (Union[Unset, int]): User ID that owns the job
-        user_name (Union[Unset, str]): User name that owns the job
-        maximum_switch_wait_time (Union[Unset, int]): Maximum time to wait for switches in seconds
-        wckey (Union[Unset, str]): Workload characterization key
-        current_working_directory (Union[Unset, str]): Working directory to use for the job
-    """
-
     account: Union[Unset, str] = UNSET
+    """ Account associated with the job """
     accrue_time: Union[Unset, "V0043Uint64NoValStruct"] = UNSET
     admin_comment: Union[Unset, str] = UNSET
+    """ Arbitrary comment made by administrator """
     allocating_node: Union[Unset, str] = UNSET
+    """ Local node making the resource allocation """
     array_job_id: Union[Unset, "V0043Uint32NoValStruct"] = UNSET
     array_task_id: Union[Unset, "V0043Uint32NoValStruct"] = UNSET
     array_max_tasks: Union[Unset, "V0043Uint32NoValStruct"] = UNSET
     array_task_string: Union[Unset, str] = UNSET
+    """ String expression of task IDs in this record """
     association_id: Union[Unset, int] = UNSET
+    """ Unique identifier for the association """
     batch_features: Union[Unset, str] = UNSET
+    """ Features required for batch script's node """
     batch_flag: Union[Unset, bool] = UNSET
+    """ True if batch job """
     batch_host: Union[Unset, str] = UNSET
+    """ Name of host running batch script """
     flags: Union[Unset, list[V0043JobInfoFlagsItem]] = UNSET
+    """ Job flags """
     burst_buffer: Union[Unset, str] = UNSET
+    """ Burst buffer specifications """
     burst_buffer_state: Union[Unset, str] = UNSET
+    """ Burst buffer state details """
     cluster: Union[Unset, str] = UNSET
+    """ Cluster name """
     cluster_features: Union[Unset, str] = UNSET
+    """ List of required cluster features """
     command: Union[Unset, str] = UNSET
+    """ Executed command """
     comment: Union[Unset, str] = UNSET
+    """ Arbitrary comment """
     container: Union[Unset, str] = UNSET
+    """ Absolute path to OCI container bundle """
     container_id: Union[Unset, str] = UNSET
+    """ OCI container ID """
     contiguous: Union[Unset, bool] = UNSET
+    """ True if job requires contiguous nodes """
     core_spec: Union[Unset, int] = UNSET
+    """ Specialized core count """
     thread_spec: Union[Unset, int] = UNSET
+    """ Specialized thread count """
     cores_per_socket: Union[Unset, "V0043Uint16NoValStruct"] = UNSET
     billable_tres: Union[Unset, "V0043Float64NoValStruct"] = UNSET
     cpus_per_task: Union[Unset, "V0043Uint16NoValStruct"] = UNSET
@@ -197,44 +78,71 @@ class V0043JobInfo:
     cpu_frequency_maximum: Union[Unset, "V0043Uint32NoValStruct"] = UNSET
     cpu_frequency_governor: Union[Unset, "V0043Uint32NoValStruct"] = UNSET
     cpus_per_tres: Union[Unset, str] = UNSET
+    """ Semicolon delimited list of TRES=# values indicating how many CPUs should be allocated for each specified
+    TRES (currently only used for gres/gpu) """
     cron: Union[Unset, str] = UNSET
+    """ Time specification for scrontab job """
     deadline: Union[Unset, "V0043Uint64NoValStruct"] = UNSET
     delay_boot: Union[Unset, "V0043Uint32NoValStruct"] = UNSET
     dependency: Union[Unset, str] = UNSET
+    """ Other jobs that must meet certain criteria before this job can start """
     derived_exit_code: Union[Unset, "V0043ProcessExitCodeVerbose"] = UNSET
     eligible_time: Union[Unset, "V0043Uint64NoValStruct"] = UNSET
     end_time: Union[Unset, "V0043Uint64NoValStruct"] = UNSET
     excluded_nodes: Union[Unset, str] = UNSET
+    """ Comma-separated list of nodes that may not be used """
     exit_code: Union[Unset, "V0043ProcessExitCodeVerbose"] = UNSET
     extra: Union[Unset, str] = UNSET
+    """ Arbitrary string used for node filtering if extra constraints are enabled """
     failed_node: Union[Unset, str] = UNSET
+    """ Name of node that caused job failure """
     features: Union[Unset, str] = UNSET
+    """ Comma-separated list of features that are required """
     federation_origin: Union[Unset, str] = UNSET
+    """ Origin cluster's name (when using federation) """
     federation_siblings_active: Union[Unset, str] = UNSET
+    """ Active sibling job names """
     federation_siblings_viable: Union[Unset, str] = UNSET
+    """ Viable sibling job names """
     gres_detail: Union[Unset, list[str]] = UNSET
     group_id: Union[Unset, int] = UNSET
+    """ Group ID of the user that owns the job """
     group_name: Union[Unset, str] = UNSET
+    """ Group name of the user that owns the job """
     het_job_id: Union[Unset, "V0043Uint32NoValStruct"] = UNSET
     het_job_id_set: Union[Unset, str] = UNSET
+    """ Job ID range for all heterogeneous job components """
     het_job_offset: Union[Unset, "V0043Uint32NoValStruct"] = UNSET
     job_id: Union[Unset, int] = UNSET
+    """ Job ID """
     job_resources: Union[Unset, "V0043JobRes"] = UNSET
     job_size_str: Union[Unset, list[str]] = UNSET
     job_state: Union[Unset, list[V0043JobInfoJobStateItem]] = UNSET
+    """ Current state """
     last_sched_evaluation: Union[Unset, "V0043Uint64NoValStruct"] = UNSET
     licenses: Union[Unset, str] = UNSET
+    """ License(s) required by the job """
     licenses_allocated: Union[Unset, str] = UNSET
+    """ License(s) allocated to the job """
     mail_type: Union[Unset, list[V0043JobInfoMailTypeItem]] = UNSET
+    """ Mail event type(s) """
     mail_user: Union[Unset, str] = UNSET
+    """ User to receive email notifications """
     max_cpus: Union[Unset, "V0043Uint32NoValStruct"] = UNSET
     max_nodes: Union[Unset, "V0043Uint32NoValStruct"] = UNSET
     mcs_label: Union[Unset, str] = UNSET
+    """ Multi-Category Security label on the job """
     memory_per_tres: Union[Unset, str] = UNSET
+    """ Semicolon delimited list of TRES=# values indicating how much memory in megabytes should be allocated for
+    each specified TRES (currently only used for gres/gpu) """
     name: Union[Unset, str] = UNSET
+    """ Job name """
     network: Union[Unset, str] = UNSET
+    """ Network specs for the job """
     nodes: Union[Unset, str] = UNSET
+    """ Node(s) allocated to the job """
     nice: Union[Unset, int] = UNSET
+    """ Requested job priority change """
     tasks_per_core: Union[Unset, "V0043Uint16NoValStruct"] = UNSET
     tasks_per_tres: Union[Unset, "V0043Uint16NoValStruct"] = UNSET
     tasks_per_node: Union[Unset, "V0043Uint16NoValStruct"] = UNSET
@@ -244,7 +152,9 @@ class V0043JobInfo:
     node_count: Union[Unset, "V0043Uint32NoValStruct"] = UNSET
     tasks: Union[Unset, "V0043Uint32NoValStruct"] = UNSET
     partition: Union[Unset, str] = UNSET
+    """ Partition assigned to the job """
     prefer: Union[Unset, str] = UNSET
+    """ Feature(s) the job requested but that are not required """
     memory_per_cpu: Union[Unset, "V0043Uint64NoValStruct"] = UNSET
     memory_per_node: Union[Unset, "V0043Uint64NoValStruct"] = UNSET
     minimum_cpus_per_node: Union[Unset, "V0043Uint16NoValStruct"] = UNSET
@@ -254,51 +164,87 @@ class V0043JobInfo:
     preemptable_time: Union[Unset, "V0043Uint64NoValStruct"] = UNSET
     pre_sus_time: Union[Unset, "V0043Uint64NoValStruct"] = UNSET
     hold: Union[Unset, bool] = UNSET
+    """ Hold (true) or release (false) job (Job held) """
     priority: Union[Unset, "V0043Uint32NoValStruct"] = UNSET
     priority_by_partition: Union[Unset, list["V0043PartPrio"]] = UNSET
     profile: Union[Unset, list[V0043JobInfoProfileItem]] = UNSET
+    """ Profile used by the acct_gather_profile plugin """
     qos: Union[Unset, str] = UNSET
+    """ Quality of Service assigned to the job, if pending the QOS requested """
     reboot: Union[Unset, bool] = UNSET
+    """ Node reboot requested before start """
     required_nodes: Union[Unset, str] = UNSET
+    """ Comma-separated list of required nodes """
     required_switches: Union[Unset, int] = UNSET
+    """ Maximum number of switches """
     requeue: Union[Unset, bool] = UNSET
+    """ Determines whether the job may be requeued """
     resize_time: Union[Unset, "V0043Uint64NoValStruct"] = UNSET
     restart_cnt: Union[Unset, int] = UNSET
+    """ Number of job restarts """
     resv_name: Union[Unset, str] = UNSET
+    """ Name of reservation to use """
     scheduled_nodes: Union[Unset, str] = UNSET
+    """ List of nodes scheduled to be used for the job """
     segment_size: Union[Unset, int] = UNSET
+    """ Requested segment size """
     selinux_context: Union[Unset, str] = UNSET
+    """ SELinux context """
     shared: Union[Unset, list[V0043JobInfoSharedItem]] = UNSET
+    """ How the job can share resources with other jobs, if at all """
     sockets_per_board: Union[Unset, int] = UNSET
+    """ Number of sockets per board required """
     sockets_per_node: Union[Unset, "V0043Uint16NoValStruct"] = UNSET
     start_time: Union[Unset, "V0043Uint64NoValStruct"] = UNSET
     state_description: Union[Unset, str] = UNSET
+    """ Optional details for state_reason """
     state_reason: Union[Unset, str] = UNSET
+    """ Reason for current Pending or Failed state """
     standard_input: Union[Unset, str] = UNSET
+    """ Path to stdin file """
     standard_output: Union[Unset, str] = UNSET
+    """ Path to stdout file """
     standard_error: Union[Unset, str] = UNSET
+    """ Path to stderr file """
     stdin_expanded: Union[Unset, str] = UNSET
+    """ Job stdin with expanded fields """
     stdout_expanded: Union[Unset, str] = UNSET
+    """ Job stdout with expanded fields """
     stderr_expanded: Union[Unset, str] = UNSET
+    """ Job stderr with expanded fields """
     submit_time: Union[Unset, "V0043Uint64NoValStruct"] = UNSET
     suspend_time: Union[Unset, "V0043Uint64NoValStruct"] = UNSET
     system_comment: Union[Unset, str] = UNSET
+    """ Arbitrary comment from slurmctld """
     time_limit: Union[Unset, "V0043Uint32NoValStruct"] = UNSET
     time_minimum: Union[Unset, "V0043Uint32NoValStruct"] = UNSET
     threads_per_core: Union[Unset, "V0043Uint16NoValStruct"] = UNSET
     tres_bind: Union[Unset, str] = UNSET
+    """ Task to TRES binding directives """
     tres_freq: Union[Unset, str] = UNSET
+    """ TRES frequency directives """
     tres_per_job: Union[Unset, str] = UNSET
+    """ Comma-separated list of TRES=# values to be allocated per job """
     tres_per_node: Union[Unset, str] = UNSET
+    """ Comma-separated list of TRES=# values to be allocated per node """
     tres_per_socket: Union[Unset, str] = UNSET
+    """ Comma-separated list of TRES=# values to be allocated per socket """
     tres_per_task: Union[Unset, str] = UNSET
+    """ Comma-separated list of TRES=# values to be allocated per task """
     tres_req_str: Union[Unset, str] = UNSET
+    """ TRES requested by the job """
     tres_alloc_str: Union[Unset, str] = UNSET
+    """ TRES used by the job """
     user_id: Union[Unset, int] = UNSET
+    """ User ID that owns the job """
     user_name: Union[Unset, str] = UNSET
+    """ User name that owns the job """
     maximum_switch_wait_time: Union[Unset, int] = UNSET
+    """ Maximum time to wait for switches in seconds """
     wckey: Union[Unset, str] = UNSET
+    """ Workload characterization key """
     current_working_directory: Union[Unset, str] = UNSET
+    """ Working directory to use for the job """
     additional_properties: dict[str, Any] = _attrs_field(init=False, factory=dict)
 
     def to_dict(self) -> dict[str, Any]:
@@ -986,7 +932,7 @@ class V0043JobInfo:
 
         _accrue_time = d.pop("accrue_time", UNSET)
         accrue_time: Union[Unset, V0043Uint64NoValStruct]
-        if isinstance(_accrue_time, Unset):
+        if isinstance(_accrue_time, Unset) or _accrue_time is None:
             accrue_time = UNSET
         else:
             accrue_time = V0043Uint64NoValStruct.from_dict(_accrue_time)
@@ -997,21 +943,21 @@ class V0043JobInfo:
 
         _array_job_id = d.pop("array_job_id", UNSET)
         array_job_id: Union[Unset, V0043Uint32NoValStruct]
-        if isinstance(_array_job_id, Unset):
+        if isinstance(_array_job_id, Unset) or _array_job_id is None:
             array_job_id = UNSET
         else:
             array_job_id = V0043Uint32NoValStruct.from_dict(_array_job_id)
 
         _array_task_id = d.pop("array_task_id", UNSET)
         array_task_id: Union[Unset, V0043Uint32NoValStruct]
-        if isinstance(_array_task_id, Unset):
+        if isinstance(_array_task_id, Unset) or _array_task_id is None:
             array_task_id = UNSET
         else:
             array_task_id = V0043Uint32NoValStruct.from_dict(_array_task_id)
 
         _array_max_tasks = d.pop("array_max_tasks", UNSET)
         array_max_tasks: Union[Unset, V0043Uint32NoValStruct]
-        if isinstance(_array_max_tasks, Unset):
+        if isinstance(_array_max_tasks, Unset) or _array_max_tasks is None:
             array_max_tasks = UNSET
         else:
             array_max_tasks = V0043Uint32NoValStruct.from_dict(_array_max_tasks)
@@ -1057,42 +1003,42 @@ class V0043JobInfo:
 
         _cores_per_socket = d.pop("cores_per_socket", UNSET)
         cores_per_socket: Union[Unset, V0043Uint16NoValStruct]
-        if isinstance(_cores_per_socket, Unset):
+        if isinstance(_cores_per_socket, Unset) or _cores_per_socket is None:
             cores_per_socket = UNSET
         else:
             cores_per_socket = V0043Uint16NoValStruct.from_dict(_cores_per_socket)
 
         _billable_tres = d.pop("billable_tres", UNSET)
         billable_tres: Union[Unset, V0043Float64NoValStruct]
-        if isinstance(_billable_tres, Unset):
+        if isinstance(_billable_tres, Unset) or _billable_tres is None:
             billable_tres = UNSET
         else:
             billable_tres = V0043Float64NoValStruct.from_dict(_billable_tres)
 
         _cpus_per_task = d.pop("cpus_per_task", UNSET)
         cpus_per_task: Union[Unset, V0043Uint16NoValStruct]
-        if isinstance(_cpus_per_task, Unset):
+        if isinstance(_cpus_per_task, Unset) or _cpus_per_task is None:
             cpus_per_task = UNSET
         else:
             cpus_per_task = V0043Uint16NoValStruct.from_dict(_cpus_per_task)
 
         _cpu_frequency_minimum = d.pop("cpu_frequency_minimum", UNSET)
         cpu_frequency_minimum: Union[Unset, V0043Uint32NoValStruct]
-        if isinstance(_cpu_frequency_minimum, Unset):
+        if isinstance(_cpu_frequency_minimum, Unset) or _cpu_frequency_minimum is None:
             cpu_frequency_minimum = UNSET
         else:
             cpu_frequency_minimum = V0043Uint32NoValStruct.from_dict(_cpu_frequency_minimum)
 
         _cpu_frequency_maximum = d.pop("cpu_frequency_maximum", UNSET)
         cpu_frequency_maximum: Union[Unset, V0043Uint32NoValStruct]
-        if isinstance(_cpu_frequency_maximum, Unset):
+        if isinstance(_cpu_frequency_maximum, Unset) or _cpu_frequency_maximum is None:
             cpu_frequency_maximum = UNSET
         else:
             cpu_frequency_maximum = V0043Uint32NoValStruct.from_dict(_cpu_frequency_maximum)
 
         _cpu_frequency_governor = d.pop("cpu_frequency_governor", UNSET)
         cpu_frequency_governor: Union[Unset, V0043Uint32NoValStruct]
-        if isinstance(_cpu_frequency_governor, Unset):
+        if isinstance(_cpu_frequency_governor, Unset) or _cpu_frequency_governor is None:
             cpu_frequency_governor = UNSET
         else:
             cpu_frequency_governor = V0043Uint32NoValStruct.from_dict(_cpu_frequency_governor)
@@ -1103,14 +1049,14 @@ class V0043JobInfo:
 
         _deadline = d.pop("deadline", UNSET)
         deadline: Union[Unset, V0043Uint64NoValStruct]
-        if isinstance(_deadline, Unset):
+        if isinstance(_deadline, Unset) or _deadline is None:
             deadline = UNSET
         else:
             deadline = V0043Uint64NoValStruct.from_dict(_deadline)
 
         _delay_boot = d.pop("delay_boot", UNSET)
         delay_boot: Union[Unset, V0043Uint32NoValStruct]
-        if isinstance(_delay_boot, Unset):
+        if isinstance(_delay_boot, Unset) or _delay_boot is None:
             delay_boot = UNSET
         else:
             delay_boot = V0043Uint32NoValStruct.from_dict(_delay_boot)
@@ -1119,21 +1065,21 @@ class V0043JobInfo:
 
         _derived_exit_code = d.pop("derived_exit_code", UNSET)
         derived_exit_code: Union[Unset, V0043ProcessExitCodeVerbose]
-        if isinstance(_derived_exit_code, Unset):
+        if isinstance(_derived_exit_code, Unset) or _derived_exit_code is None:
             derived_exit_code = UNSET
         else:
             derived_exit_code = V0043ProcessExitCodeVerbose.from_dict(_derived_exit_code)
 
         _eligible_time = d.pop("eligible_time", UNSET)
         eligible_time: Union[Unset, V0043Uint64NoValStruct]
-        if isinstance(_eligible_time, Unset):
+        if isinstance(_eligible_time, Unset) or _eligible_time is None:
             eligible_time = UNSET
         else:
             eligible_time = V0043Uint64NoValStruct.from_dict(_eligible_time)
 
         _end_time = d.pop("end_time", UNSET)
         end_time: Union[Unset, V0043Uint64NoValStruct]
-        if isinstance(_end_time, Unset):
+        if isinstance(_end_time, Unset) or _end_time is None:
             end_time = UNSET
         else:
             end_time = V0043Uint64NoValStruct.from_dict(_end_time)
@@ -1142,7 +1088,7 @@ class V0043JobInfo:
 
         _exit_code = d.pop("exit_code", UNSET)
         exit_code: Union[Unset, V0043ProcessExitCodeVerbose]
-        if isinstance(_exit_code, Unset):
+        if isinstance(_exit_code, Unset) or _exit_code is None:
             exit_code = UNSET
         else:
             exit_code = V0043ProcessExitCodeVerbose.from_dict(_exit_code)
@@ -1167,7 +1113,7 @@ class V0043JobInfo:
 
         _het_job_id = d.pop("het_job_id", UNSET)
         het_job_id: Union[Unset, V0043Uint32NoValStruct]
-        if isinstance(_het_job_id, Unset):
+        if isinstance(_het_job_id, Unset) or _het_job_id is None:
             het_job_id = UNSET
         else:
             het_job_id = V0043Uint32NoValStruct.from_dict(_het_job_id)
@@ -1176,7 +1122,7 @@ class V0043JobInfo:
 
         _het_job_offset = d.pop("het_job_offset", UNSET)
         het_job_offset: Union[Unset, V0043Uint32NoValStruct]
-        if isinstance(_het_job_offset, Unset):
+        if isinstance(_het_job_offset, Unset) or _het_job_offset is None:
             het_job_offset = UNSET
         else:
             het_job_offset = V0043Uint32NoValStruct.from_dict(_het_job_offset)
@@ -1184,8 +1130,9 @@ class V0043JobInfo:
         job_id = d.pop("job_id", UNSET)
 
         _job_resources = d.pop("job_resources", UNSET)
+        print("_job_resources", _job_resources)
         job_resources: Union[Unset, V0043JobRes]
-        if isinstance(_job_resources, Unset):
+        if isinstance(_job_resources, Unset) or _job_resources is None:
             job_resources = UNSET
         else:
             job_resources = V0043JobRes.from_dict(_job_resources)
@@ -1201,7 +1148,7 @@ class V0043JobInfo:
 
         _last_sched_evaluation = d.pop("last_sched_evaluation", UNSET)
         last_sched_evaluation: Union[Unset, V0043Uint64NoValStruct]
-        if isinstance(_last_sched_evaluation, Unset):
+        if isinstance(_last_sched_evaluation, Unset) or _last_sched_evaluation is None:
             last_sched_evaluation = UNSET
         else:
             last_sched_evaluation = V0043Uint64NoValStruct.from_dict(_last_sched_evaluation)
@@ -1221,14 +1168,14 @@ class V0043JobInfo:
 
         _max_cpus = d.pop("max_cpus", UNSET)
         max_cpus: Union[Unset, V0043Uint32NoValStruct]
-        if isinstance(_max_cpus, Unset):
+        if isinstance(_max_cpus, Unset) or _max_cpus is None:
             max_cpus = UNSET
         else:
             max_cpus = V0043Uint32NoValStruct.from_dict(_max_cpus)
 
         _max_nodes = d.pop("max_nodes", UNSET)
         max_nodes: Union[Unset, V0043Uint32NoValStruct]
-        if isinstance(_max_nodes, Unset):
+        if isinstance(_max_nodes, Unset) or _max_nodes is None:
             max_nodes = UNSET
         else:
             max_nodes = V0043Uint32NoValStruct.from_dict(_max_nodes)
@@ -1247,56 +1194,56 @@ class V0043JobInfo:
 
         _tasks_per_core = d.pop("tasks_per_core", UNSET)
         tasks_per_core: Union[Unset, V0043Uint16NoValStruct]
-        if isinstance(_tasks_per_core, Unset):
+        if isinstance(_tasks_per_core, Unset) or _tasks_per_core is None:
             tasks_per_core = UNSET
         else:
             tasks_per_core = V0043Uint16NoValStruct.from_dict(_tasks_per_core)
 
         _tasks_per_tres = d.pop("tasks_per_tres", UNSET)
         tasks_per_tres: Union[Unset, V0043Uint16NoValStruct]
-        if isinstance(_tasks_per_tres, Unset):
+        if isinstance(_tasks_per_tres, Unset) or _tasks_per_tres is None:
             tasks_per_tres = UNSET
         else:
             tasks_per_tres = V0043Uint16NoValStruct.from_dict(_tasks_per_tres)
 
         _tasks_per_node = d.pop("tasks_per_node", UNSET)
         tasks_per_node: Union[Unset, V0043Uint16NoValStruct]
-        if isinstance(_tasks_per_node, Unset):
+        if isinstance(_tasks_per_node, Unset) or _tasks_per_node is None:
             tasks_per_node = UNSET
         else:
             tasks_per_node = V0043Uint16NoValStruct.from_dict(_tasks_per_node)
 
         _tasks_per_socket = d.pop("tasks_per_socket", UNSET)
         tasks_per_socket: Union[Unset, V0043Uint16NoValStruct]
-        if isinstance(_tasks_per_socket, Unset):
+        if isinstance(_tasks_per_socket, Unset) or _tasks_per_socket is None:
             tasks_per_socket = UNSET
         else:
             tasks_per_socket = V0043Uint16NoValStruct.from_dict(_tasks_per_socket)
 
         _tasks_per_board = d.pop("tasks_per_board", UNSET)
         tasks_per_board: Union[Unset, V0043Uint16NoValStruct]
-        if isinstance(_tasks_per_board, Unset):
+        if isinstance(_tasks_per_board, Unset) or _tasks_per_board is None:
             tasks_per_board = UNSET
         else:
             tasks_per_board = V0043Uint16NoValStruct.from_dict(_tasks_per_board)
 
         _cpus = d.pop("cpus", UNSET)
         cpus: Union[Unset, V0043Uint32NoValStruct]
-        if isinstance(_cpus, Unset):
+        if isinstance(_cpus, Unset) or _cpus is None:
             cpus = UNSET
         else:
             cpus = V0043Uint32NoValStruct.from_dict(_cpus)
 
         _node_count = d.pop("node_count", UNSET)
         node_count: Union[Unset, V0043Uint32NoValStruct]
-        if isinstance(_node_count, Unset):
+        if isinstance(_node_count, Unset) or _node_count is None:
             node_count = UNSET
         else:
             node_count = V0043Uint32NoValStruct.from_dict(_node_count)
 
         _tasks = d.pop("tasks", UNSET)
         tasks: Union[Unset, V0043Uint32NoValStruct]
-        if isinstance(_tasks, Unset):
+        if isinstance(_tasks, Unset) or _tasks is None:
             tasks = UNSET
         else:
             tasks = V0043Uint32NoValStruct.from_dict(_tasks)
@@ -1307,56 +1254,56 @@ class V0043JobInfo:
 
         _memory_per_cpu = d.pop("memory_per_cpu", UNSET)
         memory_per_cpu: Union[Unset, V0043Uint64NoValStruct]
-        if isinstance(_memory_per_cpu, Unset):
+        if isinstance(_memory_per_cpu, Unset) or _memory_per_cpu is None:
             memory_per_cpu = UNSET
         else:
             memory_per_cpu = V0043Uint64NoValStruct.from_dict(_memory_per_cpu)
 
         _memory_per_node = d.pop("memory_per_node", UNSET)
         memory_per_node: Union[Unset, V0043Uint64NoValStruct]
-        if isinstance(_memory_per_node, Unset):
+        if isinstance(_memory_per_node, Unset) or _memory_per_node is None:
             memory_per_node = UNSET
         else:
             memory_per_node = V0043Uint64NoValStruct.from_dict(_memory_per_node)
 
         _minimum_cpus_per_node = d.pop("minimum_cpus_per_node", UNSET)
         minimum_cpus_per_node: Union[Unset, V0043Uint16NoValStruct]
-        if isinstance(_minimum_cpus_per_node, Unset):
+        if isinstance(_minimum_cpus_per_node, Unset) or _minimum_cpus_per_node is None:
             minimum_cpus_per_node = UNSET
         else:
             minimum_cpus_per_node = V0043Uint16NoValStruct.from_dict(_minimum_cpus_per_node)
 
         _minimum_tmp_disk_per_node = d.pop("minimum_tmp_disk_per_node", UNSET)
         minimum_tmp_disk_per_node: Union[Unset, V0043Uint32NoValStruct]
-        if isinstance(_minimum_tmp_disk_per_node, Unset):
+        if isinstance(_minimum_tmp_disk_per_node, Unset) or _minimum_tmp_disk_per_node is None:
             minimum_tmp_disk_per_node = UNSET
         else:
             minimum_tmp_disk_per_node = V0043Uint32NoValStruct.from_dict(_minimum_tmp_disk_per_node)
 
         _power = d.pop("power", UNSET)
         power: Union[Unset, V0043JobInfoPower]
-        if isinstance(_power, Unset):
+        if isinstance(_power, Unset) or _power is None:
             power = UNSET
         else:
             power = V0043JobInfoPower.from_dict(_power)
 
         _preempt_time = d.pop("preempt_time", UNSET)
         preempt_time: Union[Unset, V0043Uint64NoValStruct]
-        if isinstance(_preempt_time, Unset):
+        if isinstance(_preempt_time, Unset) or _preempt_time is None:
             preempt_time = UNSET
         else:
             preempt_time = V0043Uint64NoValStruct.from_dict(_preempt_time)
 
         _preemptable_time = d.pop("preemptable_time", UNSET)
         preemptable_time: Union[Unset, V0043Uint64NoValStruct]
-        if isinstance(_preemptable_time, Unset):
+        if isinstance(_preemptable_time, Unset) or _preemptable_time is None:
             preemptable_time = UNSET
         else:
             preemptable_time = V0043Uint64NoValStruct.from_dict(_preemptable_time)
 
         _pre_sus_time = d.pop("pre_sus_time", UNSET)
         pre_sus_time: Union[Unset, V0043Uint64NoValStruct]
-        if isinstance(_pre_sus_time, Unset):
+        if isinstance(_pre_sus_time, Unset) or _pre_sus_time is None:
             pre_sus_time = UNSET
         else:
             pre_sus_time = V0043Uint64NoValStruct.from_dict(_pre_sus_time)
@@ -1365,7 +1312,7 @@ class V0043JobInfo:
 
         _priority = d.pop("priority", UNSET)
         priority: Union[Unset, V0043Uint32NoValStruct]
-        if isinstance(_priority, Unset):
+        if isinstance(_priority, Unset) or _priority is None:
             priority = UNSET
         else:
             priority = V0043Uint32NoValStruct.from_dict(_priority)
@@ -1398,7 +1345,7 @@ class V0043JobInfo:
 
         _resize_time = d.pop("resize_time", UNSET)
         resize_time: Union[Unset, V0043Uint64NoValStruct]
-        if isinstance(_resize_time, Unset):
+        if isinstance(_resize_time, Unset) or _resize_time is None:
             resize_time = UNSET
         else:
             resize_time = V0043Uint64NoValStruct.from_dict(_resize_time)
@@ -1424,14 +1371,14 @@ class V0043JobInfo:
 
         _sockets_per_node = d.pop("sockets_per_node", UNSET)
         sockets_per_node: Union[Unset, V0043Uint16NoValStruct]
-        if isinstance(_sockets_per_node, Unset):
+        if isinstance(_sockets_per_node, Unset) or _sockets_per_node is None:
             sockets_per_node = UNSET
         else:
             sockets_per_node = V0043Uint16NoValStruct.from_dict(_sockets_per_node)
 
         _start_time = d.pop("start_time", UNSET)
         start_time: Union[Unset, V0043Uint64NoValStruct]
-        if isinstance(_start_time, Unset):
+        if isinstance(_start_time, Unset) or _start_time is None:
             start_time = UNSET
         else:
             start_time = V0043Uint64NoValStruct.from_dict(_start_time)
@@ -1454,14 +1401,14 @@ class V0043JobInfo:
 
         _submit_time = d.pop("submit_time", UNSET)
         submit_time: Union[Unset, V0043Uint64NoValStruct]
-        if isinstance(_submit_time, Unset):
+        if isinstance(_submit_time, Unset) or _submit_time is None:
             submit_time = UNSET
         else:
             submit_time = V0043Uint64NoValStruct.from_dict(_submit_time)
 
         _suspend_time = d.pop("suspend_time", UNSET)
         suspend_time: Union[Unset, V0043Uint64NoValStruct]
-        if isinstance(_suspend_time, Unset):
+        if isinstance(_suspend_time, Unset) or _suspend_time is None:
             suspend_time = UNSET
         else:
             suspend_time = V0043Uint64NoValStruct.from_dict(_suspend_time)
@@ -1470,21 +1417,21 @@ class V0043JobInfo:
 
         _time_limit = d.pop("time_limit", UNSET)
         time_limit: Union[Unset, V0043Uint32NoValStruct]
-        if isinstance(_time_limit, Unset):
+        if isinstance(_time_limit, Unset) or _time_limit is None:
             time_limit = UNSET
         else:
             time_limit = V0043Uint32NoValStruct.from_dict(_time_limit)
 
         _time_minimum = d.pop("time_minimum", UNSET)
         time_minimum: Union[Unset, V0043Uint32NoValStruct]
-        if isinstance(_time_minimum, Unset):
+        if isinstance(_time_minimum, Unset) or _time_minimum is None:
             time_minimum = UNSET
         else:
             time_minimum = V0043Uint32NoValStruct.from_dict(_time_minimum)
 
         _threads_per_core = d.pop("threads_per_core", UNSET)
         threads_per_core: Union[Unset, V0043Uint16NoValStruct]
-        if isinstance(_threads_per_core, Unset):
+        if isinstance(_threads_per_core, Unset) or _threads_per_core is None:
             threads_per_core = UNSET
         else:
             threads_per_core = V0043Uint16NoValStruct.from_dict(_threads_per_core)

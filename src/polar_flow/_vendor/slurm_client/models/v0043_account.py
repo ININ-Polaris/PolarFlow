@@ -17,22 +17,16 @@ T = TypeVar("T", bound="V0043Account")
 
 @_attrs_define
 class V0043Account:
-    """
-    Attributes:
-        description (str): Arbitrary string describing the account
-        name (str): Account name
-        organization (str): Organization to which the account belongs
-        associations (Union[Unset, list['V0043AssocShort']]):
-        coordinators (Union[Unset, list['V0043Coord']]):
-        flags (Union[Unset, list[V0043AccountFlagsItem]]): Flags associated with this account
-    """
-
     description: str
+    """ Arbitrary string describing the account """
     name: str
+    """ Account name """
     organization: str
+    """ Organization to which the account belongs """
     associations: Union[Unset, list["V0043AssocShort"]] = UNSET
     coordinators: Union[Unset, list["V0043Coord"]] = UNSET
     flags: Union[Unset, list[V0043AccountFlagsItem]] = UNSET
+    """ Flags associated with this account """
     additional_properties: dict[str, Any] = _attrs_field(init=False, factory=dict)
 
     def to_dict(self) -> dict[str, Any]:

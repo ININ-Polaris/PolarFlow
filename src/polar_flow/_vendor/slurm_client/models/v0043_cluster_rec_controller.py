@@ -11,14 +11,10 @@ T = TypeVar("T", bound="V0043ClusterRecController")
 
 @_attrs_define
 class V0043ClusterRecController:
-    """
-    Attributes:
-        host (Union[Unset, str]): ControlHost
-        port (Union[Unset, int]): ControlPort
-    """
-
     host: Union[Unset, str] = UNSET
+    """ ControlHost """
     port: Union[Unset, int] = UNSET
+    """ ControlPort """
     additional_properties: dict[str, Any] = _attrs_field(init=False, factory=dict)
 
     def to_dict(self) -> dict[str, Any]:

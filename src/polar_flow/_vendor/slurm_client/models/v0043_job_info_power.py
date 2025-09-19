@@ -11,11 +11,6 @@ T = TypeVar("T", bound="V0043JobInfoPower")
 
 @_attrs_define
 class V0043JobInfoPower:
-    """
-    Attributes:
-        flags (Union[Unset, list[Any]]):
-    """
-
     flags: Union[Unset, list[Any]] = UNSET
     additional_properties: dict[str, Any] = _attrs_field(init=False, factory=dict)
 

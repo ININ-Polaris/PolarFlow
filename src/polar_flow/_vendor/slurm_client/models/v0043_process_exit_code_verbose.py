@@ -17,14 +17,8 @@ T = TypeVar("T", bound="V0043ProcessExitCodeVerbose")
 
 @_attrs_define
 class V0043ProcessExitCodeVerbose:
-    """
-    Attributes:
-        status (Union[Unset, list[V0043ProcessExitCodeVerboseStatusItem]]): Status given by return code
-        return_code (Union[Unset, V0043Uint32NoValStruct]):
-        signal (Union[Unset, V0043ProcessExitCodeVerboseSignal]):
-    """
-
     status: Union[Unset, list[V0043ProcessExitCodeVerboseStatusItem]] = UNSET
+    """ Status given by return code """
     return_code: Union[Unset, "V0043Uint32NoValStruct"] = UNSET
     signal: Union[Unset, "V0043ProcessExitCodeVerboseSignal"] = UNSET
     additional_properties: dict[str, Any] = _attrs_field(init=False, factory=dict)

@@ -11,18 +11,14 @@ T = TypeVar("T", bound="V0043OpenapiError")
 
 @_attrs_define
 class V0043OpenapiError:
-    """
-    Attributes:
-        description (Union[Unset, str]): Long form error description
-        error_number (Union[Unset, int]): Slurm numeric error identifier
-        error (Union[Unset, str]): Short form error description
-        source (Union[Unset, str]): Source of error or where error was first detected
-    """
-
     description: Union[Unset, str] = UNSET
+    """ Long form error description """
     error_number: Union[Unset, int] = UNSET
+    """ Slurm numeric error identifier """
     error: Union[Unset, str] = UNSET
+    """ Short form error description """
     source: Union[Unset, str] = UNSET
+    """ Source of error or where error was first detected """
     additional_properties: dict[str, Any] = _attrs_field(init=False, factory=dict)
 
     def to_dict(self) -> dict[str, Any]:

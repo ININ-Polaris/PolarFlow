@@ -11,16 +11,12 @@ T = TypeVar("T", bound="V0043JobReservation")
 
 @_attrs_define
 class V0043JobReservation:
-    """
-    Attributes:
-        id (Union[Unset, int]): Unique identifier of requested reservation
-        name (Union[Unset, str]): Name of reservation to use
-        requested (Union[Unset, str]): Comma-separated list of requested reservation names
-    """
-
     id: Union[Unset, int] = UNSET
+    """ Unique identifier of requested reservation """
     name: Union[Unset, str] = UNSET
+    """ Name of reservation to use """
     requested: Union[Unset, str] = UNSET
+    """ Comma-separated list of requested reservation names """
     additional_properties: dict[str, Any] = _attrs_field(init=False, factory=dict)
 
     def to_dict(self) -> dict[str, Any]:

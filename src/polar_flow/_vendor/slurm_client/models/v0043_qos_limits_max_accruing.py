@@ -15,11 +15,6 @@ T = TypeVar("T", bound="V0043QosLimitsMaxAccruing")
 
 @_attrs_define
 class V0043QosLimitsMaxAccruing:
-    """
-    Attributes:
-        per (Union[Unset, V0043QosLimitsMaxAccruingPer]):
-    """
-
     per: Union[Unset, "V0043QosLimitsMaxAccruingPer"] = UNSET
     additional_properties: dict[str, Any] = _attrs_field(init=False, factory=dict)
 

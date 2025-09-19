@@ -15,12 +15,6 @@ T = TypeVar("T", bound="V0043StepCPURequestedFrequency")
 
 @_attrs_define
 class V0043StepCPURequestedFrequency:
-    """
-    Attributes:
-        min_ (Union[Unset, V0043Uint32NoValStruct]):
-        max_ (Union[Unset, V0043Uint32NoValStruct]):
-    """
-
     min_: Union[Unset, "V0043Uint32NoValStruct"] = UNSET
     max_: Union[Unset, "V0043Uint32NoValStruct"] = UNSET
     additional_properties: dict[str, Any] = _attrs_field(init=False, factory=dict)

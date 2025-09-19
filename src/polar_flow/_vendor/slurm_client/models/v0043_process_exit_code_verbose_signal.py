@@ -15,14 +15,9 @@ T = TypeVar("T", bound="V0043ProcessExitCodeVerboseSignal")
 
 @_attrs_define
 class V0043ProcessExitCodeVerboseSignal:
-    """
-    Attributes:
-        id (Union[Unset, V0043Uint16NoValStruct]):
-        name (Union[Unset, str]): Signal sent to process (name)
-    """
-
     id: Union[Unset, "V0043Uint16NoValStruct"] = UNSET
     name: Union[Unset, str] = UNSET
+    """ Signal sent to process (name) """
     additional_properties: dict[str, Any] = _attrs_field(init=False, factory=dict)
 
     def to_dict(self) -> dict[str, Any]:

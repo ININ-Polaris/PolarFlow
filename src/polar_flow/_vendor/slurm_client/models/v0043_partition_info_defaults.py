@@ -16,21 +16,13 @@ T = TypeVar("T", bound="V0043PartitionInfoDefaults")
 
 @_attrs_define
 class V0043PartitionInfoDefaults:
-    """
-    Attributes:
-        memory_per_cpu (Union[Unset, int]): Raw value for DefMemPerCPU or DefMemPerNode
-        partition_memory_per_cpu (Union[Unset, V0043Uint64NoValStruct]):
-        partition_memory_per_node (Union[Unset, V0043Uint64NoValStruct]):
-        time (Union[Unset, V0043Uint32NoValStruct]):
-        job (Union[Unset, str]): JobDefaults - Comma-separated list of job default values (this field is only used to
-            set new defaults)
-    """
-
     memory_per_cpu: Union[Unset, int] = UNSET
+    """ Raw value for DefMemPerCPU or DefMemPerNode """
     partition_memory_per_cpu: Union[Unset, "V0043Uint64NoValStruct"] = UNSET
     partition_memory_per_node: Union[Unset, "V0043Uint64NoValStruct"] = UNSET
     time: Union[Unset, "V0043Uint32NoValStruct"] = UNSET
     job: Union[Unset, str] = UNSET
+    """ JobDefaults - Comma-separated list of job default values (this field is only used to set new defaults) """
     additional_properties: dict[str, Any] = _attrs_field(init=False, factory=dict)
 
     def to_dict(self) -> dict[str, Any]:

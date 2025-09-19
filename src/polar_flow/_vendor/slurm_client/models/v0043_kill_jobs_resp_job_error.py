@@ -11,16 +11,12 @@ T = TypeVar("T", bound="V0043KillJobsRespJobError")
 
 @_attrs_define
 class V0043KillJobsRespJobError:
-    """
-    Attributes:
-        string (Union[Unset, str]): String error encountered signaling job
-        code (Union[Unset, int]): Numeric error encountered signaling job
-        message (Union[Unset, str]): Error message why signaling job failed
-    """
-
     string: Union[Unset, str] = UNSET
+    """ String error encountered signaling job """
     code: Union[Unset, int] = UNSET
+    """ Numeric error encountered signaling job """
     message: Union[Unset, str] = UNSET
+    """ Error message why signaling job failed """
     additional_properties: dict[str, Any] = _attrs_field(init=False, factory=dict)
 
     def to_dict(self) -> dict[str, Any]:

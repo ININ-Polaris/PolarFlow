@@ -11,22 +11,18 @@ T = TypeVar("T", bound="V0043ControllerPing")
 
 @_attrs_define
 class V0043ControllerPing:
-    """
-    Attributes:
-        responding (bool): If ping RPC responded with pong from controller
-        primary (bool): Is responding slurmctld the primary controller (Is responding slurmctld the primary controller)
-        hostname (Union[Unset, str]): Target for ping
-        pinged (Union[Unset, str]): Ping result
-        latency (Union[Unset, int]): Number of microseconds it took to successfully ping or timeout
-        mode (Union[Unset, str]): The operating mode of the responding slurmctld
-    """
-
     responding: bool
+    """ If ping RPC responded with pong from controller """
     primary: bool
+    """ Is responding slurmctld the primary controller (Is responding slurmctld the primary controller) """
     hostname: Union[Unset, str] = UNSET
+    """ Target for ping """
     pinged: Union[Unset, str] = UNSET
+    """ Ping result """
     latency: Union[Unset, int] = UNSET
+    """ Number of microseconds it took to successfully ping or timeout """
     mode: Union[Unset, str] = UNSET
+    """ The operating mode of the responding slurmctld """
     additional_properties: dict[str, Any] = _attrs_field(init=False, factory=dict)
 
     def to_dict(self) -> dict[str, Any]:

@@ -17,14 +17,6 @@ T = TypeVar("T", bound="V0043OpenapiAccountsRemovedResp")
 
 @_attrs_define
 class V0043OpenapiAccountsRemovedResp:
-    """
-    Attributes:
-        removed_accounts (list[str]):
-        meta (Union[Unset, V0043OpenapiMeta]):
-        errors (Union[Unset, list['V0043OpenapiError']]):
-        warnings (Union[Unset, list['V0043OpenapiWarning']]):
-    """
-
     removed_accounts: list[str]
     meta: Union[Unset, "V0043OpenapiMeta"] = UNSET
     errors: Union[Unset, list["V0043OpenapiError"]] = UNSET

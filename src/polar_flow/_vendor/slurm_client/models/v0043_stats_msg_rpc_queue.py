@@ -9,16 +9,12 @@ T = TypeVar("T", bound="V0043StatsMsgRpcQueue")
 
 @_attrs_define
 class V0043StatsMsgRpcQueue:
-    """
-    Attributes:
-        type_id (int): Message type as integer
-        message_type (str): Message type as string (Slurm RPC message type)
-        count (int): Number of pending RPCs queued
-    """
-
     type_id: int
+    """ Message type as integer """
     message_type: str
+    """ Message type as string (Slurm RPC message type) """
     count: int
+    """ Number of pending RPCs queued """
     additional_properties: dict[str, Any] = _attrs_field(init=False, factory=dict)
 
     def to_dict(self) -> dict[str, Any]:

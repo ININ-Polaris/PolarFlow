@@ -15,11 +15,6 @@ T = TypeVar("T", bound="V0043AssocMin")
 
 @_attrs_define
 class V0043AssocMin:
-    """
-    Attributes:
-        priority_threshold (Union[Unset, V0043Uint32NoValStruct]):
-    """
-
     priority_threshold: Union[Unset, "V0043Uint32NoValStruct"] = UNSET
     additional_properties: dict[str, Any] = _attrs_field(init=False, factory=dict)
 

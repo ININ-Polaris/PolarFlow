@@ -20,44 +20,35 @@ T = TypeVar("T", bound="V0043Assoc")
 
 @_attrs_define
 class V0043Assoc:
-    """
-    Attributes:
-        user (str): User name
-        accounting (Union[Unset, list['V0043Accounting']]):
-        account (Union[Unset, str]): Account name
-        cluster (Union[Unset, str]): Cluster name
-        comment (Union[Unset, str]): Arbitrary comment
-        default (Union[Unset, V0043AssocDefault]):
-        flags (Union[Unset, list[V0043AssocFlagsItem]]): Flags on the association
-        max_ (Union[Unset, V0043AssocMax]):
-        id (Union[Unset, int]): Unique ID (Association ID)
-        is_default (Union[Unset, bool]): Is default association for user
-        lineage (Union[Unset, str]): Complete path up the hierarchy to the root association
-        min_ (Union[Unset, V0043AssocMin]):
-        parent_account (Union[Unset, str]): Name of parent account
-        partition (Union[Unset, str]): Partition name
-        priority (Union[Unset, V0043Uint32NoValStruct]):
-        qos (Union[Unset, list[str]]): List of QOS names
-        shares_raw (Union[Unset, int]): Allocated shares used for fairshare calculation
-    """
-
     user: str
+    """ User name """
     accounting: Union[Unset, list["V0043Accounting"]] = UNSET
     account: Union[Unset, str] = UNSET
+    """ Account name """
     cluster: Union[Unset, str] = UNSET
+    """ Cluster name """
     comment: Union[Unset, str] = UNSET
+    """ Arbitrary comment """
     default: Union[Unset, "V0043AssocDefault"] = UNSET
     flags: Union[Unset, list[V0043AssocFlagsItem]] = UNSET
+    """ Flags on the association """
     max_: Union[Unset, "V0043AssocMax"] = UNSET
     id: Union[Unset, int] = UNSET
+    """ Unique ID (Association ID) """
     is_default: Union[Unset, bool] = UNSET
+    """ Is default association for user """
     lineage: Union[Unset, str] = UNSET
+    """ Complete path up the hierarchy to the root association """
     min_: Union[Unset, "V0043AssocMin"] = UNSET
     parent_account: Union[Unset, str] = UNSET
+    """ Name of parent account """
     partition: Union[Unset, str] = UNSET
+    """ Partition name """
     priority: Union[Unset, "V0043Uint32NoValStruct"] = UNSET
     qos: Union[Unset, list[str]] = UNSET
+    """ List of QOS names """
     shares_raw: Union[Unset, int] = UNSET
+    """ Allocated shares used for fairshare calculation """
     additional_properties: dict[str, Any] = _attrs_field(init=False, factory=dict)
 
     def to_dict(self) -> dict[str, Any]:

@@ -15,13 +15,8 @@ T = TypeVar("T", bound="V0043SharesUint64Tres")
 
 @_attrs_define
 class V0043SharesUint64Tres:
-    """
-    Attributes:
-        name (Union[Unset, str]): TRES name
-        value (Union[Unset, V0043Uint64NoValStruct]):
-    """
-
     name: Union[Unset, str] = UNSET
+    """ TRES name """
     value: Union[Unset, "V0043Uint64NoValStruct"] = UNSET
     additional_properties: dict[str, Any] = _attrs_field(init=False, factory=dict)
 

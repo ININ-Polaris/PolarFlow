@@ -11,14 +11,10 @@ T = TypeVar("T", bound="V0043JobResNodeCpus")
 
 @_attrs_define
 class V0043JobResNodeCpus:
-    """
-    Attributes:
-        count (Union[Unset, int]): Total number of CPUs assigned to job
-        used (Union[Unset, int]): Total number of CPUs used by job
-    """
-
     count: Union[Unset, int] = UNSET
+    """ Total number of CPUs assigned to job """
     used: Union[Unset, int] = UNSET
+    """ Total number of CPUs used by job """
     additional_properties: dict[str, Any] = _attrs_field(init=False, factory=dict)
 
     def to_dict(self) -> dict[str, Any]:

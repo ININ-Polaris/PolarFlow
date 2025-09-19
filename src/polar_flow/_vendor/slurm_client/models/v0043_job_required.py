@@ -15,14 +15,8 @@ T = TypeVar("T", bound="V0043JobRequired")
 
 @_attrs_define
 class V0043JobRequired:
-    """
-    Attributes:
-        cp_us (Union[Unset, int]): Minimum number of CPUs required
-        memory_per_cpu (Union[Unset, V0043Uint64NoValStruct]):
-        memory_per_node (Union[Unset, V0043Uint64NoValStruct]):
-    """
-
     cp_us: Union[Unset, int] = UNSET
+    """ Minimum number of CPUs required """
     memory_per_cpu: Union[Unset, "V0043Uint64NoValStruct"] = UNSET
     memory_per_node: Union[Unset, "V0043Uint64NoValStruct"] = UNSET
     additional_properties: dict[str, Any] = _attrs_field(init=False, factory=dict)

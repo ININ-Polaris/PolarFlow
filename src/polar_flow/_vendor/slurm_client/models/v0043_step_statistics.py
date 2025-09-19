@@ -16,12 +16,6 @@ T = TypeVar("T", bound="V0043StepStatistics")
 
 @_attrs_define
 class V0043StepStatistics:
-    """
-    Attributes:
-        cpu (Union[Unset, V0043StepStatisticsCPU]):
-        energy (Union[Unset, V0043StepStatisticsEnergy]):
-    """
-
     cpu: Union[Unset, "V0043StepStatisticsCPU"] = UNSET
     energy: Union[Unset, "V0043StepStatisticsEnergy"] = UNSET
     additional_properties: dict[str, Any] = _attrs_field(init=False, factory=dict)

@@ -11,22 +11,18 @@ T = TypeVar("T", bound="V0043ScheduleExitFields")
 
 @_attrs_define
 class V0043ScheduleExitFields:
-    """
-    Attributes:
-        end_job_queue (Union[Unset, int]): Reached end of queue
-        default_queue_depth (Union[Unset, int]): Reached number of jobs allowed to be tested
-        max_job_start (Union[Unset, int]): Reached number of jobs allowed to start
-        max_rpc_cnt (Union[Unset, int]): Reached RPC limit
-        max_sched_time (Union[Unset, int]): Reached maximum allowed scheduler time
-        licenses (Union[Unset, int]): Blocked on licenses
-    """
-
     end_job_queue: Union[Unset, int] = UNSET
+    """ Reached end of queue """
     default_queue_depth: Union[Unset, int] = UNSET
+    """ Reached number of jobs allowed to be tested """
     max_job_start: Union[Unset, int] = UNSET
+    """ Reached number of jobs allowed to start """
     max_rpc_cnt: Union[Unset, int] = UNSET
+    """ Reached RPC limit """
     max_sched_time: Union[Unset, int] = UNSET
+    """ Reached maximum allowed scheduler time """
     licenses: Union[Unset, int] = UNSET
+    """ Blocked on licenses """
     additional_properties: dict[str, Any] = _attrs_field(init=False, factory=dict)
 
     def to_dict(self) -> dict[str, Any]:

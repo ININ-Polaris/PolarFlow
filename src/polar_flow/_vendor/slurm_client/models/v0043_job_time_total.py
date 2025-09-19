@@ -11,14 +11,10 @@ T = TypeVar("T", bound="V0043JobTimeTotal")
 
 @_attrs_define
 class V0043JobTimeTotal:
-    """
-    Attributes:
-        seconds (Union[Unset, int]): Sum of System and User CPU time used by the job in seconds
-        microseconds (Union[Unset, int]): Sum of System and User CPU time used by the job in microseconds
-    """
-
     seconds: Union[Unset, int] = UNSET
+    """ Sum of System and User CPU time used by the job in seconds """
     microseconds: Union[Unset, int] = UNSET
+    """ Sum of System and User CPU time used by the job in microseconds """
     additional_properties: dict[str, Any] = _attrs_field(init=False, factory=dict)
 
     def to_dict(self) -> dict[str, Any]:

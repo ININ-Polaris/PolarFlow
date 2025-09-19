@@ -11,17 +11,12 @@ T = TypeVar("T", bound="V0043PartitionInfoNodes")
 
 @_attrs_define
 class V0043PartitionInfoNodes:
-    """
-    Attributes:
-        allowed_allocation (Union[Unset, str]): AllocNodes - Comma-separated list of nodes from which users can submit
-            jobs in the partition
-        configured (Union[Unset, str]): Nodes - Comma-separated list of nodes which are associated with this partition
-        total (Union[Unset, int]): TotalNodes - Number of nodes available in this partition
-    """
-
     allowed_allocation: Union[Unset, str] = UNSET
+    """ AllocNodes - Comma-separated list of nodes from which users can submit jobs in the partition """
     configured: Union[Unset, str] = UNSET
+    """ Nodes - Comma-separated list of nodes which are associated with this partition """
     total: Union[Unset, int] = UNSET
+    """ TotalNodes - Number of nodes available in this partition """
     additional_properties: dict[str, Any] = _attrs_field(init=False, factory=dict)
 
     def to_dict(self) -> dict[str, Any]:

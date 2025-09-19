@@ -19,49 +19,31 @@ T = TypeVar("T", bound="V0043ReservationDescMsg")
 
 @_attrs_define
 class V0043ReservationDescMsg:
-    """
-    Attributes:
-        accounts (Union[Unset, list[str]]):
-        burst_buffer (Union[Unset, str]): BurstBuffer
-        comment (Union[Unset, str]): Arbitrary string
-        core_count (Union[Unset, V0043Uint32NoValStruct]):
-        duration (Union[Unset, V0043Uint32NoValStruct]):
-        end_time (Union[Unset, V0043Uint64NoValStruct]):
-        features (Union[Unset, str]): Requested node features. Multiple values may be "&" separated if all features are
-            required (AND operation) or separated by "|" if any of the specified features are required (OR operation).
-            Parenthesis are also supported for features to be ANDed together with counts of nodes having the specified
-            features.
-        flags (Union[Unset, list[V0043ReservationDescMsgFlagsItem]]): Flags associated with this reservation. Note, to
-            remove flags use "NO_" prefixed flag excluding NO_HOLD_JOBS_AFTER_END
-        groups (Union[Unset, list[str]]):
-        licenses (Union[Unset, list[str]]):
-        max_start_delay (Union[Unset, V0043Uint32NoValStruct]):
-        name (Union[Unset, str]): ReservationName
-        node_count (Union[Unset, V0043Uint32NoValStruct]):
-        node_list (Union[Unset, list[str]]):
-        partition (Union[Unset, str]): Partition used to reserve nodes from. This will attempt to allocate all nodes in
-            the specified partition unless you request fewer resources than are available with core_cnt, node_cnt or tres.
-        purge_completed (Union[Unset, V0043ReservationDescMsgPurgeCompleted]):
-        start_time (Union[Unset, V0043Uint64NoValStruct]):
-        tres (Union[Unset, list['V0043Tres']]):
-        users (Union[Unset, list[str]]):
-    """
-
     accounts: Union[Unset, list[str]] = UNSET
     burst_buffer: Union[Unset, str] = UNSET
+    """ BurstBuffer """
     comment: Union[Unset, str] = UNSET
+    """ Arbitrary string """
     core_count: Union[Unset, "V0043Uint32NoValStruct"] = UNSET
     duration: Union[Unset, "V0043Uint32NoValStruct"] = UNSET
     end_time: Union[Unset, "V0043Uint64NoValStruct"] = UNSET
     features: Union[Unset, str] = UNSET
+    """ Requested node features. Multiple values may be "&" separated if all features are required (AND operation)
+    or separated by "|" if any of the specified features are required (OR operation). Parenthesis are also supported
+    for features to be ANDed together with counts of nodes having the specified features. """
     flags: Union[Unset, list[V0043ReservationDescMsgFlagsItem]] = UNSET
+    """ Flags associated with this reservation. Note, to remove flags use "NO_" prefixed flag excluding
+    NO_HOLD_JOBS_AFTER_END """
     groups: Union[Unset, list[str]] = UNSET
     licenses: Union[Unset, list[str]] = UNSET
     max_start_delay: Union[Unset, "V0043Uint32NoValStruct"] = UNSET
     name: Union[Unset, str] = UNSET
+    """ ReservationName """
     node_count: Union[Unset, "V0043Uint32NoValStruct"] = UNSET
     node_list: Union[Unset, list[str]] = UNSET
     partition: Union[Unset, str] = UNSET
+    """ Partition used to reserve nodes from. This will attempt to allocate all nodes in the specified partition
+    unless you request fewer resources than are available with core_cnt, node_cnt or tres. """
     purge_completed: Union[Unset, "V0043ReservationDescMsgPurgeCompleted"] = UNSET
     start_time: Union[Unset, "V0043Uint64NoValStruct"] = UNSET
     tres: Union[Unset, list["V0043Tres"]] = UNSET

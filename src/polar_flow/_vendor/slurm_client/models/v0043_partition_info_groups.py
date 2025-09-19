@@ -11,13 +11,8 @@ T = TypeVar("T", bound="V0043PartitionInfoGroups")
 
 @_attrs_define
 class V0043PartitionInfoGroups:
-    """
-    Attributes:
-        allowed (Union[Unset, str]): AllowGroups - Comma-separated list of group names which may execute jobs in this
-            partition
-    """
-
     allowed: Union[Unset, str] = UNSET
+    """ AllowGroups - Comma-separated list of group names which may execute jobs in this partition """
     additional_properties: dict[str, Any] = _attrs_field(init=False, factory=dict)
 
     def to_dict(self) -> dict[str, Any]:

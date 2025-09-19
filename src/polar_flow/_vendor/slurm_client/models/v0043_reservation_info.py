@@ -19,49 +19,40 @@ T = TypeVar("T", bound="V0043ReservationInfo")
 
 @_attrs_define
 class V0043ReservationInfo:
-    """
-    Attributes:
-        accounts (Union[Unset, str]): Comma-separated list of permitted accounts
-        burst_buffer (Union[Unset, str]): BurstBuffer - Burst buffer resources reserved
-        core_count (Union[Unset, int]): CoreCnt - Number of cores reserved
-        core_specializations (Union[Unset, list['V0043ReservationCoreSpec']]):
-        end_time (Union[Unset, V0043Uint64NoValStruct]):
-        features (Union[Unset, str]): Features - Expression describing the reservation's required node features
-        flags (Union[Unset, list[V0043ReservationInfoFlagsItem]]): Flags associated with this reservation
-        groups (Union[Unset, str]): Groups - Comma-separated list of permitted groups
-        licenses (Union[Unset, str]): Licenses - Comma-separated list of licenses reserved
-        max_start_delay (Union[Unset, int]): MaxStartDelay - Maximum time an eligible job not requesting this
-            reservation can delay a job requesting it in seconds
-        name (Union[Unset, str]): ReservationName - Name of the reservation
-        node_count (Union[Unset, int]): NodeCnt - Number of nodes reserved
-        node_list (Union[Unset, str]): Nodes - Comma-separated list of node names and/or node ranges reserved
-        partition (Union[Unset, str]): PartitionName - Partition used to reserve nodes from
-        purge_completed (Union[Unset, V0043ReservationInfoPurgeCompleted]):
-        start_time (Union[Unset, V0043Uint64NoValStruct]):
-        watts (Union[Unset, V0043Uint32NoValStruct]):
-        tres (Union[Unset, str]): Comma-separated list of required TRES
-        users (Union[Unset, str]): Comma-separated list of permitted users
-    """
-
     accounts: Union[Unset, str] = UNSET
+    """ Comma-separated list of permitted accounts """
     burst_buffer: Union[Unset, str] = UNSET
+    """ BurstBuffer - Burst buffer resources reserved """
     core_count: Union[Unset, int] = UNSET
+    """ CoreCnt - Number of cores reserved """
     core_specializations: Union[Unset, list["V0043ReservationCoreSpec"]] = UNSET
     end_time: Union[Unset, "V0043Uint64NoValStruct"] = UNSET
     features: Union[Unset, str] = UNSET
+    """ Features - Expression describing the reservation's required node features """
     flags: Union[Unset, list[V0043ReservationInfoFlagsItem]] = UNSET
+    """ Flags associated with this reservation """
     groups: Union[Unset, str] = UNSET
+    """ Groups - Comma-separated list of permitted groups """
     licenses: Union[Unset, str] = UNSET
+    """ Licenses - Comma-separated list of licenses reserved """
     max_start_delay: Union[Unset, int] = UNSET
+    """ MaxStartDelay - Maximum time an eligible job not requesting this reservation can delay a job requesting it
+    in seconds """
     name: Union[Unset, str] = UNSET
+    """ ReservationName - Name of the reservation """
     node_count: Union[Unset, int] = UNSET
+    """ NodeCnt - Number of nodes reserved """
     node_list: Union[Unset, str] = UNSET
+    """ Nodes - Comma-separated list of node names and/or node ranges reserved """
     partition: Union[Unset, str] = UNSET
+    """ PartitionName - Partition used to reserve nodes from """
     purge_completed: Union[Unset, "V0043ReservationInfoPurgeCompleted"] = UNSET
     start_time: Union[Unset, "V0043Uint64NoValStruct"] = UNSET
     watts: Union[Unset, "V0043Uint32NoValStruct"] = UNSET
     tres: Union[Unset, str] = UNSET
+    """ Comma-separated list of required TRES """
     users: Union[Unset, str] = UNSET
+    """ Comma-separated list of permitted users """
     additional_properties: dict[str, Any] = _attrs_field(init=False, factory=dict)
 
     def to_dict(self) -> dict[str, Any]:

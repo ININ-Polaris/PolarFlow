@@ -28,248 +28,222 @@ T = TypeVar("T", bound="V0043JobDescMsg")
 
 @_attrs_define
 class V0043JobDescMsg:
-    """
-    Attributes:
-        account (Union[Unset, str]): Account associated with the job
-        account_gather_frequency (Union[Unset, str]): Job accounting and profiling sampling intervals in seconds
-        admin_comment (Union[Unset, str]): Arbitrary comment made by administrator
-        allocation_node_list (Union[Unset, str]): Local node making the resource allocation
-        allocation_node_port (Union[Unset, int]): Port to send allocation confirmation to
-        argv (Union[Unset, list[str]]):
-        array (Union[Unset, str]): Job array index value specification
-        batch_features (Union[Unset, str]): Features required for batch script's node
-        begin_time (Union[Unset, V0043Uint64NoValStruct]):
-        flags (Union[Unset, list[V0043JobDescMsgFlagsItem]]): Job flags
-        burst_buffer (Union[Unset, str]): Burst buffer specifications
-        clusters (Union[Unset, str]): Clusters that a federated job can run on
-        cluster_constraint (Union[Unset, str]): Required features that a federated cluster must have to have a sibling
-            job submitted to it
-        comment (Union[Unset, str]): Arbitrary comment made by user
-        contiguous (Union[Unset, bool]): True if job requires contiguous nodes
-        container (Union[Unset, str]): Absolute path to OCI container bundle
-        container_id (Union[Unset, str]): OCI container ID
-        core_specification (Union[Unset, int]): Specialized core count
-        thread_specification (Union[Unset, int]): Specialized thread count
-        cpu_binding (Union[Unset, str]): Method for binding tasks to allocated CPUs
-        cpu_binding_flags (Union[Unset, list[V0043JobDescMsgCpuBindingFlagsItem]]): Flags for CPU binding
-        cpu_frequency (Union[Unset, str]): Requested CPU frequency range <p1>[-p2][:p3]
-        cpus_per_tres (Union[Unset, str]): Semicolon delimited list of TRES=# values values indicating how many CPUs
-            should be allocated for each specified TRES (currently only used for gres/gpu)
-        crontab (Union[Unset, V0043CronEntry]):
-        deadline (Union[Unset, int]): Latest time that the job may start (UNIX timestamp) (UNIX timestamp or time string
-            recognized by Slurm (e.g., '[MM/DD[/YY]-]HH:MM[:SS]'))
-        delay_boot (Union[Unset, int]): Number of seconds after job eligible start that nodes will be rebooted to
-            satisfy feature specification
-        dependency (Union[Unset, str]): Other jobs that must meet certain criteria before this job can start
-        end_time (Union[Unset, int]): Expected end time (UNIX timestamp) (UNIX timestamp or time string recognized by
-            Slurm (e.g., '[MM/DD[/YY]-]HH:MM[:SS]'))
-        environment (Union[Unset, list[str]]):
-        rlimits (Union[Unset, V0043JobDescMsgRlimits]):
-        excluded_nodes (Union[Unset, list[str]]):
-        extra (Union[Unset, str]): Arbitrary string used for node filtering if extra constraints are enabled
-        constraints (Union[Unset, str]): Comma-separated list of features that are required
-        group_id (Union[Unset, str]): Group ID of the user that owns the job
-        hetjob_group (Union[Unset, int]): Unique sequence number applied to this component of the heterogeneous job
-        immediate (Union[Unset, bool]): If true, exit if resources are not available within the time period specified
-        job_id (Union[Unset, int]): Job ID
-        kill_on_node_fail (Union[Unset, bool]): If true, kill job on node failure
-        licenses (Union[Unset, str]): License(s) required by the job
-        mail_type (Union[Unset, list[V0043JobDescMsgMailTypeItem]]): Mail event type(s)
-        mail_user (Union[Unset, str]): User to receive email notifications
-        mcs_label (Union[Unset, str]): Multi-Category Security label on the job
-        memory_binding (Union[Unset, str]): Binding map for map/mask_cpu
-        memory_binding_type (Union[Unset, list[V0043JobDescMsgMemoryBindingTypeItem]]): Method for binding tasks to
-            memory
-        memory_per_tres (Union[Unset, str]): Semicolon delimited list of TRES=# values indicating how much memory in
-            megabytes should be allocated for each specified TRES (currently only used for gres/gpu)
-        name (Union[Unset, str]): Job name
-        network (Union[Unset, str]): Network specs for job step
-        nice (Union[Unset, int]): Requested job priority change
-        tasks (Union[Unset, int]): Number of tasks
-        oom_kill_step (Union[Unset, int]): Kill whole step in case of OOM in one of the tasks
-        open_mode (Union[Unset, list[V0043JobDescMsgOpenModeItem]]): Open mode used for stdout and stderr files
-        reserve_ports (Union[Unset, int]): Port to send various notification msg to
-        overcommit (Union[Unset, bool]): Overcommit resources
-        partition (Union[Unset, str]): Partition assigned to the job
-        distribution_plane_size (Union[Unset, V0043Uint16NoValStruct]):
-        power_flags (Union[Unset, list[Any]]):
-        prefer (Union[Unset, str]): Comma-separated list of features that are preferred but not required
-        hold (Union[Unset, bool]): Hold (true) or release (false) job (Job held)
-        priority (Union[Unset, V0043Uint32NoValStruct]):
-        profile (Union[Unset, list[V0043JobDescMsgProfileItem]]): Profile used by the acct_gather_profile plugin
-        qos (Union[Unset, str]): Quality of Service assigned to the job
-        reboot (Union[Unset, bool]): Node reboot requested before start
-        required_nodes (Union[Unset, list[str]]):
-        requeue (Union[Unset, bool]): Determines whether the job may be requeued
-        reservation (Union[Unset, str]): Name of reservation to use
-        script (Union[Unset, str]): Job batch script; only the first component in a HetJob is populated or honored
-        shared (Union[Unset, list[V0043JobDescMsgSharedItem]]): How the job can share resources with other jobs, if at
-            all
-        site_factor (Union[Unset, int]): Site-specific priority factor
-        spank_environment (Union[Unset, list[str]]):
-        distribution (Union[Unset, str]): Layout
-        time_limit (Union[Unset, V0043Uint32NoValStruct]):
-        time_minimum (Union[Unset, V0043Uint32NoValStruct]):
-        tres_bind (Union[Unset, str]): Task to TRES binding directives
-        tres_freq (Union[Unset, str]): TRES frequency directives
-        tres_per_job (Union[Unset, str]): Comma-separated list of TRES=# values to be allocated for every job
-        tres_per_node (Union[Unset, str]): Comma-separated list of TRES=# values to be allocated for every node
-        tres_per_socket (Union[Unset, str]): Comma-separated list of TRES=# values to be allocated for every socket
-        tres_per_task (Union[Unset, str]): Comma-separated list of TRES=# values to be allocated for every task
-        user_id (Union[Unset, str]): User ID that owns the job
-        wait_all_nodes (Union[Unset, bool]): If true, wait to start until after all nodes have booted
-        kill_warning_flags (Union[Unset, list[V0043JobDescMsgKillWarningFlagsItem]]): Flags related to job signals
-        kill_warning_signal (Union[Unset, str]): Signal to send when approaching end time (e.g. "10" or "USR1")
-        kill_warning_delay (Union[Unset, V0043Uint16NoValStruct]):
-        current_working_directory (Union[Unset, str]): Working directory to use for the job
-        cpus_per_task (Union[Unset, int]): Number of CPUs required by each task
-        minimum_cpus (Union[Unset, int]): Minimum number of CPUs required
-        maximum_cpus (Union[Unset, int]): Maximum number of CPUs required
-        nodes (Union[Unset, str]): Node count range specification (e.g. 1-15:4)
-        minimum_nodes (Union[Unset, int]): Minimum node count
-        maximum_nodes (Union[Unset, int]): Maximum node count
-        minimum_boards_per_node (Union[Unset, int]): Boards per node required
-        minimum_sockets_per_board (Union[Unset, int]): Sockets per board required
-        sockets_per_node (Union[Unset, int]): Sockets per node required
-        threads_per_core (Union[Unset, int]): Threads per core required
-        tasks_per_node (Union[Unset, int]): Number of tasks to invoke on each node
-        tasks_per_socket (Union[Unset, int]): Number of tasks to invoke on each socket
-        tasks_per_core (Union[Unset, int]): Number of tasks to invoke on each core
-        tasks_per_board (Union[Unset, int]): Number of tasks to invoke on each board
-        ntasks_per_tres (Union[Unset, int]): Number of tasks that can access each GPU
-        minimum_cpus_per_node (Union[Unset, int]): Minimum number of CPUs per node
-        memory_per_cpu (Union[Unset, V0043Uint64NoValStruct]):
-        memory_per_node (Union[Unset, V0043Uint64NoValStruct]):
-        temporary_disk_per_node (Union[Unset, int]): Minimum tmp disk space required per node
-        selinux_context (Union[Unset, str]): SELinux context
-        required_switches (Union[Unset, V0043Uint32NoValStruct]):
-        segment_size (Union[Unset, V0043Uint16NoValStruct]):
-        standard_error (Union[Unset, str]): Path to stderr file
-        standard_input (Union[Unset, str]): Path to stdin file
-        standard_output (Union[Unset, str]): Path to stdout file
-        wait_for_switch (Union[Unset, int]): Maximum time to wait for switches in seconds
-        wckey (Union[Unset, str]): Workload characterization key
-        x11 (Union[Unset, list[V0043JobDescMsgX11Item]]): X11 forwarding options
-        x11_magic_cookie (Union[Unset, str]): Magic cookie for X11 forwarding
-        x11_target_host (Union[Unset, str]): Hostname or UNIX socket if x11_target_port=0
-        x11_target_port (Union[Unset, int]): TCP port
-    """
-
     account: Union[Unset, str] = UNSET
+    """ Account associated with the job """
     account_gather_frequency: Union[Unset, str] = UNSET
+    """ Job accounting and profiling sampling intervals in seconds """
     admin_comment: Union[Unset, str] = UNSET
+    """ Arbitrary comment made by administrator """
     allocation_node_list: Union[Unset, str] = UNSET
+    """ Local node making the resource allocation """
     allocation_node_port: Union[Unset, int] = UNSET
+    """ Port to send allocation confirmation to """
     argv: Union[Unset, list[str]] = UNSET
     array: Union[Unset, str] = UNSET
+    """ Job array index value specification """
     batch_features: Union[Unset, str] = UNSET
+    """ Features required for batch script's node """
     begin_time: Union[Unset, "V0043Uint64NoValStruct"] = UNSET
     flags: Union[Unset, list[V0043JobDescMsgFlagsItem]] = UNSET
+    """ Job flags """
     burst_buffer: Union[Unset, str] = UNSET
+    """ Burst buffer specifications """
     clusters: Union[Unset, str] = UNSET
+    """ Clusters that a federated job can run on """
     cluster_constraint: Union[Unset, str] = UNSET
+    """ Required features that a federated cluster must have to have a sibling job submitted to it """
     comment: Union[Unset, str] = UNSET
+    """ Arbitrary comment made by user """
     contiguous: Union[Unset, bool] = UNSET
+    """ True if job requires contiguous nodes """
     container: Union[Unset, str] = UNSET
+    """ Absolute path to OCI container bundle """
     container_id: Union[Unset, str] = UNSET
+    """ OCI container ID """
     core_specification: Union[Unset, int] = UNSET
+    """ Specialized core count """
     thread_specification: Union[Unset, int] = UNSET
+    """ Specialized thread count """
     cpu_binding: Union[Unset, str] = UNSET
+    """ Method for binding tasks to allocated CPUs """
     cpu_binding_flags: Union[Unset, list[V0043JobDescMsgCpuBindingFlagsItem]] = UNSET
+    """ Flags for CPU binding """
     cpu_frequency: Union[Unset, str] = UNSET
+    """ Requested CPU frequency range <p1>[-p2][:p3] """
     cpus_per_tres: Union[Unset, str] = UNSET
+    """ Semicolon delimited list of TRES=# values values indicating how many CPUs should be allocated for each
+    specified TRES (currently only used for gres/gpu) """
     crontab: Union[Unset, "V0043CronEntry"] = UNSET
     deadline: Union[Unset, int] = UNSET
+    """ Latest time that the job may start (UNIX timestamp) (UNIX timestamp or time string recognized by Slurm
+    (e.g., '[MM/DD[/YY]-]HH:MM[:SS]')) """
     delay_boot: Union[Unset, int] = UNSET
+    """ Number of seconds after job eligible start that nodes will be rebooted to satisfy feature specification """
     dependency: Union[Unset, str] = UNSET
+    """ Other jobs that must meet certain criteria before this job can start """
     end_time: Union[Unset, int] = UNSET
+    """ Expected end time (UNIX timestamp) (UNIX timestamp or time string recognized by Slurm (e.g.,
+    '[MM/DD[/YY]-]HH:MM[:SS]')) """
     environment: Union[Unset, list[str]] = UNSET
     rlimits: Union[Unset, "V0043JobDescMsgRlimits"] = UNSET
     excluded_nodes: Union[Unset, list[str]] = UNSET
     extra: Union[Unset, str] = UNSET
+    """ Arbitrary string used for node filtering if extra constraints are enabled """
     constraints: Union[Unset, str] = UNSET
+    """ Comma-separated list of features that are required """
     group_id: Union[Unset, str] = UNSET
+    """ Group ID of the user that owns the job """
     hetjob_group: Union[Unset, int] = UNSET
+    """ Unique sequence number applied to this component of the heterogeneous job """
     immediate: Union[Unset, bool] = UNSET
+    """ If true, exit if resources are not available within the time period specified """
     job_id: Union[Unset, int] = UNSET
+    """ Job ID """
     kill_on_node_fail: Union[Unset, bool] = UNSET
+    """ If true, kill job on node failure """
     licenses: Union[Unset, str] = UNSET
+    """ License(s) required by the job """
     mail_type: Union[Unset, list[V0043JobDescMsgMailTypeItem]] = UNSET
+    """ Mail event type(s) """
     mail_user: Union[Unset, str] = UNSET
+    """ User to receive email notifications """
     mcs_label: Union[Unset, str] = UNSET
+    """ Multi-Category Security label on the job """
     memory_binding: Union[Unset, str] = UNSET
+    """ Binding map for map/mask_cpu """
     memory_binding_type: Union[Unset, list[V0043JobDescMsgMemoryBindingTypeItem]] = UNSET
+    """ Method for binding tasks to memory """
     memory_per_tres: Union[Unset, str] = UNSET
+    """ Semicolon delimited list of TRES=# values indicating how much memory in megabytes should be allocated for
+    each specified TRES (currently only used for gres/gpu) """
     name: Union[Unset, str] = UNSET
+    """ Job name """
     network: Union[Unset, str] = UNSET
+    """ Network specs for job step """
     nice: Union[Unset, int] = UNSET
+    """ Requested job priority change """
     tasks: Union[Unset, int] = UNSET
+    """ Number of tasks """
     oom_kill_step: Union[Unset, int] = UNSET
+    """ Kill whole step in case of OOM in one of the tasks """
     open_mode: Union[Unset, list[V0043JobDescMsgOpenModeItem]] = UNSET
+    """ Open mode used for stdout and stderr files """
     reserve_ports: Union[Unset, int] = UNSET
+    """ Port to send various notification msg to """
     overcommit: Union[Unset, bool] = UNSET
+    """ Overcommit resources """
     partition: Union[Unset, str] = UNSET
+    """ Partition assigned to the job """
     distribution_plane_size: Union[Unset, "V0043Uint16NoValStruct"] = UNSET
     power_flags: Union[Unset, list[Any]] = UNSET
     prefer: Union[Unset, str] = UNSET
+    """ Comma-separated list of features that are preferred but not required """
     hold: Union[Unset, bool] = UNSET
+    """ Hold (true) or release (false) job (Job held) """
     priority: Union[Unset, "V0043Uint32NoValStruct"] = UNSET
     profile: Union[Unset, list[V0043JobDescMsgProfileItem]] = UNSET
+    """ Profile used by the acct_gather_profile plugin """
     qos: Union[Unset, str] = UNSET
+    """ Quality of Service assigned to the job """
     reboot: Union[Unset, bool] = UNSET
+    """ Node reboot requested before start """
     required_nodes: Union[Unset, list[str]] = UNSET
     requeue: Union[Unset, bool] = UNSET
+    """ Determines whether the job may be requeued """
     reservation: Union[Unset, str] = UNSET
+    """ Name of reservation to use """
     script: Union[Unset, str] = UNSET
+    """ Job batch script; only the first component in a HetJob is populated or honored """
     shared: Union[Unset, list[V0043JobDescMsgSharedItem]] = UNSET
+    """ How the job can share resources with other jobs, if at all """
     site_factor: Union[Unset, int] = UNSET
+    """ Site-specific priority factor """
     spank_environment: Union[Unset, list[str]] = UNSET
     distribution: Union[Unset, str] = UNSET
+    """ Layout """
     time_limit: Union[Unset, "V0043Uint32NoValStruct"] = UNSET
     time_minimum: Union[Unset, "V0043Uint32NoValStruct"] = UNSET
     tres_bind: Union[Unset, str] = UNSET
+    """ Task to TRES binding directives """
     tres_freq: Union[Unset, str] = UNSET
+    """ TRES frequency directives """
     tres_per_job: Union[Unset, str] = UNSET
+    """ Comma-separated list of TRES=# values to be allocated for every job """
     tres_per_node: Union[Unset, str] = UNSET
+    """ Comma-separated list of TRES=# values to be allocated for every node """
     tres_per_socket: Union[Unset, str] = UNSET
+    """ Comma-separated list of TRES=# values to be allocated for every socket """
     tres_per_task: Union[Unset, str] = UNSET
+    """ Comma-separated list of TRES=# values to be allocated for every task """
     user_id: Union[Unset, str] = UNSET
+    """ User ID that owns the job """
     wait_all_nodes: Union[Unset, bool] = UNSET
+    """ If true, wait to start until after all nodes have booted """
     kill_warning_flags: Union[Unset, list[V0043JobDescMsgKillWarningFlagsItem]] = UNSET
+    """ Flags related to job signals """
     kill_warning_signal: Union[Unset, str] = UNSET
+    """ Signal to send when approaching end time (e.g. "10" or "USR1") """
     kill_warning_delay: Union[Unset, "V0043Uint16NoValStruct"] = UNSET
     current_working_directory: Union[Unset, str] = UNSET
+    """ Working directory to use for the job """
     cpus_per_task: Union[Unset, int] = UNSET
+    """ Number of CPUs required by each task """
     minimum_cpus: Union[Unset, int] = UNSET
+    """ Minimum number of CPUs required """
     maximum_cpus: Union[Unset, int] = UNSET
+    """ Maximum number of CPUs required """
     nodes: Union[Unset, str] = UNSET
+    """ Node count range specification (e.g. 1-15:4) """
     minimum_nodes: Union[Unset, int] = UNSET
+    """ Minimum node count """
     maximum_nodes: Union[Unset, int] = UNSET
+    """ Maximum node count """
     minimum_boards_per_node: Union[Unset, int] = UNSET
+    """ Boards per node required """
     minimum_sockets_per_board: Union[Unset, int] = UNSET
+    """ Sockets per board required """
     sockets_per_node: Union[Unset, int] = UNSET
+    """ Sockets per node required """
     threads_per_core: Union[Unset, int] = UNSET
+    """ Threads per core required """
     tasks_per_node: Union[Unset, int] = UNSET
+    """ Number of tasks to invoke on each node """
     tasks_per_socket: Union[Unset, int] = UNSET
+    """ Number of tasks to invoke on each socket """
     tasks_per_core: Union[Unset, int] = UNSET
+    """ Number of tasks to invoke on each core """
     tasks_per_board: Union[Unset, int] = UNSET
+    """ Number of tasks to invoke on each board """
     ntasks_per_tres: Union[Unset, int] = UNSET
+    """ Number of tasks that can access each GPU """
     minimum_cpus_per_node: Union[Unset, int] = UNSET
+    """ Minimum number of CPUs per node """
     memory_per_cpu: Union[Unset, "V0043Uint64NoValStruct"] = UNSET
     memory_per_node: Union[Unset, "V0043Uint64NoValStruct"] = UNSET
     temporary_disk_per_node: Union[Unset, int] = UNSET
+    """ Minimum tmp disk space required per node """
     selinux_context: Union[Unset, str] = UNSET
+    """ SELinux context """
     required_switches: Union[Unset, "V0043Uint32NoValStruct"] = UNSET
     segment_size: Union[Unset, "V0043Uint16NoValStruct"] = UNSET
     standard_error: Union[Unset, str] = UNSET
+    """ Path to stderr file """
     standard_input: Union[Unset, str] = UNSET
+    """ Path to stdin file """
     standard_output: Union[Unset, str] = UNSET
+    """ Path to stdout file """
     wait_for_switch: Union[Unset, int] = UNSET
+    """ Maximum time to wait for switches in seconds """
     wckey: Union[Unset, str] = UNSET
+    """ Workload characterization key """
     x11: Union[Unset, list[V0043JobDescMsgX11Item]] = UNSET
+    """ X11 forwarding options """
     x11_magic_cookie: Union[Unset, str] = UNSET
+    """ Magic cookie for X11 forwarding """
     x11_target_host: Union[Unset, str] = UNSET
+    """ Hostname or UNIX socket if x11_target_port=0 """
     x11_target_port: Union[Unset, int] = UNSET
+    """ TCP port """
     additional_properties: dict[str, Any] = _attrs_field(init=False, factory=dict)
 
     def to_dict(self) -> dict[str, Any]:

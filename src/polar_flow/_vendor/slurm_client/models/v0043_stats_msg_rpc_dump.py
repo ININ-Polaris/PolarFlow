@@ -9,15 +9,10 @@ T = TypeVar("T", bound="V0043StatsMsgRpcDump")
 
 @_attrs_define
 class V0043StatsMsgRpcDump:
-    """
-    Attributes:
-        type_id (int): Message type as integer
-        message_type (str): Message type as string (Slurm RPC message type)
-        count (list[str]):
-    """
-
     type_id: int
+    """ Message type as integer """
     message_type: str
+    """ Message type as string (Slurm RPC message type) """
     count: list[str]
     additional_properties: dict[str, Any] = _attrs_field(init=False, factory=dict)
 

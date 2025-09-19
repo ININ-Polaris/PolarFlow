@@ -11,14 +11,10 @@ T = TypeVar("T", bound="V0043StepTimeUser")
 
 @_attrs_define
 class V0043StepTimeUser:
-    """
-    Attributes:
-        seconds (Union[Unset, int]): User CPU time used by the step in seconds
-        microseconds (Union[Unset, int]): User CPU time used by the step in microseconds
-    """
-
     seconds: Union[Unset, int] = UNSET
+    """ User CPU time used by the step in seconds """
     microseconds: Union[Unset, int] = UNSET
+    """ User CPU time used by the step in microseconds """
     additional_properties: dict[str, Any] = _attrs_field(init=False, factory=dict)
 
     def to_dict(self) -> dict[str, Any]:

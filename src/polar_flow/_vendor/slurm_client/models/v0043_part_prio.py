@@ -11,14 +11,10 @@ T = TypeVar("T", bound="V0043PartPrio")
 
 @_attrs_define
 class V0043PartPrio:
-    """
-    Attributes:
-        partition (Union[Unset, str]): Partition name
-        priority (Union[Unset, int]): Prospective job priority if it runs in this partition
-    """
-
     partition: Union[Unset, str] = UNSET
+    """ Partition name """
     priority: Union[Unset, int] = UNSET
+    """ Prospective job priority if it runs in this partition """
     additional_properties: dict[str, Any] = _attrs_field(init=False, factory=dict)
 
     def to_dict(self) -> dict[str, Any]:

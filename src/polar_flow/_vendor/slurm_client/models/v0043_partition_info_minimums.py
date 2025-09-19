@@ -11,12 +11,8 @@ T = TypeVar("T", bound="V0043PartitionInfoMinimums")
 
 @_attrs_define
 class V0043PartitionInfoMinimums:
-    """
-    Attributes:
-        nodes (Union[Unset, int]): MinNodes - Minimum count of nodes which may be allocated to any single job
-    """
-
     nodes: Union[Unset, int] = UNSET
+    """ MinNodes - Minimum count of nodes which may be allocated to any single job """
     additional_properties: dict[str, Any] = _attrs_field(init=False, factory=dict)
 
     def to_dict(self) -> dict[str, Any]:

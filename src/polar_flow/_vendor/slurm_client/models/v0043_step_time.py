@@ -19,22 +19,12 @@ T = TypeVar("T", bound="V0043StepTime")
 
 @_attrs_define
 class V0043StepTime:
-    """
-    Attributes:
-        elapsed (Union[Unset, int]): Elapsed time in seconds
-        end (Union[Unset, V0043Uint64NoValStruct]):
-        start (Union[Unset, V0043Uint64NoValStruct]):
-        suspended (Union[Unset, int]): Total time in suspended state in seconds
-        system (Union[Unset, V0043StepTimeSystem]):
-        limit (Union[Unset, V0043Uint32NoValStruct]):
-        total (Union[Unset, V0043StepTimeTotal]):
-        user (Union[Unset, V0043StepTimeUser]):
-    """
-
     elapsed: Union[Unset, int] = UNSET
+    """ Elapsed time in seconds """
     end: Union[Unset, "V0043Uint64NoValStruct"] = UNSET
     start: Union[Unset, "V0043Uint64NoValStruct"] = UNSET
     suspended: Union[Unset, int] = UNSET
+    """ Total time in suspended state in seconds """
     system: Union[Unset, "V0043StepTimeSystem"] = UNSET
     limit: Union[Unset, "V0043Uint32NoValStruct"] = UNSET
     total: Union[Unset, "V0043StepTimeTotal"] = UNSET

@@ -18,14 +18,6 @@ T = TypeVar("T", bound="V0043OpenapiSlurmdbdQosResp")
 
 @_attrs_define
 class V0043OpenapiSlurmdbdQosResp:
-    """
-    Attributes:
-        qos (list['V0043Qos']):
-        meta (Union[Unset, V0043OpenapiMeta]):
-        errors (Union[Unset, list['V0043OpenapiError']]):
-        warnings (Union[Unset, list['V0043OpenapiWarning']]):
-    """
-
     qos: list["V0043Qos"]
     meta: Union[Unset, "V0043OpenapiMeta"] = UNSET
     errors: Union[Unset, list["V0043OpenapiError"]] = UNSET

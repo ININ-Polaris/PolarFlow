@@ -17,13 +17,6 @@ T = TypeVar("T", bound="V0043StepTres")
 
 @_attrs_define
 class V0043StepTres:
-    """
-    Attributes:
-        requested (Union[Unset, V0043StepTresRequested]):
-        consumed (Union[Unset, V0043StepTresConsumed]):
-        allocated (Union[Unset, list['V0043Tres']]):
-    """
-
     requested: Union[Unset, "V0043StepTresRequested"] = UNSET
     consumed: Union[Unset, "V0043StepTresConsumed"] = UNSET
     allocated: Union[Unset, list["V0043Tres"]] = UNSET

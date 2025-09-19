@@ -25,21 +25,6 @@ T = TypeVar("T", bound="V0043OpenapiSlurmdbdConfigResp")
 
 @_attrs_define
 class V0043OpenapiSlurmdbdConfigResp:
-    """
-    Attributes:
-        clusters (Union[Unset, list['V0043ClusterRec']]):
-        tres (Union[Unset, list['V0043Tres']]):
-        accounts (Union[Unset, list['V0043Account']]):
-        users (Union[Unset, list['V0043User']]):
-        qos (Union[Unset, list['V0043Qos']]):
-        wckeys (Union[Unset, list['V0043Wckey']]):
-        associations (Union[Unset, list['V0043Assoc']]):
-        instances (Union[Unset, list['V0043Instance']]):
-        meta (Union[Unset, V0043OpenapiMeta]):
-        errors (Union[Unset, list['V0043OpenapiError']]):
-        warnings (Union[Unset, list['V0043OpenapiWarning']]):
-    """
-
     clusters: Union[Unset, list["V0043ClusterRec"]] = UNSET
     tres: Union[Unset, list["V0043Tres"]] = UNSET
     accounts: Union[Unset, list["V0043Account"]] = UNSET

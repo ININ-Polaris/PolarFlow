@@ -15,11 +15,6 @@ T = TypeVar("T", bound="V0043ReservationModReq")
 
 @_attrs_define
 class V0043ReservationModReq:
-    """
-    Attributes:
-        reservations (Union[Unset, list['V0043ReservationDescMsg']]):
-    """
-
     reservations: Union[Unset, list["V0043ReservationDescMsg"]] = UNSET
     additional_properties: dict[str, Any] = _attrs_field(init=False, factory=dict)
 

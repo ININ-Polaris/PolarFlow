@@ -11,17 +11,12 @@ T = TypeVar("T", bound="V0043Float64NoValStruct")
 
 @_attrs_define
 class V0043Float64NoValStruct:
-    """
-    Attributes:
-        set_ (Union[Unset, bool]): True if number has been set; False if number is unset
-        infinite (Union[Unset, bool]): True if number has been set to infinite; "set" and "number" will be ignored
-        number (Union[Unset, float]): If "set" is True the number will be set with value; otherwise ignore number
-            contents
-    """
-
     set_: Union[Unset, bool] = UNSET
+    """ True if number has been set; False if number is unset """
     infinite: Union[Unset, bool] = UNSET
+    """ True if number has been set to infinite; "set" and "number" will be ignored """
     number: Union[Unset, float] = UNSET
+    """ If "set" is True the number will be set with value; otherwise ignore number contents """
     additional_properties: dict[str, Any] = _attrs_field(init=False, factory=dict)
 
     def to_dict(self) -> dict[str, Any]:

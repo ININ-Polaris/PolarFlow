@@ -19,16 +19,6 @@ T = TypeVar("T", bound="V0043OpenapiJobInfoResp")
 
 @_attrs_define
 class V0043OpenapiJobInfoResp:
-    """
-    Attributes:
-        jobs (list['V0043JobInfo']):
-        last_backfill (V0043Uint64NoValStruct):
-        last_update (V0043Uint64NoValStruct):
-        meta (Union[Unset, V0043OpenapiMeta]):
-        errors (Union[Unset, list['V0043OpenapiError']]):
-        warnings (Union[Unset, list['V0043OpenapiWarning']]):
-    """
-
     jobs: list["V0043JobInfo"]
     last_backfill: "V0043Uint64NoValStruct"
     last_update: "V0043Uint64NoValStruct"

@@ -15,16 +15,11 @@ T = TypeVar("T", bound="V0043OpenapiMetaSlurm")
 
 @_attrs_define
 class V0043OpenapiMetaSlurm:
-    """
-    Attributes:
-        version (Union[Unset, V0043OpenapiMetaSlurmVersion]):
-        release (Union[Unset, str]): Slurm release string
-        cluster (Union[Unset, str]): Slurm cluster name
-    """
-
     version: Union[Unset, "V0043OpenapiMetaSlurmVersion"] = UNSET
     release: Union[Unset, str] = UNSET
+    """ Slurm release string """
     cluster: Union[Unset, str] = UNSET
+    """ Slurm cluster name """
     additional_properties: dict[str, Any] = _attrs_field(init=False, factory=dict)
 
     def to_dict(self) -> dict[str, Any]:

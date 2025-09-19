@@ -18,14 +18,6 @@ T = TypeVar("T", bound="V0043OpenapiClustersResp")
 
 @_attrs_define
 class V0043OpenapiClustersResp:
-    """
-    Attributes:
-        clusters (list['V0043ClusterRec']):
-        meta (Union[Unset, V0043OpenapiMeta]):
-        errors (Union[Unset, list['V0043OpenapiError']]):
-        warnings (Union[Unset, list['V0043OpenapiWarning']]):
-    """
-
     clusters: list["V0043ClusterRec"]
     meta: Union[Unset, "V0043OpenapiMeta"] = UNSET
     errors: Union[Unset, list["V0043OpenapiError"]] = UNSET

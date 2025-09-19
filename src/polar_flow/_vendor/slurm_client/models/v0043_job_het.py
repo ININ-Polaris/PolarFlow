@@ -15,13 +15,8 @@ T = TypeVar("T", bound="V0043JobHet")
 
 @_attrs_define
 class V0043JobHet:
-    """
-    Attributes:
-        job_id (Union[Unset, int]): Heterogeneous job ID, if applicable
-        job_offset (Union[Unset, V0043Uint32NoValStruct]):
-    """
-
     job_id: Union[Unset, int] = UNSET
+    """ Heterogeneous job ID, if applicable """
     job_offset: Union[Unset, "V0043Uint32NoValStruct"] = UNSET
     additional_properties: dict[str, Any] = _attrs_field(init=False, factory=dict)
 

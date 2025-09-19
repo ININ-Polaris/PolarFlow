@@ -15,12 +15,6 @@ T = TypeVar("T", bound="V0043AssocSharesObjWrapFairshare")
 
 @_attrs_define
 class V0043AssocSharesObjWrapFairshare:
-    """
-    Attributes:
-        factor (Union[Unset, V0043Float64NoValStruct]):
-        level (Union[Unset, V0043Float64NoValStruct]):
-    """
-
     factor: Union[Unset, "V0043Float64NoValStruct"] = UNSET
     level: Union[Unset, "V0043Float64NoValStruct"] = UNSET
     additional_properties: dict[str, Any] = _attrs_field(init=False, factory=dict)

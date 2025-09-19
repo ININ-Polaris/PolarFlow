@@ -11,12 +11,8 @@ T = TypeVar("T", bound="V0043JobMcs")
 
 @_attrs_define
 class V0043JobMcs:
-    """
-    Attributes:
-        label (Union[Unset, str]): Multi-Category Security label on the job
-    """
-
     label: Union[Unset, str] = UNSET
+    """ Multi-Category Security label on the job """
     additional_properties: dict[str, Any] = _attrs_field(init=False, factory=dict)
 
     def to_dict(self) -> dict[str, Any]:

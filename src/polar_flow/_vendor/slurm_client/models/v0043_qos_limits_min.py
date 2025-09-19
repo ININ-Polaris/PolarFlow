@@ -16,12 +16,6 @@ T = TypeVar("T", bound="V0043QosLimitsMin")
 
 @_attrs_define
 class V0043QosLimitsMin:
-    """
-    Attributes:
-        priority_threshold (Union[Unset, V0043Uint32NoValStruct]):
-        tres (Union[Unset, V0043QosLimitsMinTres]):
-    """
-
     priority_threshold: Union[Unset, "V0043Uint32NoValStruct"] = UNSET
     tres: Union[Unset, "V0043QosLimitsMinTres"] = UNSET
     additional_properties: dict[str, Any] = _attrs_field(init=False, factory=dict)

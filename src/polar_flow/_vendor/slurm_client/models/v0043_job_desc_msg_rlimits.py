@@ -15,20 +15,6 @@ T = TypeVar("T", bound="V0043JobDescMsgRlimits")
 
 @_attrs_define
 class V0043JobDescMsgRlimits:
-    """
-    Attributes:
-        cpu (Union[Unset, V0043Uint64NoValStruct]):
-        fsize (Union[Unset, V0043Uint64NoValStruct]):
-        data (Union[Unset, V0043Uint64NoValStruct]):
-        stack (Union[Unset, V0043Uint64NoValStruct]):
-        core (Union[Unset, V0043Uint64NoValStruct]):
-        rss (Union[Unset, V0043Uint64NoValStruct]):
-        nproc (Union[Unset, V0043Uint64NoValStruct]):
-        nofile (Union[Unset, V0043Uint64NoValStruct]):
-        memlock (Union[Unset, V0043Uint64NoValStruct]):
-        as_ (Union[Unset, V0043Uint64NoValStruct]):
-    """
-
     cpu: Union[Unset, "V0043Uint64NoValStruct"] = UNSET
     fsize: Union[Unset, "V0043Uint64NoValStruct"] = UNSET
     data: Union[Unset, "V0043Uint64NoValStruct"] = UNSET

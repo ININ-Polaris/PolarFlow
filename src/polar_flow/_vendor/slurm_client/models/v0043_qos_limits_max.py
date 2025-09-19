@@ -19,15 +19,6 @@ T = TypeVar("T", bound="V0043QosLimitsMax")
 
 @_attrs_define
 class V0043QosLimitsMax:
-    """
-    Attributes:
-        active_jobs (Union[Unset, V0043QosLimitsMaxActiveJobs]):
-        jobs (Union[Unset, V0043QosLimitsMaxJobs]):
-        tres (Union[Unset, V0043QosLimitsMaxTres]):
-        wall_clock (Union[Unset, V0043QosLimitsMaxWallClock]):
-        accruing (Union[Unset, V0043QosLimitsMaxAccruing]):
-    """
-
     active_jobs: Union[Unset, "V0043QosLimitsMaxActiveJobs"] = UNSET
     jobs: Union[Unset, "V0043QosLimitsMaxJobs"] = UNSET
     tres: Union[Unset, "V0043QosLimitsMaxTres"] = UNSET

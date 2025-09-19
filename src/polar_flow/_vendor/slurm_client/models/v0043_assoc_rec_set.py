@@ -16,34 +16,10 @@ T = TypeVar("T", bound="V0043AssocRecSet")
 
 @_attrs_define
 class V0043AssocRecSet:
-    """
-    Attributes:
-        comment (Union[Unset, str]): Arbitrary comment
-        defaultqos (Union[Unset, str]): Default QOS
-        grpjobs (Union[Unset, V0043Uint32NoValStruct]):
-        grpjobsaccrue (Union[Unset, V0043Uint32NoValStruct]):
-        grpsubmitjobs (Union[Unset, V0043Uint32NoValStruct]):
-        grptres (Union[Unset, list['V0043Tres']]):
-        grptresmins (Union[Unset, list['V0043Tres']]):
-        grptresrunmins (Union[Unset, list['V0043Tres']]):
-        grpwall (Union[Unset, V0043Uint32NoValStruct]):
-        maxjobs (Union[Unset, V0043Uint32NoValStruct]):
-        maxjobsaccrue (Union[Unset, V0043Uint32NoValStruct]):
-        maxsubmitjobs (Union[Unset, V0043Uint32NoValStruct]):
-        maxtresminsperjob (Union[Unset, list['V0043Tres']]):
-        maxtresrunmins (Union[Unset, list['V0043Tres']]):
-        maxtresperjob (Union[Unset, list['V0043Tres']]):
-        maxtrespernode (Union[Unset, list['V0043Tres']]):
-        maxwalldurationperjob (Union[Unset, V0043Uint32NoValStruct]):
-        minpriothresh (Union[Unset, V0043Uint32NoValStruct]):
-        parent (Union[Unset, str]): Name of parent account
-        priority (Union[Unset, V0043Uint32NoValStruct]):
-        qoslevel (Union[Unset, list[str]]): List of QOS names
-        fairshare (Union[Unset, int]): Allocated shares used for fairshare calculation
-    """
-
     comment: Union[Unset, str] = UNSET
+    """ Arbitrary comment """
     defaultqos: Union[Unset, str] = UNSET
+    """ Default QOS """
     grpjobs: Union[Unset, "V0043Uint32NoValStruct"] = UNSET
     grpjobsaccrue: Union[Unset, "V0043Uint32NoValStruct"] = UNSET
     grpsubmitjobs: Union[Unset, "V0043Uint32NoValStruct"] = UNSET
@@ -61,9 +37,12 @@ class V0043AssocRecSet:
     maxwalldurationperjob: Union[Unset, "V0043Uint32NoValStruct"] = UNSET
     minpriothresh: Union[Unset, "V0043Uint32NoValStruct"] = UNSET
     parent: Union[Unset, str] = UNSET
+    """ Name of parent account """
     priority: Union[Unset, "V0043Uint32NoValStruct"] = UNSET
     qoslevel: Union[Unset, list[str]] = UNSET
+    """ List of QOS names """
     fairshare: Union[Unset, int] = UNSET
+    """ Allocated shares used for fairshare calculation """
     additional_properties: dict[str, Any] = _attrs_field(init=False, factory=dict)
 
     def to_dict(self) -> dict[str, Any]:

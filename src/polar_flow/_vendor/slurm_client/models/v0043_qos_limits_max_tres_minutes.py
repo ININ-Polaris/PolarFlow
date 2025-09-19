@@ -16,12 +16,6 @@ T = TypeVar("T", bound="V0043QosLimitsMaxTresMinutes")
 
 @_attrs_define
 class V0043QosLimitsMaxTresMinutes:
-    """
-    Attributes:
-        total (Union[Unset, list['V0043Tres']]):
-        per (Union[Unset, V0043QosLimitsMaxTresMinutesPer]):
-    """
-
     total: Union[Unset, list["V0043Tres"]] = UNSET
     per: Union[Unset, "V0043QosLimitsMaxTresMinutesPer"] = UNSET
     additional_properties: dict[str, Any] = _attrs_field(init=False, factory=dict)

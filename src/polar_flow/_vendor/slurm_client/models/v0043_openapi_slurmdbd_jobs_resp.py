@@ -18,14 +18,6 @@ T = TypeVar("T", bound="V0043OpenapiSlurmdbdJobsResp")
 
 @_attrs_define
 class V0043OpenapiSlurmdbdJobsResp:
-    """
-    Attributes:
-        jobs (list['V0043Job']):
-        meta (Union[Unset, V0043OpenapiMeta]):
-        errors (Union[Unset, list['V0043OpenapiError']]):
-        warnings (Union[Unset, list['V0043OpenapiWarning']]):
-    """
-
     jobs: list["V0043Job"]
     meta: Union[Unset, "V0043OpenapiMeta"] = UNSET
     errors: Union[Unset, list["V0043OpenapiError"]] = UNSET

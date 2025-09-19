@@ -11,16 +11,10 @@ T = TypeVar("T", bound="V0043PartitionInfoPriority")
 
 @_attrs_define
 class V0043PartitionInfoPriority:
-    """
-    Attributes:
-        job_factor (Union[Unset, int]): PriorityJobFactor - Partition factor used by priority/multifactor plugin in
-            calculating job priority
-        tier (Union[Unset, int]): PriorityTier - Controls the order in which the scheduler evaluates jobs from different
-            partitions
-    """
-
     job_factor: Union[Unset, int] = UNSET
+    """ PriorityJobFactor - Partition factor used by priority/multifactor plugin in calculating job priority """
     tier: Union[Unset, int] = UNSET
+    """ PriorityTier - Controls the order in which the scheduler evaluates jobs from different partitions """
     additional_properties: dict[str, Any] = _attrs_field(init=False, factory=dict)
 
     def to_dict(self) -> dict[str, Any]:

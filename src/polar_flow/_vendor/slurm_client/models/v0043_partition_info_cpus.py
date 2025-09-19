@@ -11,15 +11,10 @@ T = TypeVar("T", bound="V0043PartitionInfoCpus")
 
 @_attrs_define
 class V0043PartitionInfoCpus:
-    """
-    Attributes:
-        task_binding (Union[Unset, int]): CpuBind - Default method controlling how tasks are bound to allocated
-            resources
-        total (Union[Unset, int]): TotalCPUs - Number of CPUs available in this partition
-    """
-
     task_binding: Union[Unset, int] = UNSET
+    """ CpuBind - Default method controlling how tasks are bound to allocated resources """
     total: Union[Unset, int] = UNSET
+    """ TotalCPUs - Number of CPUs available in this partition """
     additional_properties: dict[str, Any] = _attrs_field(init=False, factory=dict)
 
     def to_dict(self) -> dict[str, Any]:

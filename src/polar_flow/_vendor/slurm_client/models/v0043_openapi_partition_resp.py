@@ -19,15 +19,6 @@ T = TypeVar("T", bound="V0043OpenapiPartitionResp")
 
 @_attrs_define
 class V0043OpenapiPartitionResp:
-    """
-    Attributes:
-        partitions (list['V0043PartitionInfo']):
-        last_update (V0043Uint64NoValStruct):
-        meta (Union[Unset, V0043OpenapiMeta]):
-        errors (Union[Unset, list['V0043OpenapiError']]):
-        warnings (Union[Unset, list['V0043OpenapiWarning']]):
-    """
-
     partitions: list["V0043PartitionInfo"]
     last_update: "V0043Uint64NoValStruct"
     meta: Union[Unset, "V0043OpenapiMeta"] = UNSET

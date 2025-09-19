@@ -18,28 +18,16 @@ T = TypeVar("T", bound="V0043PartitionInfoMaximums")
 
 @_attrs_define
 class V0043PartitionInfoMaximums:
-    """
-    Attributes:
-        cpus_per_node (Union[Unset, V0043Uint32NoValStruct]):
-        cpus_per_socket (Union[Unset, V0043Uint32NoValStruct]):
-        memory_per_cpu (Union[Unset, int]): Raw value for MaxMemPerCPU or MaxMemPerNode
-        partition_memory_per_cpu (Union[Unset, V0043Uint64NoValStruct]):
-        partition_memory_per_node (Union[Unset, V0043Uint64NoValStruct]):
-        nodes (Union[Unset, V0043Uint32NoValStruct]):
-        shares (Union[Unset, int]): OverSubscribe - Controls the ability of the partition to execute more than one job
-            at a time on each resource
-        oversubscribe (Union[Unset, V0043PartitionInfoMaximumsOversubscribe]):
-        time (Union[Unset, V0043Uint32NoValStruct]):
-        over_time_limit (Union[Unset, V0043Uint16NoValStruct]):
-    """
-
     cpus_per_node: Union[Unset, "V0043Uint32NoValStruct"] = UNSET
     cpus_per_socket: Union[Unset, "V0043Uint32NoValStruct"] = UNSET
     memory_per_cpu: Union[Unset, int] = UNSET
+    """ Raw value for MaxMemPerCPU or MaxMemPerNode """
     partition_memory_per_cpu: Union[Unset, "V0043Uint64NoValStruct"] = UNSET
     partition_memory_per_node: Union[Unset, "V0043Uint64NoValStruct"] = UNSET
     nodes: Union[Unset, "V0043Uint32NoValStruct"] = UNSET
     shares: Union[Unset, int] = UNSET
+    """ OverSubscribe - Controls the ability of the partition to execute more than one job at a time on each
+    resource """
     oversubscribe: Union[Unset, "V0043PartitionInfoMaximumsOversubscribe"] = UNSET
     time: Union[Unset, "V0043Uint32NoValStruct"] = UNSET
     over_time_limit: Union[Unset, "V0043Uint16NoValStruct"] = UNSET

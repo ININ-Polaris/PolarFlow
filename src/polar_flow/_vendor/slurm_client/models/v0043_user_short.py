@@ -12,16 +12,12 @@ T = TypeVar("T", bound="V0043UserShort")
 
 @_attrs_define
 class V0043UserShort:
-    """
-    Attributes:
-        adminlevel (Union[Unset, list[V0043UserShortAdminlevelItem]]): AdminLevel granted to the user
-        defaultaccount (Union[Unset, str]): Default account
-        defaultwckey (Union[Unset, str]): Default WCKey
-    """
-
     adminlevel: Union[Unset, list[V0043UserShortAdminlevelItem]] = UNSET
+    """ AdminLevel granted to the user """
     defaultaccount: Union[Unset, str] = UNSET
+    """ Default account """
     defaultwckey: Union[Unset, str] = UNSET
+    """ Default WCKey """
     additional_properties: dict[str, Any] = _attrs_field(init=False, factory=dict)
 
     def to_dict(self) -> dict[str, Any]:

@@ -15,11 +15,6 @@ T = TypeVar("T", bound="V0043QosLimitsMaxWallClock")
 
 @_attrs_define
 class V0043QosLimitsMaxWallClock:
-    """
-    Attributes:
-        per (Union[Unset, V0043QosLimitsMaxWallClockPer]):
-    """
-
     per: Union[Unset, "V0043QosLimitsMaxWallClockPer"] = UNSET
     additional_properties: dict[str, Any] = _attrs_field(init=False, factory=dict)
 

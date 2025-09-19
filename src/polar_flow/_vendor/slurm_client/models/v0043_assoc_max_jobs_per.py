@@ -15,14 +15,6 @@ T = TypeVar("T", bound="V0043AssocMaxJobsPer")
 
 @_attrs_define
 class V0043AssocMaxJobsPer:
-    """
-    Attributes:
-        count (Union[Unset, V0043Uint32NoValStruct]):
-        accruing (Union[Unset, V0043Uint32NoValStruct]):
-        submitted (Union[Unset, V0043Uint32NoValStruct]):
-        wall_clock (Union[Unset, V0043Uint32NoValStruct]):
-    """
-
     count: Union[Unset, "V0043Uint32NoValStruct"] = UNSET
     accruing: Union[Unset, "V0043Uint32NoValStruct"] = UNSET
     submitted: Union[Unset, "V0043Uint32NoValStruct"] = UNSET

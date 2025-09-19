@@ -11,14 +11,10 @@ T = TypeVar("T", bound="V0043StatsUserTime")
 
 @_attrs_define
 class V0043StatsUserTime:
-    """
-    Attributes:
-        average (Union[Unset, int]): Average RPC processing time in microseconds
-        total (Union[Unset, int]): Total RPC processing time in microseconds
-    """
-
     average: Union[Unset, int] = UNSET
+    """ Average RPC processing time in microseconds """
     total: Union[Unset, int] = UNSET
+    """ Total RPC processing time in microseconds """
     additional_properties: dict[str, Any] = _attrs_field(init=False, factory=dict)
 
     def to_dict(self) -> dict[str, Any]:

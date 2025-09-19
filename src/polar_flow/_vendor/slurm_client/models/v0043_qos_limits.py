@@ -17,16 +17,9 @@ T = TypeVar("T", bound="V0043QosLimits")
 
 @_attrs_define
 class V0043QosLimits:
-    """
-    Attributes:
-        grace_time (Union[Unset, int]): GraceTime - Preemption grace time in seconds to be extended to a job which has
-            been selected for preemption
-        max_ (Union[Unset, V0043QosLimitsMax]):
-        factor (Union[Unset, V0043Float64NoValStruct]):
-        min_ (Union[Unset, V0043QosLimitsMin]):
-    """
-
     grace_time: Union[Unset, int] = UNSET
+    """ GraceTime - Preemption grace time in seconds to be extended to a job which has been selected for preemption
+    """
     max_: Union[Unset, "V0043QosLimitsMax"] = UNSET
     factor: Union[Unset, "V0043Float64NoValStruct"] = UNSET
     min_: Union[Unset, "V0043QosLimitsMin"] = UNSET

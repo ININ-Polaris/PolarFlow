@@ -15,25 +15,20 @@ T = TypeVar("T", bound="V0043AcctGatherEnergy")
 
 @_attrs_define
 class V0043AcctGatherEnergy:
-    """
-    Attributes:
-        average_watts (Union[Unset, int]): Average power consumption, in watts
-        base_consumed_energy (Union[Unset, int]): The energy consumed between when the node was powered on and the last
-            time it was registered by slurmd, in joules
-        consumed_energy (Union[Unset, int]): The energy consumed between the last time the node was registered by the
-            slurmd daemon and the last node energy accounting sample, in joules
-        current_watts (Union[Unset, V0043Uint32NoValStruct]):
-        previous_consumed_energy (Union[Unset, int]): Previous value of consumed_energy
-        last_collected (Union[Unset, int]): Time when energy data was last retrieved (UNIX timestamp) (UNIX timestamp or
-            time string recognized by Slurm (e.g., '[MM/DD[/YY]-]HH:MM[:SS]'))
-    """
-
     average_watts: Union[Unset, int] = UNSET
+    """ Average power consumption, in watts """
     base_consumed_energy: Union[Unset, int] = UNSET
+    """ The energy consumed between when the node was powered on and the last time it was registered by slurmd, in
+    joules """
     consumed_energy: Union[Unset, int] = UNSET
+    """ The energy consumed between the last time the node was registered by the slurmd daemon and the last node
+    energy accounting sample, in joules """
     current_watts: Union[Unset, "V0043Uint32NoValStruct"] = UNSET
     previous_consumed_energy: Union[Unset, int] = UNSET
+    """ Previous value of consumed_energy """
     last_collected: Union[Unset, int] = UNSET
+    """ Time when energy data was last retrieved (UNIX timestamp) (UNIX timestamp or time string recognized by Slurm
+    (e.g., '[MM/DD[/YY]-]HH:MM[:SS]')) """
     additional_properties: dict[str, Any] = _attrs_field(init=False, factory=dict)
 
     def to_dict(self) -> dict[str, Any]:

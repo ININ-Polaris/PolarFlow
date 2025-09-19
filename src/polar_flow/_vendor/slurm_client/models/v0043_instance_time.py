@@ -11,16 +11,12 @@ T = TypeVar("T", bound="V0043InstanceTime")
 
 @_attrs_define
 class V0043InstanceTime:
-    """
-    Attributes:
-        time_end (Union[Unset, int]): When the instance will end (UNIX timestamp) (UNIX timestamp or time string
-            recognized by Slurm (e.g., '[MM/DD[/YY]-]HH:MM[:SS]'))
-        time_start (Union[Unset, int]): When the instance will start (UNIX timestamp) (UNIX timestamp or time string
-            recognized by Slurm (e.g., '[MM/DD[/YY]-]HH:MM[:SS]'))
-    """
-
     time_end: Union[Unset, int] = UNSET
+    """ When the instance will end (UNIX timestamp) (UNIX timestamp or time string recognized by Slurm (e.g.,
+    '[MM/DD[/YY]-]HH:MM[:SS]')) """
     time_start: Union[Unset, int] = UNSET
+    """ When the instance will start (UNIX timestamp) (UNIX timestamp or time string recognized by Slurm (e.g.,
+    '[MM/DD[/YY]-]HH:MM[:SS]')) """
     additional_properties: dict[str, Any] = _attrs_field(init=False, factory=dict)
 
     def to_dict(self) -> dict[str, Any]:

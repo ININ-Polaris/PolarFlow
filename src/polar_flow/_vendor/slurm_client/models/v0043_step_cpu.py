@@ -15,14 +15,9 @@ T = TypeVar("T", bound="V0043StepCPU")
 
 @_attrs_define
 class V0043StepCPU:
-    """
-    Attributes:
-        requested_frequency (Union[Unset, V0043StepCPURequestedFrequency]):
-        governor (Union[Unset, str]): Requested CPU frequency governor in kHz
-    """
-
     requested_frequency: Union[Unset, "V0043StepCPURequestedFrequency"] = UNSET
     governor: Union[Unset, str] = UNSET
+    """ Requested CPU frequency governor in kHz """
     additional_properties: dict[str, Any] = _attrs_field(init=False, factory=dict)
 
     def to_dict(self) -> dict[str, Any]:

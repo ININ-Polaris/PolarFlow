@@ -13,35 +13,29 @@ T = TypeVar("T", bound="V0043KillJobsMsg")
 
 @_attrs_define
 class V0043KillJobsMsg:
-    """
-    Attributes:
-        account (Union[Unset, str]): Filter jobs to a specific account
-        flags (Union[Unset, list[V0043KillJobsMsgFlagsItem]]): Filter jobs according to flags
-        job_name (Union[Unset, str]): Filter jobs to a specific name
-        jobs (Union[Unset, list[str]]):
-        partition (Union[Unset, str]): Filter jobs to a specific partition
-        qos (Union[Unset, str]): Filter jobs to a specific QOS
-        reservation (Union[Unset, str]): Filter jobs to a specific reservation
-        signal (Union[Unset, str]): Signal to send to jobs
-        job_state (Union[Unset, list[V0043KillJobsMsgJobStateItem]]): Filter jobs to a specific state
-        user_id (Union[Unset, str]): Filter jobs to a specific numeric user id
-        user_name (Union[Unset, str]): Filter jobs to a specific user name
-        wckey (Union[Unset, str]): Filter jobs to a specific wckey
-        nodes (Union[Unset, list[str]]):
-    """
-
     account: Union[Unset, str] = UNSET
+    """ Filter jobs to a specific account """
     flags: Union[Unset, list[V0043KillJobsMsgFlagsItem]] = UNSET
+    """ Filter jobs according to flags """
     job_name: Union[Unset, str] = UNSET
+    """ Filter jobs to a specific name """
     jobs: Union[Unset, list[str]] = UNSET
     partition: Union[Unset, str] = UNSET
+    """ Filter jobs to a specific partition """
     qos: Union[Unset, str] = UNSET
+    """ Filter jobs to a specific QOS """
     reservation: Union[Unset, str] = UNSET
+    """ Filter jobs to a specific reservation """
     signal: Union[Unset, str] = UNSET
+    """ Signal to send to jobs """
     job_state: Union[Unset, list[V0043KillJobsMsgJobStateItem]] = UNSET
+    """ Filter jobs to a specific state """
     user_id: Union[Unset, str] = UNSET
+    """ Filter jobs to a specific numeric user id """
     user_name: Union[Unset, str] = UNSET
+    """ Filter jobs to a specific user name """
     wckey: Union[Unset, str] = UNSET
+    """ Filter jobs to a specific wckey """
     nodes: Union[Unset, list[str]] = UNSET
     additional_properties: dict[str, Any] = _attrs_field(init=False, factory=dict)
 

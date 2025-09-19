@@ -11,20 +11,16 @@ T = TypeVar("T", bound="V0043AssocShort")
 
 @_attrs_define
 class V0043AssocShort:
-    """
-    Attributes:
-        user (str): User name
-        account (Union[Unset, str]): Account name
-        cluster (Union[Unset, str]): Cluster name
-        partition (Union[Unset, str]): Partition name
-        id (Union[Unset, int]): Numeric association ID
-    """
-
     user: str
+    """ User name """
     account: Union[Unset, str] = UNSET
+    """ Account name """
     cluster: Union[Unset, str] = UNSET
+    """ Cluster name """
     partition: Union[Unset, str] = UNSET
+    """ Partition name """
     id: Union[Unset, int] = UNSET
+    """ Numeric association ID """
     additional_properties: dict[str, Any] = _attrs_field(init=False, factory=dict)
 
     def to_dict(self) -> dict[str, Any]:

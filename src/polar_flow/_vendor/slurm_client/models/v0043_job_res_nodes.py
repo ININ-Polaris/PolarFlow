@@ -16,20 +16,16 @@ T = TypeVar("T", bound="V0043JobResNodes")
 
 @_attrs_define
 class V0043JobResNodes:
-    """
-    Attributes:
-        count (Union[Unset, int]): Number of allocated nodes
-        select_type (Union[Unset, list[V0043JobResNodesSelectTypeItem]]): Node scheduling selection method
-        list_ (Union[Unset, str]): Node(s) allocated to the job
-        whole (Union[Unset, bool]): Whether whole nodes were allocated
-        allocation (Union[Unset, list['V0043JobResNode']]): Job resources for a node
-    """
-
     count: Union[Unset, int] = UNSET
+    """ Number of allocated nodes """
     select_type: Union[Unset, list[V0043JobResNodesSelectTypeItem]] = UNSET
+    """ Node scheduling selection method """
     list_: Union[Unset, str] = UNSET
+    """ Node(s) allocated to the job """
     whole: Union[Unset, bool] = UNSET
+    """ Whether whole nodes were allocated """
     allocation: Union[Unset, list["V0043JobResNode"]] = UNSET
+    """ Job resources for a node """
     additional_properties: dict[str, Any] = _attrs_field(init=False, factory=dict)
 
     def to_dict(self) -> dict[str, Any]:

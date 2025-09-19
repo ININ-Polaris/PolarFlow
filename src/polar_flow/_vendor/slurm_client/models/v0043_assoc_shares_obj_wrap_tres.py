@@ -16,13 +16,6 @@ T = TypeVar("T", bound="V0043AssocSharesObjWrapTres")
 
 @_attrs_define
 class V0043AssocSharesObjWrapTres:
-    """
-    Attributes:
-        run_seconds (Union[Unset, list['V0043SharesUint64Tres']]):
-        group_minutes (Union[Unset, list['V0043SharesUint64Tres']]):
-        usage (Union[Unset, list['V0043SharesFloat128Tres']]):
-    """
-
     run_seconds: Union[Unset, list["V0043SharesUint64Tres"]] = UNSET
     group_minutes: Union[Unset, list["V0043SharesUint64Tres"]] = UNSET
     usage: Union[Unset, list["V0043SharesFloat128Tres"]] = UNSET

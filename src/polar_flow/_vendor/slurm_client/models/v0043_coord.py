@@ -11,14 +11,10 @@ T = TypeVar("T", bound="V0043Coord")
 
 @_attrs_define
 class V0043Coord:
-    """
-    Attributes:
-        name (str): User name
-        direct (Union[Unset, bool]): Indicates whether the coordinator was directly assigned to this account
-    """
-
     name: str
+    """ User name """
     direct: Union[Unset, bool] = UNSET
+    """ Indicates whether the coordinator was directly assigned to this account """
     additional_properties: dict[str, Any] = _attrs_field(init=False, factory=dict)
 
     def to_dict(self) -> dict[str, Any]:

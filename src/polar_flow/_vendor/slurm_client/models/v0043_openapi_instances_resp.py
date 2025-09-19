@@ -18,14 +18,6 @@ T = TypeVar("T", bound="V0043OpenapiInstancesResp")
 
 @_attrs_define
 class V0043OpenapiInstancesResp:
-    """
-    Attributes:
-        instances (list['V0043Instance']):
-        meta (Union[Unset, V0043OpenapiMeta]):
-        errors (Union[Unset, list['V0043OpenapiError']]):
-        warnings (Union[Unset, list['V0043OpenapiWarning']]):
-    """
-
     instances: list["V0043Instance"]
     meta: Union[Unset, "V0043OpenapiMeta"] = UNSET
     errors: Union[Unset, list["V0043OpenapiError"]] = UNSET

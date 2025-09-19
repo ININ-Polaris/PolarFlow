@@ -11,12 +11,8 @@ T = TypeVar("T", bound="V0043AssocDefault")
 
 @_attrs_define
 class V0043AssocDefault:
-    """
-    Attributes:
-        qos (Union[Unset, str]): Default QOS
-    """
-
     qos: Union[Unset, str] = UNSET
+    """ Default QOS """
     additional_properties: dict[str, Any] = _attrs_field(init=False, factory=dict)
 
     def to_dict(self) -> dict[str, Any]:

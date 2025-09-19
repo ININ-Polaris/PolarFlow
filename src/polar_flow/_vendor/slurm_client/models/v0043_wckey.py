@@ -16,22 +16,17 @@ T = TypeVar("T", bound="V0043Wckey")
 
 @_attrs_define
 class V0043Wckey:
-    """
-    Attributes:
-        cluster (str): Cluster name
-        name (str): WCKey name
-        user (str): User name
-        accounting (Union[Unset, list['V0043Accounting']]):
-        id (Union[Unset, int]): Unique ID for this user-cluster-wckey combination
-        flags (Union[Unset, list[V0043WckeyFlagsItem]]): Flags associated with this WCKey
-    """
-
     cluster: str
+    """ Cluster name """
     name: str
+    """ WCKey name """
     user: str
+    """ User name """
     accounting: Union[Unset, list["V0043Accounting"]] = UNSET
     id: Union[Unset, int] = UNSET
+    """ Unique ID for this user-cluster-wckey combination """
     flags: Union[Unset, list[V0043WckeyFlagsItem]] = UNSET
+    """ Flags associated with this WCKey """
     additional_properties: dict[str, Any] = _attrs_field(init=False, factory=dict)
 
     def to_dict(self) -> dict[str, Any]:

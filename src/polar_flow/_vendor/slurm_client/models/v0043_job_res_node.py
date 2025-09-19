@@ -17,17 +17,10 @@ T = TypeVar("T", bound="V0043JobResNode")
 
 @_attrs_define
 class V0043JobResNode:
-    """
-    Attributes:
-        index (int): Node index
-        name (str): Node name
-        sockets (list['V0043JobResSocket']):
-        cpus (Union[Unset, V0043JobResNodeCpus]):
-        memory (Union[Unset, V0043JobResNodeMemory]):
-    """
-
     index: int
+    """ Node index """
     name: str
+    """ Node name """
     sockets: list["V0043JobResSocket"]
     cpus: Union[Unset, "V0043JobResNodeCpus"] = UNSET
     memory: Union[Unset, "V0043JobResNodeMemory"] = UNSET

@@ -11,12 +11,8 @@ T = TypeVar("T", bound="V0043StepStatisticsCPU")
 
 @_attrs_define
 class V0043StepStatisticsCPU:
-    """
-    Attributes:
-        actual_frequency (Union[Unset, int]): Average weighted CPU frequency of all tasks in kHz
-    """
-
     actual_frequency: Union[Unset, int] = UNSET
+    """ Average weighted CPU frequency of all tasks in kHz """
     additional_properties: dict[str, Any] = _attrs_field(init=False, factory=dict)
 
     def to_dict(self) -> dict[str, Any]:

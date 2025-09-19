@@ -16,16 +16,9 @@ T = TypeVar("T", bound="V0043QosPreempt")
 
 @_attrs_define
 class V0043QosPreempt:
-    """
-    Attributes:
-        list_ (Union[Unset, list[str]]):
-        mode (Union[Unset, list[V0043QosPreemptModeItem]]): PreemptMode - Mechanism used to preempt jobs or enable gang
-            scheduling
-        exempt_time (Union[Unset, V0043Uint32NoValStruct]):
-    """
-
     list_: Union[Unset, list[str]] = UNSET
     mode: Union[Unset, list[V0043QosPreemptModeItem]] = UNSET
+    """ PreemptMode - Mechanism used to preempt jobs or enable gang scheduling """
     exempt_time: Union[Unset, "V0043Uint32NoValStruct"] = UNSET
     additional_properties: dict[str, Any] = _attrs_field(init=False, factory=dict)
 

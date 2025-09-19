@@ -15,21 +15,16 @@ T = TypeVar("T", bound="V0043Instance")
 
 @_attrs_define
 class V0043Instance:
-    """
-    Attributes:
-        cluster (Union[Unset, str]): Cluster name
-        extra (Union[Unset, str]): Arbitrary string used for node filtering if extra constraints are enabled
-        instance_id (Union[Unset, str]): Cloud instance ID
-        instance_type (Union[Unset, str]): Cloud instance type
-        node_name (Union[Unset, str]): NodeName
-        time (Union[Unset, V0043InstanceTime]):
-    """
-
     cluster: Union[Unset, str] = UNSET
+    """ Cluster name """
     extra: Union[Unset, str] = UNSET
+    """ Arbitrary string used for node filtering if extra constraints are enabled """
     instance_id: Union[Unset, str] = UNSET
+    """ Cloud instance ID """
     instance_type: Union[Unset, str] = UNSET
+    """ Cloud instance type """
     node_name: Union[Unset, str] = UNSET
+    """ NodeName """
     time: Union[Unset, "V0043InstanceTime"] = UNSET
     additional_properties: dict[str, Any] = _attrs_field(init=False, factory=dict)
 

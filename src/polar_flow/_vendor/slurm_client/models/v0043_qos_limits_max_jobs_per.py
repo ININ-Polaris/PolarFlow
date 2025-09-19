@@ -15,12 +15,6 @@ T = TypeVar("T", bound="V0043QosLimitsMaxJobsPer")
 
 @_attrs_define
 class V0043QosLimitsMaxJobsPer:
-    """
-    Attributes:
-        account (Union[Unset, V0043Uint32NoValStruct]):
-        user (Union[Unset, V0043Uint32NoValStruct]):
-    """
-
     account: Union[Unset, "V0043Uint32NoValStruct"] = UNSET
     user: Union[Unset, "V0043Uint32NoValStruct"] = UNSET
     additional_properties: dict[str, Any] = _attrs_field(init=False, factory=dict)

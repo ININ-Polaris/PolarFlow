@@ -21,133 +21,113 @@ T = TypeVar("T", bound="V0043Node")
 
 @_attrs_define
 class V0043Node:
-    """
-    Attributes:
-        architecture (Union[Unset, str]): Computer architecture
-        burstbuffer_network_address (Union[Unset, str]): Alternate network path to be used for sbcast network traffic
-        boards (Union[Unset, int]): Number of Baseboards in nodes with a baseboard controller
-        boot_time (Union[Unset, V0043Uint64NoValStruct]):
-        tls_cert_last_renewal (Union[Unset, V0043Uint64NoValStruct]):
-        cert_flags (Union[Unset, list[V0043NodeCertFlagsItem]]): Certmgr status flags
-        cluster_name (Union[Unset, str]): Cluster name (only set in federated environments)
-        cores (Union[Unset, int]): Number of cores in a single physical processor socket
-        specialized_cores (Union[Unset, int]): Number of cores reserved for system use
-        cpu_binding (Union[Unset, int]): Default method for binding tasks to allocated CPUs
-        cpu_load (Union[Unset, int]): CPU load as reported by the OS
-        free_mem (Union[Unset, V0043Uint64NoValStruct]):
-        cpus (Union[Unset, int]): Total CPUs, including cores and threads
-        effective_cpus (Union[Unset, int]): Number of effective CPUs (excluding specialized CPUs)
-        specialized_cpus (Union[Unset, str]): Abstract CPU IDs on this node reserved for exclusive use by slurmd and
-            slurmstepd
-        energy (Union[Unset, V0043AcctGatherEnergy]):
-        external_sensors (Union[Unset, V0043NodeExternalSensors]):
-        extra (Union[Unset, str]): Arbitrary string used for node filtering if extra constraints are enabled
-        power (Union[Unset, V0043NodePower]):
-        features (Union[Unset, list[str]]):
-        active_features (Union[Unset, list[str]]):
-        gpu_spec (Union[Unset, str]): CPU cores reserved for jobs that also use a GPU
-        gres (Union[Unset, str]): Generic resources
-        gres_drained (Union[Unset, str]): Drained generic resources
-        gres_used (Union[Unset, str]): Generic resources currently in use
-        instance_id (Union[Unset, str]): Cloud instance ID
-        instance_type (Union[Unset, str]): Cloud instance type
-        last_busy (Union[Unset, V0043Uint64NoValStruct]):
-        mcs_label (Union[Unset, str]): Multi-Category Security label
-        specialized_memory (Union[Unset, int]): Combined memory limit, in MB, for Slurm compute node daemons
-        name (Union[Unset, str]): NodeName
-        next_state_after_reboot (Union[Unset, list[V0043NodeNextStateAfterRebootItem]]): The state the node will be
-            assigned after rebooting
-        address (Union[Unset, str]): NodeAddr, used to establish a communication path
-        hostname (Union[Unset, str]): NodeHostname
-        state (Union[Unset, list[V0043NodeStateItem]]): Node state(s) applicable to this node
-        operating_system (Union[Unset, str]): Operating system reported by the node
-        owner (Union[Unset, str]): User allowed to run jobs on this node (unset if no restriction)
-        partitions (Union[Unset, list[str]]):
-        port (Union[Unset, int]): TCP port number of the slurmd
-        real_memory (Union[Unset, int]): Total memory in MB on the node
-        res_cores_per_gpu (Union[Unset, int]): Number of CPU cores per GPU restricted to GPU jobs
-        comment (Union[Unset, str]): Arbitrary comment
-        reason (Union[Unset, str]): Describes why the node is in a "DOWN", "DRAINED", "DRAINING", "FAILING" or "FAIL"
-            state
-        reason_changed_at (Union[Unset, V0043Uint64NoValStruct]):
-        reason_set_by_user (Union[Unset, str]): User who set the reason
-        resume_after (Union[Unset, V0043Uint64NoValStruct]):
-        reservation (Union[Unset, str]): Name of reservation containing this node
-        alloc_memory (Union[Unset, int]): Total memory in MB currently allocated for jobs
-        alloc_cpus (Union[Unset, int]): Total number of CPUs currently allocated for jobs
-        alloc_idle_cpus (Union[Unset, int]): Total number of idle CPUs
-        tres_used (Union[Unset, str]): Trackable resources currently allocated for jobs
-        tres_weighted (Union[Unset, float]): Ignored. Was weighted number of billable trackable resources allocated
-        slurmd_start_time (Union[Unset, V0043Uint64NoValStruct]):
-        sockets (Union[Unset, int]): Number of physical processor sockets/chips on the node
-        threads (Union[Unset, int]): Number of logical threads in a single physical core
-        temporary_disk (Union[Unset, int]): Total size in MB of temporary disk storage in TmpFS
-        weight (Union[Unset, int]): Weight of the node for scheduling purposes
-        topology (Union[Unset, str]): Topology
-        tres (Union[Unset, str]): Configured trackable resources
-        version (Union[Unset, str]): Slurmd version
-    """
-
     architecture: Union[Unset, str] = UNSET
+    """ Computer architecture """
     burstbuffer_network_address: Union[Unset, str] = UNSET
+    """ Alternate network path to be used for sbcast network traffic """
     boards: Union[Unset, int] = UNSET
+    """ Number of Baseboards in nodes with a baseboard controller """
     boot_time: Union[Unset, "V0043Uint64NoValStruct"] = UNSET
     tls_cert_last_renewal: Union[Unset, "V0043Uint64NoValStruct"] = UNSET
     cert_flags: Union[Unset, list[V0043NodeCertFlagsItem]] = UNSET
+    """ Certmgr status flags """
     cluster_name: Union[Unset, str] = UNSET
+    """ Cluster name (only set in federated environments) """
     cores: Union[Unset, int] = UNSET
+    """ Number of cores in a single physical processor socket """
     specialized_cores: Union[Unset, int] = UNSET
+    """ Number of cores reserved for system use """
     cpu_binding: Union[Unset, int] = UNSET
+    """ Default method for binding tasks to allocated CPUs """
     cpu_load: Union[Unset, int] = UNSET
+    """ CPU load as reported by the OS """
     free_mem: Union[Unset, "V0043Uint64NoValStruct"] = UNSET
     cpus: Union[Unset, int] = UNSET
+    """ Total CPUs, including cores and threads """
     effective_cpus: Union[Unset, int] = UNSET
+    """ Number of effective CPUs (excluding specialized CPUs) """
     specialized_cpus: Union[Unset, str] = UNSET
+    """ Abstract CPU IDs on this node reserved for exclusive use by slurmd and slurmstepd """
     energy: Union[Unset, "V0043AcctGatherEnergy"] = UNSET
     external_sensors: Union[Unset, "V0043NodeExternalSensors"] = UNSET
     extra: Union[Unset, str] = UNSET
+    """ Arbitrary string used for node filtering if extra constraints are enabled """
     power: Union[Unset, "V0043NodePower"] = UNSET
     features: Union[Unset, list[str]] = UNSET
     active_features: Union[Unset, list[str]] = UNSET
     gpu_spec: Union[Unset, str] = UNSET
+    """ CPU cores reserved for jobs that also use a GPU """
     gres: Union[Unset, str] = UNSET
+    """ Generic resources """
     gres_drained: Union[Unset, str] = UNSET
+    """ Drained generic resources """
     gres_used: Union[Unset, str] = UNSET
+    """ Generic resources currently in use """
     instance_id: Union[Unset, str] = UNSET
+    """ Cloud instance ID """
     instance_type: Union[Unset, str] = UNSET
+    """ Cloud instance type """
     last_busy: Union[Unset, "V0043Uint64NoValStruct"] = UNSET
     mcs_label: Union[Unset, str] = UNSET
+    """ Multi-Category Security label """
     specialized_memory: Union[Unset, int] = UNSET
+    """ Combined memory limit, in MB, for Slurm compute node daemons """
     name: Union[Unset, str] = UNSET
+    """ NodeName """
     next_state_after_reboot: Union[Unset, list[V0043NodeNextStateAfterRebootItem]] = UNSET
+    """ The state the node will be assigned after rebooting """
     address: Union[Unset, str] = UNSET
+    """ NodeAddr, used to establish a communication path """
     hostname: Union[Unset, str] = UNSET
+    """ NodeHostname """
     state: Union[Unset, list[V0043NodeStateItem]] = UNSET
+    """ Node state(s) applicable to this node """
     operating_system: Union[Unset, str] = UNSET
+    """ Operating system reported by the node """
     owner: Union[Unset, str] = UNSET
+    """ User allowed to run jobs on this node (unset if no restriction) """
     partitions: Union[Unset, list[str]] = UNSET
     port: Union[Unset, int] = UNSET
+    """ TCP port number of the slurmd """
     real_memory: Union[Unset, int] = UNSET
+    """ Total memory in MB on the node """
     res_cores_per_gpu: Union[Unset, int] = UNSET
+    """ Number of CPU cores per GPU restricted to GPU jobs """
     comment: Union[Unset, str] = UNSET
+    """ Arbitrary comment """
     reason: Union[Unset, str] = UNSET
+    """ Describes why the node is in a "DOWN", "DRAINED", "DRAINING", "FAILING" or "FAIL" state """
     reason_changed_at: Union[Unset, "V0043Uint64NoValStruct"] = UNSET
     reason_set_by_user: Union[Unset, str] = UNSET
+    """ User who set the reason """
     resume_after: Union[Unset, "V0043Uint64NoValStruct"] = UNSET
     reservation: Union[Unset, str] = UNSET
+    """ Name of reservation containing this node """
     alloc_memory: Union[Unset, int] = UNSET
+    """ Total memory in MB currently allocated for jobs """
     alloc_cpus: Union[Unset, int] = UNSET
+    """ Total number of CPUs currently allocated for jobs """
     alloc_idle_cpus: Union[Unset, int] = UNSET
+    """ Total number of idle CPUs """
     tres_used: Union[Unset, str] = UNSET
+    """ Trackable resources currently allocated for jobs """
     tres_weighted: Union[Unset, float] = UNSET
+    """ Ignored. Was weighted number of billable trackable resources allocated """
     slurmd_start_time: Union[Unset, "V0043Uint64NoValStruct"] = UNSET
     sockets: Union[Unset, int] = UNSET
+    """ Number of physical processor sockets/chips on the node """
     threads: Union[Unset, int] = UNSET
+    """ Number of logical threads in a single physical core """
     temporary_disk: Union[Unset, int] = UNSET
+    """ Total size in MB of temporary disk storage in TmpFS """
     weight: Union[Unset, int] = UNSET
+    """ Weight of the node for scheduling purposes """
     topology: Union[Unset, str] = UNSET
+    """ Topology """
     tres: Union[Unset, str] = UNSET
+    """ Configured trackable resources """
     version: Union[Unset, str] = UNSET
+    """ Slurmd version """
     additional_properties: dict[str, Any] = _attrs_field(init=False, factory=dict)
 
     def to_dict(self) -> dict[str, Any]:

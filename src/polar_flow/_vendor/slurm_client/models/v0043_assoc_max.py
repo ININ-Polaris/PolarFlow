@@ -17,13 +17,6 @@ T = TypeVar("T", bound="V0043AssocMax")
 
 @_attrs_define
 class V0043AssocMax:
-    """
-    Attributes:
-        jobs (Union[Unset, V0043AssocMaxJobs]):
-        tres (Union[Unset, V0043AssocMaxTres]):
-        per (Union[Unset, V0043AssocMaxPer]):
-    """
-
     jobs: Union[Unset, "V0043AssocMaxJobs"] = UNSET
     tres: Union[Unset, "V0043AssocMaxTres"] = UNSET
     per: Union[Unset, "V0043AssocMaxPer"] = UNSET

@@ -17,13 +17,6 @@ T = TypeVar("T", bound="V0043RollupStats")
 
 @_attrs_define
 class V0043RollupStats:
-    """
-    Attributes:
-        hourly (Union[Unset, V0043RollupStatsHourly]):
-        daily (Union[Unset, V0043RollupStatsDaily]):
-        monthly (Union[Unset, V0043RollupStatsMonthly]):
-    """
-
     hourly: Union[Unset, "V0043RollupStatsHourly"] = UNSET
     daily: Union[Unset, "V0043RollupStatsDaily"] = UNSET
     monthly: Union[Unset, "V0043RollupStatsMonthly"] = UNSET

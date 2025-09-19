@@ -11,18 +11,14 @@ T = TypeVar("T", bound="V0043Tres")
 
 @_attrs_define
 class V0043Tres:
-    """
-    Attributes:
-        type_ (str): TRES type (CPU, MEM, etc)
-        name (Union[Unset, str]): TRES name (if applicable)
-        id (Union[Unset, int]): ID used in the database
-        count (Union[Unset, int]): TRES count (0 if listed generically)
-    """
-
     type_: str
+    """ TRES type (CPU, MEM, etc) """
     name: Union[Unset, str] = UNSET
+    """ TRES name (if applicable) """
     id: Union[Unset, int] = UNSET
+    """ ID used in the database """
     count: Union[Unset, int] = UNSET
+    """ TRES count (0 if listed generically) """
     additional_properties: dict[str, Any] = _attrs_field(init=False, factory=dict)
 
     def to_dict(self) -> dict[str, Any]:
