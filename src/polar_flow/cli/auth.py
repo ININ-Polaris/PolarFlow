@@ -77,7 +77,6 @@ def login(
         data = resp.json()
 
     token = data["access_token"]
-    print(data)
     expires = int(data.get("expires_in", 3600))
     save_token(token=Token(token, expires))
     print_kv(
