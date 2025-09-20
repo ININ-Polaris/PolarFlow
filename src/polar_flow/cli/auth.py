@@ -12,7 +12,7 @@ from cryptography.hazmat.primitives.asymmetric import padding, rsa
 
 from polar_flow.cli.printers import print_debug, print_kv
 
-from .config import AppConfig, save_token
+from .config import AppConfig, Token, save_token
 
 app = typer.Typer(help="账户与权限")
 
@@ -77,8 +77,9 @@ def login(
         data = resp.json()
 
     token = data["access_token"]
+    print(data)
     expires = int(data.get("expires_in", 3600))
-    save_token(token, expires)
+    save_token(token=Token(token, expires))
     print_kv(
         "成功认证",
         {

@@ -17,7 +17,11 @@ from polar_flow._vendor.slurm_client.api.slurm import (
     slurm_v0043_post_job_allocate,
     slurm_v0043_post_job_submit,
 )
+from polar_flow._vendor.slurm_client.api.slurmdb import (
+    slurmdb_v0043_get_tres,
+)
 from polar_flow._vendor.slurm_client.models.slurm_v0043_get_jobs_flags import SlurmV0043GetJobsFlags
+from polar_flow._vendor.slurm_client.models.v0043_openapi_tres_resp import V0043OpenapiTresResp
 from polar_flow._vendor.slurm_client.types import UNSET
 from polar_flow.cli.printers import print_debug, print_error
 
@@ -255,4 +259,23 @@ class SlurmClient:
             client=self._client,
             body=body,
         )
+        return self._error_handler(res)
+
+    def get_tres(self) -> V0043OpenapiTresResp:
+        if self._debug:
+            url = f"{self.base_url}/slurmdb/v0.0.43/tres"
+            print_debug(
+                self._build_curl(
+                    "GET",
+                    url=url,
+                    headers=self._client._headers,
+                ),
+                debug=self._debug,
+            )
+        try:
+            res = slurmdb_v0043_get_tres.sync_detailed(
+                client=self._client,
+            )
+        except KeyError:
+            raise typer.Abort("失败") from None
         return self._error_handler(res)
