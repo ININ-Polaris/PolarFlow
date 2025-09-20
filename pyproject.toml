@@ -14,14 +14,16 @@ license = { text = "MIT" }
 
 # 运行依赖 `uv add`
 dependencies = [
+  "attrs>=22.2.0",
   "colorama>=0.4.6",
   "cryptography>=45.0.7",
   "flask-login>=0.6.3",
   "flask-sqlalchemy>=3.1.1",
-  "httpx>=0.28.1",
+  "httpx>=0.23.0,<0.29.0",
   "nvidia-ml-py>=13.580.82",
   "pamela>=1.2.0",
   "pydantic>=2.11.7",
+  "python-dateutil>=2.9.0.post0",
   "requests>=2.32.5",
   "toml>=0.10.2",
   "typer>=0.17.4",
