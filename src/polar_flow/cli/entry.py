@@ -49,11 +49,11 @@ def main(
     except FileNotFoundError:
         with open(Path("~/.config/polarflow/config.toml").expanduser(), "w", encoding="utf-8") as f:
             f.write("[pam-server]\n")
-            f.write('host = "10.1.74.164"\n')
+            f.write('host = "pam.server"\n')
             f.write("port = 6602\n")
             f.write("\n")
             f.write("[slurm-server]\n")
-            f.write('host = "10.1.74.164"\n')
+            f.write('host = "slurm.server"\n')
             f.write("port = 6601\n")
             f.write("\n")
             f.write("[logging]\n")
