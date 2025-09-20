@@ -2,6 +2,7 @@
 project_name_override: slurm_client
 package_name_override: slurm_client
 package_version_override: 0.1.0
+docstrings_on_attributes: true
 field_prefix: attr_
 post_hooks:
   - "ruff check . --fix"

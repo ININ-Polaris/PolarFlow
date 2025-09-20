@@ -1,10 +1,14 @@
 from enum import Enum
-from typing import TYPE_CHECKING, Annotated
+from typing import TYPE_CHECKING, Annotated, Any
 
 import typer
 
 from polar_flow.cli.client import SlurmClient
-from polar_flow.cli.printers import PrintProgress, print_json_ex
+from polar_flow.cli.printers import (
+    PrintProgress,
+    print_client_we,
+    print_json_ex,
+)
 
 if TYPE_CHECKING:
     from polar_flow.cli.config import AppConfig
@@ -19,13 +23,19 @@ def ping(ctx: typer.Context) -> None:
         token: str = ctx.obj["token"]
         debug: bool = ctx.obj["debug"]
         c = SlurmClient(cfg, token, debug=debug)
-        data = c.get("/ping/")
+        data = c.get_ping()
+        errors = data.errors
+        warnings = data.warnings
+        # meta: Any = data.meta
+        pings = data.pings
+
+    print_client_we(warnings=warnings, errors=errors)
 
     from .ann import ping_ann  # noqa: PLC0415
 
     print_json_ex(
         "基本信息",
-        data={"pings": data["pings"]},
+        data={"pings": pings},
         key_priority=["pings"],
         expand=True,
         show_raw=debug,
@@ -64,14 +74,20 @@ def diag(
         debug: bool = ctx.obj["debug"]
 
         c = SlurmClient(cfg, token, debug=debug)
-        data = c.get("/diag/")
+        data = c.get_diag()
+        errors = data.errors
+        warnings = data.warnings
+        meta = data.meta
+        statistics = data.statistics
 
-    if show in (ShowMode.all, ShowMode.meta):
+    print_client_we(warnings=warnings, errors=errors)
+
+    if show in (ShowMode.all, ShowMode.meta) and meta:
         from .ann import meta_ann  # noqa: PLC0415
 
         print_json_ex(
             "基本信息",
-            data=data["meta"],
+            data=meta.to_dict(),
             key_priority=["plugin", "client", "command", "slurm"],
             expand=True,
             show_raw=debug,
@@ -88,7 +104,7 @@ def diag(
 
         print_json_ex(
             "统计数据",
-            data={"statistics": data["statistics"]},
+            data={"statistics": statistics.to_dict()},
             key_priority=["statistics"],
             expand=True,
             show_raw=debug,

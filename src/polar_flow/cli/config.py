@@ -1,14 +1,15 @@
 import json
 import os
-import tomllib
 from pathlib import Path
 from typing import Literal
 
+import tomllib
 from pydantic import BaseModel, ConfigDict, Field
 
 STATE_DIR = Path(os.environ.get("POLAR_CONFIG_PATH", "~/.config/polarflow")).expanduser()
 STATE_DIR.mkdir(parents=True, exist_ok=True)
 TOKEN_PATH = STATE_DIR / "token.json"
+
 
 class PamServerConfig(BaseModel):
     host: str
@@ -18,6 +19,7 @@ class PamServerConfig(BaseModel):
 class SlurmServerConfig(BaseModel):
     host: str
     port: int
+
 
 class LoggingConfig(BaseModel):
     model_config = ConfigDict(populate_by_name=True)

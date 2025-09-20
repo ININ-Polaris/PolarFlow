@@ -52,10 +52,10 @@ def main(
 app.add_typer(auth_app, name="auth")
 app.add_typer(diag.cluster_app, name="diag")
 app.add_typer(jobs.job_app, name="jobs")
-app.add_typer(nodes.node_app, name="nodes")
-app.add_typer(partitions.partition_app, name="partitions")
-app.add_typer(reservation.reservation_app, name="reservation")
-app.add_typer(acct.acct_app, name="accounting")
+# app.add_typer(nodes.node_app, name="nodes")
+# app.add_typer(partitions.partition_app, name="partitions")
+# app.add_typer(reservation.reservation_app, name="reservation")
+# app.add_typer(acct.acct_app, name="accounting")
 
 
 def entry() -> None:

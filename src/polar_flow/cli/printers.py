@@ -1,8 +1,8 @@
 # utils/console.py
 from __future__ import annotations
 
-from collections import Counter
 import json
+from collections import Counter
 from collections.abc import Iterable, Mapping, MutableMapping, Sequence
 from dataclasses import dataclass
 from fnmatch import fnmatchcase
@@ -18,6 +18,9 @@ from rich.progress import Progress, SpinnerColumn, TextColumn, TimeElapsedColumn
 from rich.table import Table
 from rich.text import Text
 from rich.tree import Tree
+import typer
+
+from polar_flow._vendor.slurm_client.types import Unset
 
 from .commands.utils import no_val_nested, version_nested
 
@@ -65,6 +68,28 @@ def print_error(msg: str | Text, title: str = "ERROR") -> None:
 def print_debug(msg: str | Text, title: str = "DEBUG", debug: bool = False) -> None:
     if debug:
         _console.print(_panel(Text(str(msg), style="dim"), title=title, border="bright_black"))
+
+
+def print_client_we(warnings: Unset | list[Any], errors: Unset | list[Any]) -> None:
+    if errors:
+        print_error(
+            "\n".join(
+                [
+                    f"{e.to_dict().get('error')}[{e.to_dict().get('error_number')}]: '{e.to_dict().get('description')}' from '{e.to_dict().get('source')}'"
+                    for e in errors
+                ],
+            ),
+        )
+        raise typer.Exit(1)
+    if warnings:
+        print_warning(
+            "\n".join(
+                [
+                    f"'{w.to_dict().get('description')}' from '{w.to_dict().get('source')}'"
+                    for w in warnings
+                ],
+            ),
+        )
 
 
 # 打印键值对

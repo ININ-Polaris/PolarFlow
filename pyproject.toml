@@ -14,19 +14,19 @@ license = { text = "MIT" }
 
 # 运行依赖 `uv add`
 dependencies = [
-    "colorama>=0.4.6",
-    "cryptography>=45.0.7",
-    "flask-login>=0.6.3",
-    "flask-sqlalchemy>=3.1.1",
-    "httpx>=0.28.1",
-    "nvidia-ml-py>=13.580.82",
-    "pamela>=1.2.0",
-    "pydantic>=2.11.7",
-    "requests>=2.32.5",
-    "toml>=0.10.2",
-    "typer>=0.17.4",
-    "types-requests>=2.32.4.20250809",
-    "types-toml>=0.10.8.20240310",
+  "colorama>=0.4.6",
+  "cryptography>=45.0.7",
+  "flask-login>=0.6.3",
+  "flask-sqlalchemy>=3.1.1",
+  "httpx>=0.28.1",
+  "nvidia-ml-py>=13.580.82",
+  "pamela>=1.2.0",
+  "pydantic>=2.11.7",
+  "requests>=2.32.5",
+  "toml>=0.10.2",
+  "typer>=0.17.4",
+  "types-requests>=2.32.4.20250809",
+  "types-toml>=0.10.8.20240310",
 ]
 
 # 分组依赖 `pip install .[dev]`
@@ -52,6 +52,11 @@ pf = "polar_flow.cli.entry:entry"
 [tool.hatch.build.targets.wheel]
 packages = ["src/polar_flow"]
 
+license-files = [
+  "src/polar_flow/_vendor/slurm_client/VENDORING.txt",
+  "src/polar_flow/_vendor/slurm_client/README.md",
+]
+
 [tool.hatch.build.targets.sdist]
 exclude = ["tests/*", ".github/*"]
 
@@ -70,6 +75,7 @@ dev-dependencies = [
   "pytest-asyncio>=1.1.0",
   "pydantic>=2.11.7",
   "twine>=6.2.0",
+  "openapi-python-client>=0.26.1",
 ]
 
 [tool.pytest.ini_options]
@@ -87,15 +93,10 @@ addopts = """
 testpaths = ["tests"]
 pythonpath = ["src"]
 # 慢测试标记为 integration，默认可以选择跳过
-markers = [
-  "unit: 快速单元测试",
-  "integration: 较慢/复杂依赖测试"
-]
+markers = ["unit: 快速单元测试", "integration: 较慢/复杂依赖测试"]
 # doctest 容错：省略号匹配/空白规整
 doctest_optionflags = "ELLIPSIS NORMALIZE_WHITESPACE"
-filterwarnings = [
-  "error::DeprecationWarning",
-]
+filterwarnings = ["error::DeprecationWarning"]
 # 日志支持
 log_cli = true
 log_cli_level = "INFO"
@@ -123,59 +124,60 @@ line-length = 100
 indent-width = 4
 
 exclude = [
-    ".git",
-    ".venv",
-    "venv",
-    "build",
-    "dist",
-    "logs",
-    "data",
-    "docs",
-    "uv.lock",
+  ".git",
+  ".venv",
+  "venv",
+  "build",
+  "dist",
+  "logs",
+  "data",
+  "docs",
+  "uv.lock",
 ]
 
 [tool.ruff.lint]
 select = [
-    "E",   # pycodestyle (errors)
-    "F",   # pyflakes
-    "W",   # pycodestyle (warnings)
-    "I",   # isort
-    "UP",  # pyupgrade
-    "ANN", # flake8-annotations
-    "ARG", # flake8-unused-arguments
-    "B",   # flake8-bugbear
-    "BLE", # flake8-blind-except
-    "C4",  # flake8-comprehensions
-    "COM", # flake8-commas
-    "DTZ", # flake8-datetimez
-    "G",   # flake8-logging-format
-    "ISC", # flake8-implicit-str-concat
-    "N",   # pep8-naming
-    "PGH", # pygrep-hooks
-    "PIE", # flake8-pie
-    "PL",  # pylint (subset)
-    "PT",  # flake8-pytest-style
-    "Q",   # flake8-quotes
-    "RET", # flake8-return
-    "RUF", # ruff extensions
-    "SIM", # flake8-simplify
-    "TCH", # flake8-type-checking
-    "TID", # flake8-tidy-imports
-    "TRY", # tryceratops
+  "E",   # pycodestyle (errors)
+  "F",   # pyflakes
+  "W",   # pycodestyle (warnings)
+  "I",   # isort
+  "UP",  # pyupgrade
+  "ANN", # flake8-annotations
+  "ARG", # flake8-unused-arguments
+  "B",   # flake8-bugbear
+  "BLE", # flake8-blind-except
+  "C4",  # flake8-comprehensions
+  "COM", # flake8-commas
+  "DTZ", # flake8-datetimez
+  "G",   # flake8-logging-format
+  "ISC", # flake8-implicit-str-concat
+  "N",   # pep8-naming
+  "PGH", # pygrep-hooks
+  "PIE", # flake8-pie
+  "PL",  # pylint (subset)
+  "PT",  # flake8-pytest-style
+  "Q",   # flake8-quotes
+  "RET", # flake8-return
+  "RUF", # ruff extensions
+  "SIM", # flake8-simplify
+  "TCH", # flake8-type-checking
+  "TID", # flake8-tidy-imports
+  "TRY", # tryceratops
 ]
 
 ignore = [
-    "E501",
-    "PLR2004",
-    "PLR0911",
-    "PLR0912",
-    "PLR0915",
-    "RUF001",
-    "RUF002",
-    "RUF003",
-    "ANN401",
-    "TRY003",
-    "G004",
+  "E501",
+  "PLR2004",
+  "PLR0911",
+  "PLR0912",
+  "PLR0915",
+  "RUF001",
+  "RUF002",
+  "RUF003",
+  "ANN401",
+  "TRY003",
+  "G004",
+  "B008"
 ]
 
 [tool.ruff.lint.isort]
