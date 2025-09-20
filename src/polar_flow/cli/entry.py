@@ -109,7 +109,7 @@ def main(
             print_error("请重新登录: auth login", "权限认证过期")
             raise typer.Exit(-1)
 
-        ctx.obj["token"] = token
+        ctx.obj["token"] = token.jwt
 
 
 app.add_typer(auth_app, name="auth")
