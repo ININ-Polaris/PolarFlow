@@ -14,6 +14,7 @@ from polar_flow._vendor.slurm_client.api.slurm import (
     slurm_v0043_get_job,
     slurm_v0043_get_jobs,
     slurm_v0043_get_ping,
+    slurm_v0043_post_job_allocate,
     slurm_v0043_post_job_submit,
 )
 from polar_flow._vendor.slurm_client.models.slurm_v0043_get_jobs_flags import SlurmV0043GetJobsFlags
@@ -27,8 +28,12 @@ if TYPE_CHECKING:
     from polar_flow._vendor.slurm_client.models.slurm_v0043_get_job_flags import (
         SlurmV0043GetJobFlags,
     )
+    from polar_flow._vendor.slurm_client.models.v0043_job_alloc_req import V0043JobAllocReq
     from polar_flow._vendor.slurm_client.models.v0043_job_submit_req import V0043JobSubmitReq
     from polar_flow._vendor.slurm_client.models.v0043_openapi_diag_resp import V0043OpenapiDiagResp
+    from polar_flow._vendor.slurm_client.models.v0043_openapi_job_alloc_resp import (
+        V0043OpenapiJobAllocResp,
+    )
     from polar_flow._vendor.slurm_client.models.v0043_openapi_job_info_resp import (
         V0043OpenapiJobInfoResp,
     )
@@ -115,6 +120,7 @@ class SlurmClient:
             elif status_code in ERROR_MESSAGES:
                 msg, title = ERROR_MESSAGES[status_code]
                 print_error(msg, title or f"HTTP {status_code}")
+                raise typer.Exit(1)
             elif not self._debug:
                 # print_error("请联系管理员，或使用 --debug", "未知错误")
                 return payload
@@ -123,7 +129,7 @@ class SlurmClient:
                 print_debug(raw_text, debug=self._debug, title="Raw Response")
         return payload
 
-    def get_diag(self) -> V0043OpenapiDiagResp:
+    def diag(self) -> V0043OpenapiDiagResp:
         if self._debug:
             url = f"{self.base_url}/slurm/v0.0.43/diag"
             print_debug(
@@ -133,7 +139,7 @@ class SlurmClient:
         res = slurm_v0043_get_diag.sync_detailed(client=self._client)
         return self._error_handler(res)
 
-    def get_ping(self) -> V0043OpenapiPingArrayResp:
+    def ping(self) -> V0043OpenapiPingArrayResp:
         if self._debug:
             url = f"{self.base_url}/slurm/v0.0.43/ping"
             print_debug(
@@ -143,7 +149,7 @@ class SlurmClient:
         res = slurm_v0043_get_ping.sync_detailed(client=self._client)
         return self._error_handler(res)
 
-    def get_jobs(
+    def list_jobs(
         self,
         update_time: None | str,
         flags: None | SlurmV0043GetJobsFlags,
@@ -161,7 +167,7 @@ class SlurmClient:
         )
         return self._error_handler(res)
 
-    def get_job(
+    def show_job(
         self,
         job_id: str,
         update_time: None | str,
@@ -225,6 +231,27 @@ class SlurmClient:
                 debug=self._debug,
             )
         res = slurm_v0043_post_job_submit.sync_detailed(
+            client=self._client,
+            body=body,
+        )
+        return self._error_handler(res)
+
+    def alloc(
+        self,
+        body: V0043JobAllocReq,
+    ) -> V0043OpenapiJobAllocResp:
+        if self._debug:
+            url = f"{self.base_url}/slurm/v0.0.43/job/allocate"
+            print_debug(
+                self._build_curl(
+                    "POST",
+                    url=url,
+                    headers=self._client._headers,
+                    body=body.to_dict(),
+                ),
+                debug=self._debug,
+            )
+        res = slurm_v0043_post_job_allocate.sync_detailed(
             client=self._client,
             body=body,
         )

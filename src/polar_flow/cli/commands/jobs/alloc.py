@@ -2,8 +2,10 @@ from typing import TYPE_CHECKING
 
 import typer
 
+from polar_flow._vendor.slurm_client.models.v0043_job_alloc_req import V0043JobAllocReq
+from polar_flow._vendor.slurm_client.models.v0043_job_desc_msg import V0043JobDescMsg
 from polar_flow._vendor.slurm_client.models.v0043_job_desc_msg_kill_warning_flags_item import (
-    V0043JobDescMsgKillWarningFlagsItem as MsgKillWarningFlags,
+    V0043JobDescMsgKillWarningFlagsItem,
 )
 from polar_flow._vendor.slurm_client.models.v0043_job_desc_msg_open_mode_item import (
     V0043JobDescMsgOpenModeItem,
@@ -11,7 +13,6 @@ from polar_flow._vendor.slurm_client.models.v0043_job_desc_msg_open_mode_item im
 from polar_flow._vendor.slurm_client.models.v0043_job_desc_msg_shared_item import (
     V0043JobDescMsgSharedItem,
 )
-from polar_flow._vendor.slurm_client.models.v0043_job_submit_req import V0043JobSubmitReq
 from polar_flow.cli.client import SlurmClient
 from polar_flow.cli.commands.jobs.read_toml_script import job_desc_from_toml
 from polar_flow.cli.commands.jobs.utils import parse_noval_ui32, parse_noval_ui64, parse_time_type
@@ -29,8 +30,8 @@ if TYPE_CHECKING:
     from polar_flow.cli.config import AppConfig
 
 
-@job_app.command("submit")
-def job_submit(  # noqa: PLR0913
+@job_app.command("alloc")
+def job_alloc(  # noqa: PLR0913
     ctx: typer.Context,
     account: str | None = typer.Option(None, help="与作业关联的账户"),
     argv: list[str] = typer.Option(
@@ -76,7 +77,6 @@ def job_submit(  # noqa: PLR0913
     priority: int | None = typer.Option(None, help="任务优先级"),
     qos: str | None = typer.Option(None, help="作业分配的 QoS（暂无，都是默认 Qos）"),
     requeue: bool | None = typer.Option(None, help="是否允许作业被重新排队"),
-    script: str = typer.Argument(help="作业批处理脚本 *.toml"),
     shared: list[V0043JobDescMsgSharedItem] | None = typer.Option(
         None,
         help="作业与其他作业共享资源的方式（如允许）",
@@ -93,7 +93,7 @@ def job_submit(  # noqa: PLR0913
         help="每个任务分配的 TRES=# 列表（逗号分隔），目前只用于 gres/gpu，比如 gres/gpu=1",
     ),
     user_id: str | None = typer.Option(None, help="作业所属用户的 UID"),
-    kill_warning_flags: list[MsgKillWarningFlags] | None = typer.Option(
+    kill_warning_flags: list[V0043JobDescMsgKillWarningFlagsItem] | None = typer.Option(
         None,
         help="与作业信号相关的标志，用于区分需要接受哪些信号",
         show_default=False,
@@ -116,122 +116,11 @@ def job_submit(  # noqa: PLR0913
     standard_error: str | None = typer.Option(None, help="stderr 文件路径"),
     standard_input: str | None = typer.Option(None, help="stdin 文件路径"),
     standard_output: str | None = typer.Option(None, help="stdout 文件路径"),
-    # account_gather_frequency: int | None = typer.Option(
-    #     None,
-    #     help="作业计费与性能采样的间隔（秒）",
-    # ),
-    # flags: None | list[V0043JobDescMsgFlagsItem] = typer.Option(
-    #     None,
-    #     help="作业标志",
-    #     show_default=False,
-    # ),
-    # tres_per_node: str | None = typer.Option(None, help="每个节点分配的 TRES=# 列表（逗号分隔）"),
-    # tres_per_socket: str | None = typer.Option(None, help="每个插槽分配的 TRES=# 列表（逗号分隔）"),
-    # memory_per_node: int | None = typer.Option(None, help="每个 节点 分配的内存"),
-    # minimum_cpus_per_node: int | None = typer.Option(None, help="每节点最少 CPU 数"),
-    # minimum_boards_per_node: int | None = typer.Option(None, help="每节点所需的板卡数"),
-    # minimum_sockets_per_board: int | None = typer.Option(None, help="每板所需插槽数"),
-    # sockets_per_node: int | None = typer.Option(None, help="每节点所需插槽数"),
-    # threads_per_core: int | None = typer.Option(None, help="每核心所需线程数"),
-    # tasks_per_node: int | None = typer.Option(None, help="每个节点启动的任务数"),
-    # tasks_per_socket: int | None = typer.Option(None, help="每个插槽启动的任务数"),
-    # tasks_per_core: int | None = typer.Option(None, help="每个核心启动的任务数"),
-    # tasks_per_board: int | None = typer.Option(None, help="每块板卡启动的任务数"),
-    # admin_comment: str | None = typer.Option(None, help="管理员填写的任意备注"),
-    # allocation_node_list: str | None = typer.Option(None, help="执行资源分配的本地节点"),
-    # allocation_node_port: int | None = typer.Option(None, help="用于发送分配确认的端口"),
-    # array: str | None = typer.Option(None, help="作业数组索引值规范"),
-    # batch_features: str | None = typer.Option(None, help="批处理脚本节点所需的特性"),
-    # burst_buffer: str | None = typer.Option(None, help="突发缓冲区配置"),
-    # clusters: str | None = typer.Option(None, help="联合作业可运行的集群"),
-    # cluster_constraint: str | None = typer.Option(None, help="联合集群接受同级作业所需具备的特性"),
-    # comment: str | None = typer.Option(None, help="用户填写的任意备注"),
-    # contiguous: bool | None = typer.Option(None, help="若需要连续节点则为 True"),
-    # container: str | None = typer.Option(None, help="OCI 容器包的绝对路径"),
-    # container_id: str | None = typer.Option(None, help="OCI 容器 ID"),
-    # core_specification: int | None = typer.Option(None, help="专用核心数量"),
-    # thread_specification: int | None = typer.Option(None, help="专用线程数量"),
-    # cpu_binding: str | None = typer.Option(None, help="将任务绑定到已分配 CPU 的方法"),
-    # cpu_binding_flags: list[V0043JobDescMsgCpuBindingFlagsItem] | None = typer.Option(
-    #     None,
-    #     help="CPU 绑定相关标志",
-    #     show_default=False,
-    # ),
-    # cpu_frequency: str | None = typer.Option(None, help="请求的 CPU 频率范围 <p1>[-p2][:p3]"),
-    # crontab: str | None = typer.Option(None, help="定时任务"),
-    # delay_boot: int | None = typer.Option(
-    #     None,
-    #     help="在作业满足可开始条件后，为满足特性要求而延迟重启节点的秒数",
-    # ),
-    # rlimits: str | None = typer.Option(None, help=""),
-    # excluded_nodes: list[str] = typer.Option(None, help="", show_default=False),
-    # extra: str | None = typer.Option(None, help="启用额外约束时用于节点筛选的任意字符串"),
-    # constraints: str | None = typer.Option(None, help="必需特性的逗号分隔列表"),
-    # hetjob_group: int | None = typer.Option(None, help="应用于此异构作业组件的唯一序号"),
-    # licenses: str | None = typer.Option(None, help="作业所需的许可证"),
-    # mail_type: list[V0043JobDescMsgMailTypeItem] | None = typer.Option(
-    #     None,
-    #     help="邮件事件类型",
-    #     show_default=False,
-    # ),
-    # mail_user: str | None = typer.Option(None, help="接收邮件通知的用户"),
-    # mcs_label: str | None = typer.Option(None, help="作业上的多类别安全（MCS）标签"),
-    # memory_binding: str | None = typer.Option(None, help="用于 map/mask_cpu 的绑定映射"),
-    # memory_binding_type: list[V0043JobDescMsgMemoryBindingTypeItem] | None = typer.Option(
-    #     None,
-    #     help="任务与内存的绑定方法",
-    #     show_default=False,
-    # ),
-    # network: str | None = typer.Option(None, help="作业步骤的网络规格"),
-    # nice: int | None = typer.Option(None, help="请求的作业优先级变更"),
-    # oom_kill_step: int | None = typer.Option(None, help="若某任务发生 OOM 则终止整个步骤"),
-    # reserve_ports: int | None = typer.Option(None, help="发送各类通知消息的端口"),
-    # overcommit: bool | None = typer.Option(None, help="超量分配资源"),
-    # distribution_plane_size: str | None = typer.Option(None, help="", hidden=True),
-    # power_flags: list[str] = typer.Option(None, help="", show_default=False),
-    # prefer: str | None = typer.Option(None, help="偏好但非必需的特性（逗号分隔）"),
-    # profile: list[V0043JobDescMsgProfileItem] | None = typer.Option(
-    #     None,
-    #     help="acct_gather_profile 插件使用的剖析配置",
-    #     show_default=False,
-    # ),
-    # reboot: bool | None = typer.Option(None, help="开始前请求节点重启"),
-    # required_nodes: list[str] = typer.Option(None, help="", show_default=False),
-    # reservation: str | None = typer.Option(None, help="要使用的保留资源名称"),
-    # site_factor: int | None = typer.Option(None, help="站点自定义优先级因子"),
-    # spank_environment: list[str] = typer.Option(None, help="", show_default=False),
-    # distribution: str | None = typer.Option(None, help="布局"),
-    # tres_bind: str | None = typer.Option(None, help="任务到 TRES 的绑定指令"),
-    # tres_freq: str | None = typer.Option(None, help="TRES 频率指令"),
-    # wait_all_nodes: bool | None = typer.Option(None, help="若为 True，则等待所有节点启动后再开始"),
-    # kill_warning_delay: str | None = typer.Option(None, help=""),
-    # nodes: str | None = typer.Option(None, help="节点数量范围规范（如 1-15:4）"),
-    # minimum_nodes: int | None = typer.Option(None, help="最小节点数"),
-    # maximum_nodes: int | None = typer.Option(None, help="最大节点数"),
-    # selinux_context: str | None = typer.Option(None, help="SELinux 上下文"),
-    # required_switches: str | None = typer.Option(None, help=""),
-    # segment_size: str | None = typer.Option(None, help=""),
-    # wait_for_switch: int | None = typer.Option(None, help="等待交换机的最长时间（秒）"),
-    # wckey: str | None = typer.Option(None, help="工作负载特征键"),
-    # x11: list[str] = typer.Option(None, help="X11 转发选项", show_default=False),
-    # x11_magic_cookie: str | None = typer.Option(None, help="X11 转发的魔术 cookie"),
-    # x11_target_host: str | None = typer.Option(
-    #     None,
-    #     help="当 x11_target_port=0 时为主机名或 UNIX 套接字",
-    # ),
-    # x11_target_port: int | None = typer.Option(None, help="TCP 端口"),
+    script: str | None = typer.Option(None, help="作业批处理脚本 *.toml（只会使用其中的配置项）"),
 ) -> None:
-    """提交自动作业脚本"""
+    """预分配作业环境"""
     with PrintProgress():
-        try:
-            job = job_desc_from_toml(script)
-        except ValueError as ve:
-            raise typer.BadParameter(f"解析脚本文件出错: {ve}") from ve
-        except FileNotFoundError as fe:
-            raise typer.BadParameter(f"解析脚本文件出错: {fe}") from fe
-        except RuntimeError as re:
-            raise typer.BadParameter(f"解析脚本文件出错: {re}") from re
-
+        job = job_desc_from_toml(script) if script is not None else V0043JobDescMsg()
         if account is not None:
             job.account = account
         if argv is not None:
@@ -324,39 +213,32 @@ def job_submit(  # noqa: PLR0913
         if standard_output is not None:
             job.standard_output = standard_output
 
-        if not job.script:
-            raise typer.BadParameter("脚本中未包含 'script'")
-
         cfg: AppConfig = ctx.obj["cfg"]
         token: str = ctx.obj["token"]
         debug: bool = ctx.obj["debug"]
 
         print_debug(str(job.to_dict()), title="Payload", debug=debug)
 
-        jobs = V0043JobSubmitReq(job=job)
+        jobs = V0043JobAllocReq(job=job)
 
         c = SlurmClient(cfg, token, debug=debug)
-        data = c.submit_job(body=jobs)
+        data = c.alloc(body=jobs)
         errors = data.errors
         warnings = data.warnings
         print_client_we(warnings=warnings, errors=errors)
         res_job_id = data.job_id
         res_job_submit_user_msg = data.job_submit_user_msg
-        res_step_id = data.step_id
 
         if type(res_job_id) is not int:
             res_job_id = None
         if type(res_job_submit_user_msg) is not str:
             res_job_submit_user_msg = None
-        if type(res_step_id) is not str:
-            res_step_id = None
 
     print_json_ex(
         "操作结果",
         data={
             "result": {
                 "job_id": res_job_id,
-                "step_id": res_step_id,
                 "job_submit_user_msg": res_job_submit_user_msg,
             },
         },

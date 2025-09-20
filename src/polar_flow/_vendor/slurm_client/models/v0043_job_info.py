@@ -1130,7 +1130,6 @@ class V0043JobInfo:
         job_id = d.pop("job_id", UNSET)
 
         _job_resources = d.pop("job_resources", UNSET)
-        print("_job_resources", _job_resources)
         job_resources: Union[Unset, V0043JobRes]
         if isinstance(_job_resources, Unset) or _job_resources is None:
             job_resources = UNSET

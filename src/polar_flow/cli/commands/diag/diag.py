@@ -1,5 +1,5 @@
 from enum import Enum
-from typing import TYPE_CHECKING, Annotated, Any
+from typing import TYPE_CHECKING, Annotated
 
 import typer
 
@@ -10,6 +10,8 @@ from polar_flow.cli.printers import (
     print_json_ex,
 )
 
+from .ann import meta_ann, ping_ann, stats_ann
+
 if TYPE_CHECKING:
     from polar_flow.cli.config import AppConfig
 
@@ -18,12 +20,13 @@ cluster_app = typer.Typer(help="集群诊断与控制")
 
 @cluster_app.command("ping")
 def ping(ctx: typer.Context) -> None:
+    """检测节点在线状态"""
     with PrintProgress():
         cfg: AppConfig = ctx.obj["cfg"]
         token: str = ctx.obj["token"]
         debug: bool = ctx.obj["debug"]
         c = SlurmClient(cfg, token, debug=debug)
-        data = c.get_ping()
+        data = c.ping()
         errors = data.errors
         warnings = data.warnings
         # meta: Any = data.meta
@@ -31,11 +34,9 @@ def ping(ctx: typer.Context) -> None:
 
     print_client_we(warnings=warnings, errors=errors)
 
-    from .ann import ping_ann  # noqa: PLC0415
-
     print_json_ex(
         "基本信息",
-        data={"pings": pings},
+        data={"pings": [p.to_dict() for p in pings]},
         key_priority=["pings"],
         expand=True,
         show_raw=debug,
@@ -68,13 +69,14 @@ def diag(
         ),
     ] = ShowMode.meta,
 ) -> None:
+    """诊断当前计算集群的状态信息"""
     with PrintProgress():
         cfg: AppConfig = ctx.obj["cfg"]
         token: str = ctx.obj["token"]
         debug: bool = ctx.obj["debug"]
 
         c = SlurmClient(cfg, token, debug=debug)
-        data = c.get_diag()
+        data = c.diag()
         errors = data.errors
         warnings = data.warnings
         meta = data.meta
@@ -83,8 +85,6 @@ def diag(
     print_client_we(warnings=warnings, errors=errors)
 
     if show in (ShowMode.all, ShowMode.meta) and meta:
-        from .ann import meta_ann  # noqa: PLC0415
-
         print_json_ex(
             "基本信息",
             data=meta.to_dict(),
@@ -100,8 +100,6 @@ def diag(
             dict_notes_panel_title="相关信息",
         )
     if show in (ShowMode.all, ShowMode.stat):
-        from .ann import stats_ann  # noqa: PLC0415
-
         print_json_ex(
             "统计数据",
             data={"statistics": statistics.to_dict()},

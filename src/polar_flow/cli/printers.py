@@ -6,8 +6,9 @@ from collections import Counter
 from collections.abc import Iterable, Mapping, MutableMapping, Sequence
 from dataclasses import dataclass
 from fnmatch import fnmatchcase
-from typing import Any
+from typing import TYPE_CHECKING, Any
 
+import typer
 from rich import box
 from rich.columns import Columns
 from rich.console import Console, Group
@@ -18,11 +19,11 @@ from rich.progress import Progress, SpinnerColumn, TextColumn, TimeElapsedColumn
 from rich.table import Table
 from rich.text import Text
 from rich.tree import Tree
-import typer
-
-from polar_flow._vendor.slurm_client.types import Unset
 
 from .commands.utils import no_val_nested, version_nested
+
+if TYPE_CHECKING:
+    from polar_flow._vendor.slurm_client.types import Unset
 
 Renderable = Table | Columns | Group
 
@@ -283,12 +284,12 @@ def print_json_ex(  # noqa: PLR0913
     annotations: Mapping[str, str | Annotation] | None = None,
     # 侧边注释面板相关
     show_side_notes_for_tables: bool = True,
-    notes_panel_title: str = "Notes",
+    notes_panel_title: str = "注释",
     notes_panel_width: int | None = None,  # 固定列宽
     show_side_notes_for_dicts: bool = True,
     dict_notes_min_hits: int = 2,  # 至少命中多少条注释才展示侧栏
     dict_notes_max_depth: int = 4,  # 超过该深度就不再画侧栏，避免过深层级拥挤
-    dict_notes_panel_title: str = "Field Notes",
+    dict_notes_panel_title: str = "相关信息",
     dict_notes_panel_width: int | None = None,
 ) -> None:
     """

@@ -1,102 +1,97 @@
 from __future__ import annotations
 
-from pathlib import Path
 import tomllib
 from collections.abc import Iterable, Mapping
+from pathlib import Path
 from typing import Any
+from urllib.parse import urlparse
+
+import requests
+
+from polar_flow._vendor.slurm_client.models.v0043_job_desc_msg import V0043JobDescMsg
+from polar_flow._vendor.slurm_client.models.v0043_job_desc_msg_kill_warning_flags_item import (
+    V0043JobDescMsgKillWarningFlagsItem,
+)
+from polar_flow._vendor.slurm_client.models.v0043_job_desc_msg_open_mode_item import (
+    V0043JobDescMsgOpenModeItem,
+)
+from polar_flow._vendor.slurm_client.models.v0043_job_desc_msg_shared_item import (
+    V0043JobDescMsgSharedItem,
+)
+from polar_flow._vendor.slurm_client.models.v0043_uint_32_no_val_struct import (
+    V0043Uint32NoValStruct,
+)
+from polar_flow._vendor.slurm_client.models.v0043_uint_64_no_val_struct import (
+    V0043Uint64NoValStruct,
+)
+from polar_flow.cli.commands.jobs.utils import parse_noval_ui32, parse_noval_ui64, parse_time_type
+
+_MAX_SCRIPT_BYTES = 20 * 1024  # 20KB 安全上限，按需调整
+_HTTP_TIMEOUT = (5, 15)  # 连接超时 5s，读超时 15s
+
+
+class Time(int): ...
+
+
+class TimeInt(int): ...
+
 
 # 所有支持的键
-_SUPPORTED_KEYS = {
-    # str 与作业关联的账户
-    "account",
-    # int 作业 ID
-    "job_id",
-    # str 作业所属分区
-    "partition",
-    # str 作业名称
-    "name",
-    # int 任务数量
-    "tasks",
-    # str 作业使用的工作目录
-    "current_working_directory",
-    # str 每个作业分配的 TRES=# 列表，目前只用于 gres/gpu，比如 gres/gpu=1
-    "tres_per_job",
-    # str 每个任务分配的 TRES=# 列表（逗号分隔），目前只用于 gres/gpu，比如 gres/gpu=1
-    "tres_per_task",
-    # str 以分号分隔的 TRES=# 列表，表示每个指定 TRES 分配的 CPU 数量（目前仅用于 gres/gpu）
-    "cpus_per_tres",
-    # int 每个任务需要的 CPU 数
-    "cpus_per_task",
-    # int 所需 CPU 最小值
-    "minimum_cpus",
-    # int 所需 CPU 最大值
-    "maximum_cpus",
-    # str 以分号分隔的 TRES=# 列表，表示每个指定 TRES 分配的内存（MB）（目前仅用于 gres/gpu）
-    "memory_per_tres",
-    # int 可访问每个 GPU 的任务数
-    "ntasks_per_tres",
-    # int 每个 CPU 分配的内存
-    "memory_per_cpu",
-    # int 每节点所需的最小临时磁盘空间
-    "temporary_disk_per_node",
-    # str 作业所属用户的 UID
-    "user_id",
-    # str 作业所属用户的组 ID
-    "group_id",
-    # list[str] 脚本的参数。注意：总是用创建的脚本文件的路径覆盖argv[0]。如果使用了这个选项，argv[0]应该是一个一次性值。
-    "argv",
-    # list[str] 要为作业设置的环境变量
-    "environment",
-    # bool 若为 True，则在指定时间内资源不可用时退出
-    "immediate",
-    # str 将作业的分配延迟到指定的时间 UNIX时间戳或时间字符串 '[MM/DD[/YY]-]HH:MM[:SS]' 或者 'infinite'
-    "begin_time",
-    # str 作业最晚可开始的时间（UNIX 时间戳或 Slurm 识别的时间字符串，如 '[MM/DD[/YY]-]HH:MM[:SS]'）
-    "deadline",
-    # str 在本作业开始前必须满足条件的其他作业
-    "dependency",
-    # str 预期结束时间（UNIX 时间戳或时间字符串，如 '[MM/DD[/YY]-]HH:MM[:SS]'）
-    "end_time",
-    # int 最大运行时间，单位为分钟，整数
-    "time_limit",
-    # int 最小运行时间，单位为分钟，整数
-    "time_minimum",
-    # bool 若为 True，当节点故障时杀死作业
-    "kill_on_node_fail",
-    # bool 暂停 (true) or 继续 (false) 任务
-    "hold",
-    # int 优先级
-    "priority",
-    # str 作业分配的 QoS（暂无，都是默认 Qos）
-    "qos",
-    # bool 是否允许作业被重新排队
-    "requeue",
-    # list[...] 与作业信号相关的标志，用于区分需要接受哪些信号
-    # ARRAY_TASK, BATCH_JOB, CRON_JOBS, FEDERATION_REQUEUE, FULL_JOB,
-    # FULL_STEPS_ONLY, HURRY, NO_SIBLING_JOBS, OUT_OF_MEMORY,
-    # RESERVATION_JOB, VERBOSE, WARNING_SENT
-    "kill_warning_flags",
-    # str 接近结束时间时发送的信号（如 "10" 或 "USR1"）
-    "kill_warning_signal",
-    # str stderr 文件路径
-    "standard_error",
-    # str stdin 文件路径
-    "standard_input",
-    # str stdout 文件路径
-    "standard_output",
+_SUPPORTED_KEYS: dict[str, type] = {
+    "account": str,
+    "job_id": int,
+    "partition": str,
+    "name": str,
+    "tasks": int,
+    "current_working_directory": str,
+    "tres_per_job": str,
+    "tres_per_task": str,
+    "cpus_per_tres": str,
+    "cpus_per_task": int,
+    "minimum_cpus": int,
+    "maximum_cpus": int,
+    "memory_per_tres": str,
+    "ntasks_per_tres": int,
+    "memory_per_cpu": V0043Uint64NoValStruct,
+    "temporary_disk_per_node": int,
+    "user_id": str,
+    "group_id": str,
+    "argv": list[str],
+    "environment": list[str],
+    "immediate": bool,
+    "begin_time": Time,
+    "deadline": TimeInt,
+    "dependency": str,
+    "end_time": TimeInt,
+    "time_limit": V0043Uint32NoValStruct,
+    "time_minimum": V0043Uint32NoValStruct,
+    "kill_on_node_fail": bool,
+    "hold": bool,
+    "priority": V0043Uint32NoValStruct,
+    "qos": str,
+    "requeue": bool,
+    "kill_warning_signal": str,
+    "standard_error": str,
+    "standard_input": str,
+    "standard_output": str,
 }
+
+# 单独处理的键
+# kill_warning_flags V0043JobDescMsgKillWarningFlagsItem
+# open_mode V0043JobDescMsgOpenModeItem
+# shared V0043JobDescMsgSharedItem
+# script Any
 
 
 def _as_list(maybe: Any) -> list[str]:
     """把 str | list[str] 统一成 list[str]（为空时返回 []）。"""
-    if maybe is None:
+    if maybe is None or maybe == "":
         return []
     if isinstance(maybe, str):
         return [maybe]
     if isinstance(maybe, Iterable):
-        # 只保留字符串项
         return [str(x) for x in maybe]
-    return [str(maybe)]
+    raise ValueError(f"{maybe} 无法转化为列表")
 
 
 def _get_script_from_toml_section(section: Mapping[str, Any]) -> str:
@@ -122,7 +117,7 @@ def _get_script_from_toml_section(section: Mapping[str, Any]) -> str:
     return "\n".join(lines).rstrip() + "\n"
 
 
-def job_submit_from_toml(toml_path: str) -> dict[str, Any]:
+def job_desc_from_toml(toml_path: str) -> V0043JobDescMsg:
     """
     从 TOML 文件读取参数，构造与原 @job_app.command(\"submit\") 等价的 payload。
     仅当键出现且值非 None 时写入 payload；[script] 额外规则见上。
@@ -130,38 +125,107 @@ def job_submit_from_toml(toml_path: str) -> dict[str, Any]:
     with open(toml_path, "rb") as fp:
         cfg = tomllib.load(fp)  # 返回 dict
 
-    payload: dict[str, Any] = {}
+    job = V0043JobDescMsg()
 
-    # 1) 复制与原函数同名的顶层键
-    for key in _SUPPORTED_KEYS:
+    for key, type_ in _SUPPORTED_KEYS.items():
         if key in cfg and cfg[key] is not None and cfg[key] != "":
-            payload[key] = cfg[key]
+            try:
+                if type_ in (str, int, bool):
+                    setattr(job, key, type_(cfg[key]))
+                elif type_ is list[str]:
+                    setattr(job, key, _as_list(cfg[key]))
+                elif type_ is Time:
+                    setattr(job, key, parse_time_type(cfg[key]))
+                elif type_ is TimeInt:
+                    setattr(job, key, parse_time_type(cfg[key]).number)
+                elif type_ is V0043Uint32NoValStruct:
+                    setattr(job, key, parse_noval_ui32(cfg[key]))
+                elif type_ is V0043Uint64NoValStruct:
+                    setattr(job, key, parse_noval_ui64(cfg[key]))
 
-    # 2) 特殊处理 [script]
+            except ValueError as ve:
+                raise ValueError(f"序列化 {key} 出错: {ve}") from None
+
+    if not job.environment:
+        job.environment = ["_THERE_MUST_BE_A_ENV_VAR_=THIS_IS_A_BUG"]
+
+    if "kill_warning_flags" in cfg:
+        try:
+            kwf = _as_list(cfg["kill_warning_flags"])
+        except ValueError as ve:
+            raise ValueError(f"序列化 kill_warning_flags 出错: {ve}") from None
+        job.kill_warning_flags = []
+        for x in kwf:
+            try:
+                job.kill_warning_flags.append(V0043JobDescMsgKillWarningFlagsItem(x))
+            except ValueError:
+                raise ValueError(f"'{x}' 不是一个合法的 kill_warning_flags") from ValueError
+
+    if "open_mode" in cfg:
+        try:
+            kwf = _as_list(cfg["open_mode"])
+        except ValueError as ve:
+            raise ValueError(f"序列化 open_mode 出错: {ve}") from None
+        job.open_mode = []
+        for x in kwf:
+            try:
+                job.open_mode.append(V0043JobDescMsgOpenModeItem(x))
+            except ValueError:
+                raise ValueError(f"'{x}' 不是一个合法的 open_mode") from ValueError
+
+    if "shared" in cfg:
+        kwf = _as_list(cfg["shared"])
+        if type(kwf) is not list:
+            raise ValueError(f"shared 应为列表而不是 {type(kwf).__name__}")
+        job.shared = []
+        for x in kwf:
+            try:
+                job.shared.append(V0043JobDescMsgSharedItem(x))
+            except ValueError:
+                raise ValueError(f"'{x}' 不是一个合法的 shared") from ValueError
+
+    # 特殊处理 [script]
     script_cfg = cfg.get("script")
     if isinstance(script_cfg, Mapping):
-        payload["script"] = _get_script_from_toml_section(script_cfg)
+        job.script = _get_script_from_toml_section(script_cfg)
     elif isinstance(script_cfg, str) and script_cfg.startswith("file://"):
         path_str = script_cfg[len("file://") :]
         path = Path(path_str)
         if path.exists() and path.is_file():
             with open(path, encoding="utf-8") as f:
-                payload["script"] = f.read()
+                job.script = f.read()
         else:
             raise FileNotFoundError(f"未找到脚本文件: {path_str}")
+    elif isinstance(script_cfg, str):
+        # 增加对 remote 的支持：http(s) URL
+        parsed = urlparse(script_cfg)
+        if parsed.scheme in {"http", "https"} and parsed.netloc:
+            try:
+                # 先流式请求以做体积保护
+                with requests.get(script_cfg, stream=True, timeout=_HTTP_TIMEOUT) as r:
+                    r.raise_for_status()
+                    total = 0
+                    chunks = []
+                    for chunk in r.iter_content(chunk_size=8192):
+                        if chunk:  # 过滤 keep-alive 块
+                            total += len(chunk)
+                            if total > _MAX_SCRIPT_BYTES:
+                                raise ValueError(
+                                    f"远端脚本过大，超过 {_MAX_SCRIPT_BYTES} 字节上限: {script_cfg}",
+                                )
+                            chunks.append(chunk)
+                    # 尝试按响应声明的编码解码，否则回退到 utf-8
+                    encoding = r.encoding or "utf-8"
+                    job.script = b"".join(chunks).decode(encoding, errors="replace")
+            except requests.RequestException as e:
+                raise RuntimeError(f"拉取远端脚本失败: {script_cfg}，原因: {e}") from e
+        else:
+            # 其余情况按“本地路径或内联内容”处理：如果存在当文件读；否则视为脚本文本
+            path = Path(script_cfg)
+            if path.exists() and path.is_file():
+                with open(path, encoding="utf-8") as f:
+                    job.script = f.read()
+            else:
+                raise ValueError("无法理解的 script 内容")
 
-    # 3) 显式的布尔字段保持布尔
-    for b in (
-        "contiguous",
-        "immediate",
-        "kill_on_node_fail",
-        "overcommit",
-        "hold",
-        "requeue",
-        "wait_all_nodes",
-    ):
-        if b in payload and payload[b] is not None:
-            payload[b] = bool(payload[b])
-
-    # 4) 返回结构
-    return payload
+    return job

@@ -11,7 +11,7 @@ from polar_flow.cli.printers import (
     print_json_ex,
 )
 
-from ..ann import job_info_ann  # noqa: TID252
+from .ann import job_info_ann
 
 if TYPE_CHECKING:
     from polar_flow.cli.config import AppConfig
@@ -46,7 +46,7 @@ def job_list(
         token: str = ctx.obj["token"]
         debug: bool = ctx.obj["debug"]
         c = SlurmClient(cfg, token, debug=debug)
-        data = c.get_jobs(update_time=update_time, flags=flags)
+        data = c.list_jobs(update_time=update_time, flags=flags)
         jobs = data.jobs
         errors = data.errors
         warnings = data.warnings
@@ -110,7 +110,7 @@ def job_show(
         token: str = ctx.obj["token"]
         debug: bool = ctx.obj["debug"]
         c = SlurmClient(cfg, token, debug=debug)
-        data = c.get_job(job_id=str(job_id), update_time=update_time, flags=flags)
+        data = c.show_job(job_id=str(job_id), update_time=update_time, flags=flags)
         jobs = data.jobs
         errors = data.errors
         warnings = data.warnings
@@ -151,10 +151,8 @@ def job_show(
         show_raw=debug,
         annotations=job_info_ann,
         show_side_notes_for_tables=True,
-        notes_panel_title="注释",
         show_side_notes_for_dicts=True,
         dict_notes_min_hits=2,
         dict_notes_max_depth=3,
-        dict_notes_panel_title="相关信息",
         table_max_keys=max_cols,
     )

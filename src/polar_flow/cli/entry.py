@@ -4,7 +4,7 @@ from pathlib import Path
 import typer
 
 from .auth import app as auth_app
-from .commands import acct, diag, jobs, nodes, partitions, reservation
+from .commands import diag, jobs
 
 DEBUG = False
 
